@@ -1,0 +1,27 @@
+ID;Model;Merk;HargaSewa;Status
+M01;520i G30;BMW;2500000.0;true
+M02;Luxio;Daihatsu;300000.0;true
+M03;Xenia;Daihatsu;280000.0;true
+M04;Brio;Honda;250000.0;true
+M05;Mobilio;Honda;250000.0;true
+M06;Civic;Honda;500000.0;true
+M07;Jazz;Honda;300000.0;true
+M08;HR-V;Honda;600000.0;true
+M09;City;Honda;400000.0;true
+M10;Xpander;Mitsubishi;600000.0;true
+M11;Stargazer;Hyundai;450000.0;true
+M12;Ioniq 5;Hyundai;1200000.0;true
+M13;Agya;Toyota;250000.0;true
+M14;Calya;Toyota;150000.0;true
+M15;Fortuner;Toyota;130000.0;true
+M16;Avanza;Toyota;300000.0;true
+M17;Rush;Toyota;300000.0;true
+M18;Yaris;Toyota;300000.0;false
+M19;Zenix;Toyota;600000.0;true
+M20;Innova;Toyota;800000.0;true
+M21;Camry;Toyota;800000.0;true
+M22;Hiace;Toyota;1000000.0;true
+M23;Alphard;Toyota;2700000.0;true
+M24;Swift;Suzuki;280000.0;true
+M25;Ertiga;Suzuki;300000.0;false
+M26;Aventador;Lamborghini;9000000.0;false
