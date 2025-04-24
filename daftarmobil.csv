@@ -16,12 +16,12 @@ M14;Calya;Toyota;150000.0;true
 M15;Fortuner;Toyota;130000.0;true
 M16;Avanza;Toyota;300000.0;true
 M17;Rush;Toyota;300000.0;true
-M18;Yaris;Toyota;300000.0;false
+M18;Yaris;Toyota;300000.0;true
 M19;Zenix;Toyota;600000.0;true
 M20;Innova;Toyota;800000.0;true
 M21;Camry;Toyota;800000.0;true
 M22;Hiace;Toyota;1000000.0;true
 M23;Alphard;Toyota;2700000.0;true
 M24;Swift;Suzuki;280000.0;true
-M25;Ertiga;Suzuki;300000.0;false
-M26;Aventador;Lamborghini;9000000.0;false
+M25;Ertiga;Suzuki;300000.0;true
+M26;Aventador;Lamborghini;9000000.0;true

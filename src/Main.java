@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.Scanner;
 
+import javax.swing.SwingUtilities;
+
 public class Main {
     public static void main(String... args) throws IOException, InterruptedException {
         Scanner obj = new Scanner(System.in);
@@ -63,7 +65,10 @@ public class Main {
                         if (pegawai.login(pegawaiUname, pegawaiPass)) {
                             tekanEnter();
                             clearScreen();
-                            pegawai.tampilkanMenu();
+
+                            SwingUtilities.invokeLater(() -> new PegawaiDb().setVisible(true));
+
+                            break;
                         } else {
                             System.out.println("Login Pegawai gagal. Username atau password salah.");
                         }
