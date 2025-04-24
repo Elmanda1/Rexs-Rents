@@ -1,12 +1,10 @@
 import java.io.IOException;
 import java.util.Scanner;
-
 import javax.swing.SwingUtilities;
 
 public class Main {
-    public static void main(String... args) throws IOException, InterruptedException {
-        Scanner obj = new Scanner(System.in);
-
+    public static void main(String... args) {
+        Scanner obj = new Scanner(System.in); // Deklarasi Scanner
         // Buat objek Pegawai dan Admin
         Pegawai pegawai = new Pegawai("pegawai", "12345");
         Admin admin = new Admin("admin", "admin123", pegawai);
@@ -33,51 +31,16 @@ public class Main {
 
                 switch (pilihan) {
                     case 1: // Login sebagai Admin
-                        clearScreen();
-                        System.out.println("====================================");
-                        System.out.println("||     Login Admin Rex's Rent     ||");
-                        System.out.println("====================================");
-                        System.out.print("Username: ");
-                        String adminUname = obj.nextLine();
-                        System.out.print("Password: ");
-                        String adminPass = obj.nextLine();
-
-                        if (admin.login(adminUname, adminPass)) {
-                            tekanEnter();
-                            clearScreen();
-                            admin.tampilkanMenu();
-                        } else {
-                            System.out.println("Login Admin gagal. Username atau password salah.");
-                        }
-                        tekanEnter();
+                        handleAdminLogin(obj, admin);
                         break;
 
                     case 2: // Login sebagai Pegawai
-                        clearScreen();
-                        System.out.println("====================================");
-                        System.out.println("||    Login Pegawai Rex's Rent    ||");
-                        System.out.println("====================================");
-                        System.out.print("Username: ");
-                        String pegawaiUname = obj.nextLine();
-                        System.out.print("Password: ");
-                        String pegawaiPass = obj.nextLine();
-
-                        if (pegawai.login(pegawaiUname, pegawaiPass)) {
-                            tekanEnter();
-                            clearScreen();
-
-                            SwingUtilities.invokeLater(() -> new PegawaiDb().setVisible(true));
-
-                            break;
-                        } else {
-                            System.out.println("Login Pegawai gagal. Username atau password salah.");
-                        }
-                        tekanEnter();
+                        handlePegawaiLogin(obj, pegawai);
                         break;
 
                     case 3: // Keluar
                         System.out.println("Keluar dari aplikasi.");
-                        obj.close();
+                        obj.close(); // Tutup Scanner
                         return;
 
                     default:
@@ -109,5 +72,47 @@ public class Main {
         } catch (IOException e) {
             System.out.println("Terjadi kesalahan saat menunggu input: " + e.getMessage());
         }
+    }
+
+    // Handle login sebagai Admin
+    private static void handleAdminLogin(Scanner obj, Admin admin) throws IOException, InterruptedException {
+        clearScreen();
+        System.out.println("====================================");
+        System.out.println("||     Login Admin Rex's Rent     ||");
+        System.out.println("====================================");
+        System.out.print("Username: ");
+        String adminUname = obj.nextLine();
+        System.out.print("Password: ");
+        String adminPass = obj.nextLine();
+
+        if (admin.login(adminUname, adminPass)) {
+            tekanEnter();
+            clearScreen();
+            admin.tampilkanMenu();
+        } else {
+            System.out.println("Login Admin gagal. Username atau password salah.");
+        }
+        tekanEnter();
+    }
+
+    // Handle login sebagai Pegawai
+    private static void handlePegawaiLogin(Scanner obj, Pegawai pegawai) throws IOException, InterruptedException {
+        clearScreen();
+        System.out.println("====================================");
+        System.out.println("||    Login Pegawai Rex's Rent    ||");
+        System.out.println("====================================");
+        System.out.print("Username: ");
+        String pegawaiUname = obj.nextLine();
+        System.out.print("Password: ");
+        String pegawaiPass = obj.nextLine();
+
+        if (pegawai.login(pegawaiUname, pegawaiPass)) {
+            tekanEnter();
+            clearScreen();
+            SwingUtilities.invokeLater(() -> new PegawaiDb().setVisible(true));
+        } else {
+            System.out.println("Login Pegawai gagal. Username atau password salah.");
+        }
+        tekanEnter();
     }
 }
