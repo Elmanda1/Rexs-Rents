@@ -1,6 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import javax.swing.*;
 
 public class LoginFrame extends JFrame {
     private Admin admin;
@@ -13,12 +13,21 @@ public class LoginFrame extends JFrame {
     }
 
     public void initialize() {
+        // Set Look and Feel
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // Set up frame properties
         setTitle("Rex's Rent Login Page");
-        setSize(1126, 694);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame
         setLayout(new BorderLayout());
+
+        // Set frame to full screen
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         // Load Poppins font
         Font poppinsFont;
@@ -42,8 +51,8 @@ public class LoginFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Title label
-        JLabel titleLabel = new JLabel("Welcome to Rex's Rent");
-        titleLabel.setFont(poppinsFont.deriveFont(Font.BOLD, 45f)); // Larger font for title
+        JLabel titleLabel = new JLabel("Landing Page");
+        titleLabel.setFont(poppinsFont.deriveFont(Font.BOLD, 37f)); // Larger font for title
         titleLabel.setForeground(new Color(255, 87, 51)); // Orange color
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridx = 0;
@@ -140,10 +149,12 @@ public class LoginFrame extends JFrame {
             if (username.isEmpty() || password.isEmpty() || role.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Pilih Role!", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (role.equals("Admin") && admin.login(username, password)) {
-                JOptionPane.showMessageDialog(null, "Login sukses sebagai Admin!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Login sukses sebagai Admin!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
                 SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true)); // Panggil menu admin
             } else if (role.equals("Employee") && pegawai.login(username, password)) {
-                JOptionPane.showMessageDialog(null, "Login sukses sebagai Employee!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Login sukses sebagai Employee!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
                 SwingUtilities.invokeLater(() -> new PegawaiDashboard().setVisible(true)); // Panggil menu pegawai
             } else {
                 JOptionPane.showMessageDialog(null, "Pengisian Invalid!", "Error", JOptionPane.ERROR_MESSAGE);
