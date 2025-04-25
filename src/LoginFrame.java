@@ -141,10 +141,10 @@ public class LoginFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Pilih Role!", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (role.equals("Admin") && admin.login(username, password)) {
                 JOptionPane.showMessageDialog(null, "Login sukses sebagai Admin!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                admin.tampilkanMenu(); // Panggil menu admin
+                SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true)); // Panggil menu admin
             } else if (role.equals("Employee") && pegawai.login(username, password)) {
                 JOptionPane.showMessageDialog(null, "Login sukses sebagai Employee!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                pegawai.tampilkanMenu(); // Panggil menu pegawai
+                SwingUtilities.invokeLater(() -> new PegawaiDashboard().setVisible(true)); // Panggil menu pegawai
             } else {
                 JOptionPane.showMessageDialog(null, "Pengisian Invalid!", "Error", JOptionPane.ERROR_MESSAGE);
             }

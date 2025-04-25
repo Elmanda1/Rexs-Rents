@@ -162,7 +162,7 @@ public class PegawaiDashboard extends JFrame {
         JTable pelangganTable = new JTable(pelangganTableModel);
         pelangganTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pelangganTable.getTableHeader().setBackground(new Color(30, 90, 220));
-        pelangganTable.getTableHeader().setForeground(Color.WHITE);
+        pelangganTable.getTableHeader().setForeground(Color.BLACK);
         pelangganTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         pelangganTable.setBackground(new Color(220, 230, 250));
         pelangganTable.setRowHeight(30);
@@ -467,7 +467,7 @@ public class PegawaiDashboard extends JFrame {
         mobilTable = new JTable(tableModel);
         mobilTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mobilTable.getTableHeader().setBackground(new Color(30, 90, 220));
-        mobilTable.getTableHeader().setForeground(Color.WHITE);
+        mobilTable.getTableHeader().setForeground(Color.BLACK);
         mobilTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         mobilTable.setBackground(new Color(220, 230, 250));
         mobilTable.setRowHeight(30);
