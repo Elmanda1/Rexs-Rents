@@ -109,7 +109,7 @@ public class Main {
         if (pegawai.login(pegawaiUname, pegawaiPass)) {
             tekanEnter();
             clearScreen();
-            SwingUtilities.invokeLater(() -> new PegawaiDb().setVisible(true));
+            pegawai.tampilkanMenu();
         } else {
             System.out.println("Login Pegawai gagal. Username atau password salah.");
         }
