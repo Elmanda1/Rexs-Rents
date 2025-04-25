@@ -88,7 +88,7 @@ public class Main {
         if (admin.login(adminUname, adminPass)) {
             tekanEnter();
             clearScreen();
-            admin.tampilkanMenu();
+            SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true));
         } else {
             System.out.println("Login Admin gagal. Username atau password salah.");
         }
