@@ -3,6 +3,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 public class GUIAdmin extends JFrame {
     private JPanel mainPanel;
@@ -113,7 +115,7 @@ public class GUIAdmin extends JFrame {
 
         // Add panels for each menu item
         JPanel historyPanel = createHistoryPanel();
-        JPanel dataMobilPanel = tambahDataMobil();
+        JPanel dataMobilPanel = dataMobil();
         JPanel editLoginPanel = createEditLoginPanel();
         editDataMobilPanel = editDataMobil();
 
@@ -199,7 +201,7 @@ public class GUIAdmin extends JFrame {
         return panel;
     }
 
-    private JPanel tambahDataMobil() {
+    private JPanel dataMobil() {
         JPanel panel = new JPanel(new BorderLayout());
 
         // Create form panel (left side)
@@ -280,16 +282,38 @@ public class GUIAdmin extends JFrame {
         statusComboBox.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
         formPanel.add(statusComboBox, gbc);
 
+        // Buttons
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
+
         JButton tambahButton = new JButton("Tambah");
         tambahButton.setPreferredSize(new Dimension(100, 35));
-        tambahButton.setBackground(Color.RED);
+        tambahButton.setBackground(new Color(0, 153, 76)); // Green for "Tambah"
         tambahButton.setForeground(Color.WHITE);
         tambahButton.setBorderPainted(false);
         tambahButton.setFocusPainted(false);
-        formPanel.add(tambahButton, gbc);
+
+        JButton simpanButton = new JButton("Simpan");
+        simpanButton.setPreferredSize(new Dimension(100, 35));
+        simpanButton.setBackground(Color.RED); // Red for "Simpan"
+        simpanButton.setForeground(Color.WHITE);
+        simpanButton.setBorderPainted(false);
+        simpanButton.setFocusPainted(false);
+
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.setPreferredSize(new Dimension(100, 35));
+        deleteButton.setBackground(new Color(255, 102, 0)); // Orange for "Delete"
+        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setBorderPainted(false);
+        deleteButton.setFocusPainted(false);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.add(tambahButton);
+        buttonPanel.add(simpanButton);
+        buttonPanel.add(deleteButton);
+
+        formPanel.add(buttonPanel, gbc);
 
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -304,6 +328,7 @@ public class GUIAdmin extends JFrame {
         };
 
         JTable mobilTable = new JTable(mobilTableModel);
+        mobilTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mobilTable.getTableHeader().setBackground(new Color(30, 90, 220));
         mobilTable.getTableHeader().setForeground(Color.WHITE);
         mobilTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
@@ -316,7 +341,6 @@ public class GUIAdmin extends JFrame {
 
         // Populate the table with Mobil data
         mobilTableModel.setRowCount(0); // Clear table
-        AtomicInteger no = new AtomicInteger(1); // Use AtomicInteger for thread-safe increment
         for (Mobil m : daftarMobil) {
             mobilTableModel.addRow(new Object[]{
                     m.getIdMobil(), m.getModel(), m.getMerk(),
@@ -328,7 +352,21 @@ public class GUIAdmin extends JFrame {
         String nextIdMobil = generateNextIdMobil(mobilTableModel);
         idMobilField.setText(nextIdMobil);
 
-        // Add action listener to the tambah button
+        // Add selection listener to the table
+        mobilTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = mobilTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    idMobilField.setText(mobilTableModel.getValueAt(selectedRow, 0).toString());
+                    modelField.setText(mobilTableModel.getValueAt(selectedRow, 1).toString());
+                    merkField.setText(mobilTableModel.getValueAt(selectedRow, 2).toString());
+                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString());
+                    statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
+                }
+            }
+        });
+
+        // Add action listener to "Tambah" button
         tambahButton.addActionListener(e -> {
             String id = idMobilField.getText();
             String model = modelField.getText();
@@ -354,6 +392,8 @@ public class GUIAdmin extends JFrame {
                         newMobil.getHargaSewa(), newMobil.isTersedia() ? "Available" : "Unavailable"
                 });
 
+                Mobil.writeToCSV(daftarMobil); // Save changes to CSV
+
                 JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan",
                         "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
@@ -369,26 +409,87 @@ public class GUIAdmin extends JFrame {
             }
         });
 
+        // Add action listener to "Simpan" button
+        simpanButton.addActionListener(e -> {
+            int selectedRow = mobilTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(null, "Pilih mobil dari tabel terlebih dahulu",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String model = modelField.getText();
+            String merk = merkField.getText();
+            String hargaSewa = hargaSewaField.getText();
+            String status = statusComboBox.getSelectedItem().toString();
+
+            // Validation
+            if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Semua field harus diisi",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                double harga = Double.parseDouble(hargaSewa);
+
+                // Update table model
+                mobilTableModel.setValueAt(model, selectedRow, 1);
+                mobilTableModel.setValueAt(merk, selectedRow, 2);
+                mobilTableModel.setValueAt(harga, selectedRow, 3);
+                mobilTableModel.setValueAt(status, selectedRow, 4);
+
+                // Update the corresponding object in daftarMobil
+                Mobil updatedMobil = daftarMobil.get(selectedRow);
+                updatedMobil.setModel(model);
+                updatedMobil.setMerk(merk);
+                updatedMobil.setHargaSewa(harga);
+                updatedMobil.setStatus(status.equals("Available"));
+
+                Mobil.writeToCSV(daftarMobil); // Save changes to CSV
+
+                JOptionPane.showMessageDialog(null, "Data mobil berhasil diupdate",
+                        "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // Add action listener to "Delete" button
+        deleteButton.addActionListener(e -> {
+            int selectedRow = mobilTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(null, "Pilih mobil dari tabel terlebih dahulu",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin menghapus data ini?",
+                    "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Remove from table and daftarMobil
+                mobilTableModel.removeRow(selectedRow);
+                daftarMobil.remove(selectedRow);
+
+                Mobil.writeToCSV(daftarMobil); // Save changes to CSV
+
+                JOptionPane.showMessageDialog(null, "Data mobil berhasil dihapus",
+                        "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+                // Clear input fields and generate the next ID
+                modelField.setText("");
+                merkField.setText("");
+                hargaSewaField.setText("");
+                statusComboBox.setSelectedIndex(0);
+                idMobilField.setText(generateNextIdMobil(mobilTableModel));
+            }
+        });
+
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
-    }
-
-    // Helper method to generate the next ID Mobil
-    private String generateNextIdMobil(DefaultTableModel tableModel) {
-        int maxId = 0;
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            String id = tableModel.getValueAt(i, 0).toString();
-            if (id.startsWith("M")) {
-                try {
-                    int numericPart = Integer.parseInt(id.substring(1));
-                    maxId = Math.max(maxId, numericPart);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-        return "M" + (maxId + 1);
     }
 
     private JPanel createEditLoginPanel() {
@@ -666,6 +767,36 @@ public class GUIAdmin extends JFrame {
         // Highlight selected button
         selectedButton.setBackground(new Color(25, 83, 215));
         selectedButton.setForeground(Color.WHITE);
+    }
+
+    private String generateNextIdMobil(DefaultTableModel tableModel) {
+        int maxId = 0;
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            String id = tableModel.getValueAt(i, 0).toString();
+            if (id.startsWith("M")) {
+                try {
+                    int numericPart = Integer.parseInt(id.substring(1));
+                    maxId = Math.max(maxId, numericPart);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        return "M" + (maxId + 1);
+    }
+
+    // Helper method to save data to daftarmobil.csv
+    private void saveToCSV() {
+        try (PrintWriter writer = new PrintWriter("c:\\Users\\Juen\\Documents\\Rexs-Rents\\daftarmobil.csv")) {
+            writer.println("ID;Model;Merk;HargaSewa;Status");
+            for (Mobil m : daftarMobil) {
+                writer.printf("%s;%s;%s;%.2f;%b%n",
+                        m.getIdMobil(), m.getModel(), m.getMerk(),
+                        m.getHargaSewa(), m.isTersedia());
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Gagal menyimpan data ke CSV",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {
