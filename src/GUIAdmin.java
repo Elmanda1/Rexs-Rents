@@ -307,8 +307,4 @@ public class GUIAdmin extends JFrame {
         pnlContent.revalidate();
         pnlContent.repaint();
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true));
-    }
 }
