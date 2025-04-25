@@ -2,19 +2,14 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.io.PrintWriter;
-import java.io.IOException;
 
 public class GUIAdmin extends JFrame {
     private JPanel mainPanel;
     private JPanel contentPanel;
     private JPanel menuPanel;
-    private JPanel editDataMobilPanel;
     private JButton historyButton;
     private JButton dataMobilButton;
     private JButton editLoginButton;
-    private JButton editDataMobilButton;
     private JLabel userLabel;
     private JButton signOutButton;
     private ArrayList<Mobil> daftarMobil = Mobil.readFromCSV();
@@ -86,11 +81,6 @@ public class GUIAdmin extends JFrame {
         editLoginButton.setMargin(new Insets(8, 15, 8, 15));
         editLoginButton.setFocusPainted(false);
 
-        editDataMobilButton = new JButton("Edit Data Mobil");
-        editDataMobilButton.setPreferredSize(new Dimension(150, 40));
-        editDataMobilButton.setMargin(new Insets(8, 15, 8, 15));
-        editDataMobilButton.setFocusPainted(false);
-
         // Set default selected button
         historyButton.setBackground(new Color(25, 83, 215));
         historyButton.setForeground(Color.WHITE);
@@ -102,13 +92,9 @@ public class GUIAdmin extends JFrame {
         editLoginButton.setBackground(Color.WHITE);
         editLoginButton.setBorderPainted(false);
 
-        editDataMobilButton.setBackground(Color.WHITE);
-        editDataMobilButton.setBorderPainted(false);
-
         menuPanel.add(historyButton);
         menuPanel.add(dataMobilButton);
         menuPanel.add(editLoginButton);
-        menuPanel.add(editDataMobilButton);
 
         // Content Panel
         contentPanel = new JPanel(new CardLayout());
@@ -117,12 +103,10 @@ public class GUIAdmin extends JFrame {
         JPanel historyPanel = createHistoryPanel();
         JPanel dataMobilPanel = dataMobil();
         JPanel editLoginPanel = createEditLoginPanel();
-        editDataMobilPanel = editDataMobil();
 
         contentPanel.add(historyPanel, "history");
         contentPanel.add(dataMobilPanel, "dataMobil");
         contentPanel.add(editLoginPanel, "editLogin");
-        contentPanel.add(editDataMobilPanel, "editDataMobil");
 
         mainPanel.add(headerPanel, BorderLayout.NORTH);
         mainPanel.add(menuPanel, BorderLayout.PAGE_START);
@@ -132,13 +116,11 @@ public class GUIAdmin extends JFrame {
         addButtonHoverEffect(historyButton);
         addButtonHoverEffect(dataMobilButton);
         addButtonHoverEffect(editLoginButton);
-        addButtonHoverEffect(editDataMobilButton);
 
         // Set action listeners
         historyButton.addActionListener(e -> switchPanel("history", historyButton));
         dataMobilButton.addActionListener(e -> switchPanel("dataMobil", dataMobilButton));
         editLoginButton.addActionListener(e -> switchPanel("editLogin", editLoginButton));
-        editDataMobilButton.addActionListener(e -> switchPanel("editDataMobil", editDataMobilButton));
 
         getContentPane().add(mainPanel);
     }
@@ -556,184 +538,6 @@ public class GUIAdmin extends JFrame {
         return panel;
     }
 
-    private JPanel editDataMobil() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        // Create form panel (left side)
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 5, 10, 15);
-
-        // Form fields
-        JLabel idMobilLabel = new JLabel("ID Mobil");
-        JLabel modelLabel = new JLabel("Model");
-        JLabel merkLabel = new JLabel("Merk");
-        JLabel hargaSewaLabel = new JLabel("Harga Sewa");
-        JLabel statusLabel = new JLabel("Status");
-
-        formPanel.add(idMobilLabel, gbc);
-
-        gbc.gridy++;
-        formPanel.add(modelLabel, gbc);
-
-        gbc.gridy++;
-        formPanel.add(merkLabel, gbc);
-
-        gbc.gridy++;
-        formPanel.add(hargaSewaLabel, gbc);
-
-        gbc.gridy++;
-        formPanel.add(statusLabel, gbc);
-
-        // Form input fields
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.ipadx = 50;
-        gbc.ipady = 5;
-
-        JTextField idMobilField = new JTextField(10);
-        idMobilField.setText("Pilih pada tabel atau kosongkan saja");
-        idMobilField.setEditable(false);
-        idMobilField.setBackground(new Color(220, 230, 250));
-        idMobilField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        formPanel.add(idMobilField, gbc);
-
-        gbc.gridy++;
-        JTextField modelField = new JTextField(20);
-        modelField.setBackground(new Color(220, 230, 250));
-        modelField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        formPanel.add(modelField, gbc);
-
-        gbc.gridy++;
-        JTextField merkField = new JTextField(15);
-        merkField.setBackground(new Color(220, 230, 250));
-        merkField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        formPanel.add(merkField, gbc);
-
-        gbc.gridy++;
-        JTextField hargaSewaField = new JTextField(16);
-        hargaSewaField.setBackground(new Color(220, 230, 250));
-        hargaSewaField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        formPanel.add(hargaSewaField, gbc);
-
-        gbc.gridy++;
-        JComboBox<String> statusComboBox = new JComboBox<>(new String[]{"Available", "Unavailable"});
-        statusComboBox.setBackground(new Color(220, 230, 250));
-        statusComboBox.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
-        formPanel.add(statusComboBox, gbc);
-
-        gbc.gridy++;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(20, 5, 10, 15);
-        JButton simpanButton = new JButton("Simpan");
-        simpanButton.setPreferredSize(new Dimension(100, 35));
-        simpanButton.setBackground(Color.RED);
-        simpanButton.setForeground(Color.WHITE);
-        simpanButton.setBorderPainted(false);
-        simpanButton.setFocusPainted(false);
-        formPanel.add(simpanButton, gbc);
-
-        // Right table panel
-        JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
-
-        String[] columnNames = {"ID", "Model", "Merk", "Harga Sewa", "Status"};
-        DefaultTableModel mobilTableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        JTable mobilTable = new JTable(mobilTableModel);
-        mobilTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        mobilTable.getTableHeader().setBackground(new Color(30, 90, 220));
-        mobilTable.getTableHeader().setForeground(Color.BLACK);
-        mobilTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        mobilTable.setBackground(new Color(220, 230, 250));
-        mobilTable.setRowHeight(30);
-        mobilTable.setGridColor(new Color(200, 200, 200));
-
-        JScrollPane scrollPane = new JScrollPane(mobilTable);
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
-        
-        // Populate the table with Mobil data
-        mobilTableModel.setRowCount(0); // Clear table
-        AtomicInteger no = new AtomicInteger(1); // Use AtomicInteger for thread-safe increment
-        for (Mobil m : daftarMobil) {
-            mobilTableModel.addRow(new Object[]{
-                    no.getAndIncrement(), m.getIdMobil(), m.getModel(), m.getMerk(),
-                    m.getHargaSewa(), m.isTersedia() ? "Available" : "Unavailable"
-            });
-        }
-
-        // Add selection listener to the table
-        mobilTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedRow = mobilTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    idMobilField.setText(mobilTableModel.getValueAt(selectedRow, 0).toString());
-                    modelField.setText(mobilTableModel.getValueAt(selectedRow, 1).toString());
-                    merkField.setText(mobilTableModel.getValueAt(selectedRow, 2).toString());
-                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString());
-                    statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
-                }
-            }
-        });
-
-        // Add action listener to the simpan button
-        simpanButton.addActionListener(e -> {
-            int selectedRow = mobilTable.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(null, "Pilih mobil dari tabel terlebih dahulu",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            String id = idMobilField.getText();
-            String model = modelField.getText();
-            String merk = merkField.getText();
-            String hargaSewa = hargaSewaField.getText();
-            String status = statusComboBox.getSelectedItem().toString();
-
-            // Validation
-            if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Semua field harus diisi",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Update table model
-            mobilTableModel.setValueAt(model, selectedRow, 1);
-            mobilTableModel.setValueAt(merk, selectedRow, 2);
-            mobilTableModel.setValueAt(hargaSewa, selectedRow, 3);
-            mobilTableModel.setValueAt(status, selectedRow, 4);
-
-            JOptionPane.showMessageDialog(null, "Data mobil berhasil diupdate",
-                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
-        });
-
-        panel.add(formPanel, BorderLayout.WEST);
-        panel.add(tablePanel, BorderLayout.CENTER);
-
-        return panel;
-    }
-
     private void addButtonHoverEffect(JButton button) {
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -761,8 +565,6 @@ public class GUIAdmin extends JFrame {
         dataMobilButton.setForeground(Color.BLACK);
         editLoginButton.setBackground(Color.WHITE);
         editLoginButton.setForeground(Color.BLACK);
-        editDataMobilButton.setBackground(Color.WHITE);
-        editDataMobilButton.setForeground(Color.BLACK);
 
         // Highlight selected button
         selectedButton.setBackground(new Color(25, 83, 215));
@@ -782,21 +584,6 @@ public class GUIAdmin extends JFrame {
             }
         }
         return "M" + (maxId + 1);
-    }
-
-    // Helper method to save data to daftarmobil.csv
-    private void saveToCSV() {
-        try (PrintWriter writer = new PrintWriter("c:\\Users\\Juen\\Documents\\Rexs-Rents\\daftarmobil.csv")) {
-            writer.println("ID;Model;Merk;HargaSewa;Status");
-            for (Mobil m : daftarMobil) {
-                writer.printf("%s;%s;%s;%.2f;%b%n",
-                        m.getIdMobil(), m.getModel(), m.getMerk(),
-                        m.getHargaSewa(), m.isTersedia());
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Gagal menyimpan data ke CSV",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     public static void main(String[] args) {
