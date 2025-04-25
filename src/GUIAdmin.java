@@ -512,10 +512,8 @@ public class GUIAdmin extends JFrame {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(saveButton, gbc);
-
-        // Create an instance of Admin
+    
         Pegawai pegawai = new Pegawai("pegawai", "password");
-        Admin admin = new Admin("admin", "admin123", pegawai);
 
         saveButton.addActionListener(e -> {
             String username = usernameField.getText();
