@@ -15,6 +15,7 @@ public class Transaksi {
     private Mobil mobil;
     private int durasiSewa;
     private double totalHarga;
+    private double keuntungan;
 
     public Transaksi(String tanggal, Pegawai pegawai, Pelanggan pelanggan, Mobil mobil,
             int durasiSewa) {
@@ -26,18 +27,28 @@ public class Transaksi {
         this.pelanggan = pelanggan;
         this.mobil = mobil;
         this.durasiSewa = durasiSewa;
+        this.keuntungan = 0;
+    }
+
+    public void tambahKeuntungan(int denda) {
+        this.keuntungan += denda; // Tambahkan denda ke keuntungan
     }
 
     public void proses() {
         this.totalHarga = mobil.getHargaSewa() * durasiSewa;
+        this.keuntungan += this.totalHarga; // Tambahkan total harga sewa ke keuntungan
+    }
+
+    public double getKeuntungan() {
+        return keuntungan;
     }
 
     public String getRingkasan() {
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    String totalHargaFormatted = formatRupiah.format(totalHarga).replace(",00", ""); // Hapus desimal
-    return idTransaksi + " | " + tanggal + " | " + pelanggan.getInfoTransaksi() + mobil.getInfoTransaksi()
-            + durasiSewa + " hari | " + totalHargaFormatted;
-}
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        String totalHargaFormatted = formatRupiah.format(totalHarga).replace(",00", ""); // Hapus desimal
+        return idTransaksi + " | " + tanggal + " | " + pelanggan.getInfoTransaksi() + mobil.getInfoTransaksi()
+                + durasiSewa + " hari | " + totalHargaFormatted;
+    }
 
     public static void writeToCSV(ArrayList<Transaksi> daftarTransaksi) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) {
@@ -160,41 +171,43 @@ public class Transaksi {
 
     public static String getHeader() {
         return String.format(
-            "| %-10s | %-20s | %-5s | %-15s | %-10s | %-15s | %-5s | %-16s |",
-            "ID Trans", "Tanggal", "ID Pel", "Pelanggan", "ID Mobil", "Mobil", "Durasi", "Total Harga");
+                "| %-10s | %-20s | %-5s | %-15s | %-10s | %-15s | %-5s | %-16s |",
+                "ID Trans", "Tanggal", "ID Pel", "Pelanggan", "ID Mobil", "Mobil", "Durasi", "Total Harga");
     }
 
-   public static void tampilkanRiwayat(ArrayList<Transaksi> daftarTransaksi) {
-    if (daftarTransaksi.isEmpty()) {
-        System.out.println("Tidak ada riwayat transaksi.");
-        return;
+    public static void tampilkanRiwayat(ArrayList<Transaksi> daftarTransaksi) {
+        if (daftarTransaksi.isEmpty()) {
+            System.out.println("Tidak ada riwayat transaksi.");
+            return;
+        }
+
+        // Tampilkan header tabel
+        System.out.println(
+                "===========================================================================================================================");
+        System.out.println(
+                "||                                                  Riwayat Transaksi                                                    ||");
+        System.out.println(
+                "===========================================================================================================================");
+        System.out.println(getHeader());
+        System.out.println(
+                "---------------------------------------------------------------------------------------------------------------------------");
+
+        // Tampilkan setiap transaksi
+        for (Transaksi transaksi : daftarTransaksi) {
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+            String totalHargaFormatted = formatRupiah.format(transaksi.getTotalHarga()).replace(",00", "").replace("Rp",
+                    "Rp "); // Hapus desimal
+            System.out.printf("| %-10s | %-20s | %-6s | %-15s | %-10s | %-15s | %-6d | %-16s |\n",
+                    transaksi.getIdTransaksi(), transaksi.getTanggal(), transaksi.getPelanggan().getIdPelanggan(),
+                    transaksi.getPelanggan().getNama(), transaksi.getMobil().getIdMobil(),
+                    transaksi.getMobil().getModel(),
+                    transaksi.getDurasiSewa(), totalHargaFormatted);
+        }
+
+        // Tampilkan footer tabel
+        System.out.println(
+                "===========================================================================================================================");
     }
-
-    // Tampilkan header tabel
-    System.out.println(
-        "===========================================================================================================================");
-    System.out.println(
-        "||                                                  Riwayat Transaksi                                                    ||");
-    System.out.println(
-        "===========================================================================================================================");
-    System.out.println(getHeader());
-    System.out.println(
-        "---------------------------------------------------------------------------------------------------------------------------");
-
-    // Tampilkan setiap transaksi
-    for (Transaksi transaksi : daftarTransaksi) {
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-        String totalHargaFormatted = formatRupiah.format(transaksi.getTotalHarga()).replace(",00", "").replace("Rp","Rp "); // Hapus desimal
-        System.out.printf("| %-10s | %-20s | %-6s | %-15s | %-10s | %-15s | %-6d | %-16s |\n",
-            transaksi.getIdTransaksi(), transaksi.getTanggal(), transaksi.getPelanggan().getIdPelanggan(),
-            transaksi.getPelanggan().getNama(), transaksi.getMobil().getIdMobil(), transaksi.getMobil().getModel(),
-            transaksi.getDurasiSewa(), totalHargaFormatted);
-    }
-
-    // Tampilkan footer tabel
-    System.out.println(
-        "===========================================================================================================================");
-}
 
     public static void main(String[] args) {
         ArrayList<Transaksi> daftarTransaksi = Transaksi.readFromCSV();

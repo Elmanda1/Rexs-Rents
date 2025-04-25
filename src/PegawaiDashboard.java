@@ -37,13 +37,260 @@ public class PegawaiDashboard extends JFrame {
         setSize(1000, 600);
         setLocationRelativeTo(null);
         
-        initComponents();
+        tambahTransaksi();
         loadCarData();
         
         setVisible(true);
     }
     
-    private void initComponents() {
+    private JPanel createEditPelangganPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        // Create form panel (left side)
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 5, 10, 15);
+        
+        // Form fields
+        JLabel idPelangganLabel = new JLabel("ID Pelanggan");
+        JLabel namaLabel = new JLabel("Nama");
+        JLabel noHPLabel = new JLabel("No HP");
+        JLabel noKTPLabel = new JLabel("No KTP");
+        JLabel alamatLabel = new JLabel("Alamat");
+        JLabel genderLabel = new JLabel("Gender");
+        
+        formPanel.add(idPelangganLabel, gbc);
+        
+        gbc.gridy++;
+        formPanel.add(namaLabel, gbc);
+        
+        gbc.gridy++;
+        formPanel.add(noHPLabel, gbc);
+        
+        gbc.gridy++;
+        formPanel.add(noKTPLabel, gbc);
+        
+        gbc.gridy++;
+        formPanel.add(alamatLabel, gbc);
+        
+        gbc.gridy++;
+        formPanel.add(genderLabel, gbc);
+        
+        // Form input fields
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.ipadx = 50;
+        gbc.ipady = 5;
+        
+        JTextField idPelangganField = new JTextField(10);
+        idPelangganField.setText("Pilih pada tabel");
+        idPelangganField.setEditable(false);
+        idPelangganField.setBackground(new Color(220, 230, 250));
+        idPelangganField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 180, 180)),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(idPelangganField, gbc);
+        
+        gbc.gridy++;
+        JTextField namaField = new JTextField(20);
+        namaField.setBackground(new Color(220, 230, 250));
+        namaField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 180, 180)),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(namaField, gbc);
+        
+        gbc.gridy++;
+        JTextField noHPField = new JTextField(15);
+        noHPField.setBackground(new Color(220, 230, 250));
+        noHPField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 180, 180)),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(noHPField, gbc);
+        
+        gbc.gridy++;
+        JTextField noKTPField = new JTextField(16);
+        noKTPField.setBackground(new Color(220, 230, 250));
+        noKTPField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 180, 180)),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(noKTPField, gbc);
+        
+        gbc.gridy++;
+        JTextField alamatField = new JTextField(30);
+        alamatField.setBackground(new Color(220, 230, 250));
+        alamatField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 180, 180)),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(alamatField, gbc);
+        
+        gbc.gridy++;
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"L", "P"});
+        genderComboBox.setBackground(new Color(220, 230, 250));
+        genderComboBox.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
+        formPanel.add(genderComboBox, gbc);
+        
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 5, 10, 15);
+        JButton simpanButton = new JButton("Simpan");
+        simpanButton.setPreferredSize(new Dimension(100, 35));
+        simpanButton.setBackground(new Color(231, 76, 60));
+        simpanButton.setForeground(Color.WHITE);
+        simpanButton.setBorderPainted(false);
+        simpanButton.setFocusPainted(false);
+        formPanel.add(simpanButton, gbc);
+        
+        // Right table panel
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
+        
+        String[] columnNames = {"ID", "Nama", "No HP", "No KTP", "Alamat", "Gender"};
+        DefaultTableModel pelangganTableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        JTable pelangganTable = new JTable(pelangganTableModel);
+        pelangganTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        pelangganTable.getTableHeader().setBackground(new Color(30, 90, 220));
+        pelangganTable.getTableHeader().setForeground(Color.WHITE);
+        pelangganTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        pelangganTable.setBackground(new Color(220, 230, 250));
+        pelangganTable.setRowHeight(30);
+        pelangganTable.setGridColor(new Color(200, 200, 200));
+        
+        JScrollPane scrollPane = new JScrollPane(pelangganTable);
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        
+        // Load customer data from CSV
+        loadPelangganData(pelangganTableModel);
+        
+        // Add selection listener to the table
+        pelangganTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = pelangganTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String id = pelangganTableModel.getValueAt(selectedRow, 0).toString();
+                    String nama = pelangganTableModel.getValueAt(selectedRow, 1).toString();
+                    String noHP = pelangganTableModel.getValueAt(selectedRow, 2).toString();
+                    String noKTP = pelangganTableModel.getValueAt(selectedRow, 3).toString();
+                    String alamat = pelangganTableModel.getValueAt(selectedRow, 4).toString();
+                    String gender = pelangganTableModel.getValueAt(selectedRow, 5).toString();
+                    
+                    idPelangganField.setText(id);
+                    namaField.setText(nama);
+                    noHPField.setText(noHP);
+                    noKTPField.setText(noKTP);
+                    alamatField.setText(alamat);
+                    genderComboBox.setSelectedItem(gender);
+                }
+            }
+        });
+        
+        // Add action listener to the simpan button
+        simpanButton.addActionListener(e -> {
+            int selectedRow = pelangganTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(null, "Pilih pelanggan dari tabel terlebih dahulu", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            String id = idPelangganField.getText();
+            String nama = namaField.getText();
+            String noHP = noHPField.getText();
+            String noKTP = noKTPField.getText();
+            String alamat = alamatField.getText();
+            String gender = genderComboBox.getSelectedItem().toString();
+            
+            // Validation
+            if (nama.trim().isEmpty() || noHP.trim().isEmpty() || noKTP.trim().isEmpty() || alamat.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Semua field harus diisi", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Update table model
+            pelangganTableModel.setValueAt(nama, selectedRow, 1);
+            pelangganTableModel.setValueAt(noHP, selectedRow, 2);
+            pelangganTableModel.setValueAt(noKTP, selectedRow, 3);
+            pelangganTableModel.setValueAt(alamat, selectedRow, 4);
+            pelangganTableModel.setValueAt(gender, selectedRow, 5);
+            
+            // Save changes to CSV file
+            savePelangganData(pelangganTableModel);
+            
+            JOptionPane.showMessageDialog(null, "Data pelanggan berhasil diupdate", 
+                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
+        });
+        
+        panel.add(formPanel, BorderLayout.WEST);
+        panel.add(tablePanel, BorderLayout.CENTER);
+        
+        return panel;
+    }
+    
+    private void loadPelangganData(DefaultTableModel model) {
+        model.setRowCount(0); // Clear existing data
+        
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get("daftarpelanggan.csv");
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path);
+            
+            // Skip header line
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                String[] data = line.split(";");
+                
+                if (data.length >= 6) {
+                    model.addRow(data);
+                }
+            }
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading customer data: " + e.getMessage(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void savePelangganData(DefaultTableModel model) {
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get("daftarpelanggan.csv");
+            java.util.List<String> lines = new java.util.ArrayList<>();
+            
+            // Add header
+            lines.add("ID;Nama;NoHP;NoKTP;Alamat;Gender");
+            
+            // Add data rows
+            for (int i = 0; i < model.getRowCount(); i++) {
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    sb.append(model.getValueAt(i, j));
+                    if (j < model.getColumnCount() - 1) {
+                        sb.append(";");
+                    }
+                }
+                lines.add(sb.toString());
+            }
+            
+            java.nio.file.Files.write(path, lines);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error saving customer data: " + e.getMessage(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void tambahTransaksi() {
         mainPanel = new JPanel(new BorderLayout());
         
         // Header Panel
@@ -233,8 +480,7 @@ public class PegawaiDashboard extends JFrame {
         tambahTransaksiPanel.add(tablePanel, BorderLayout.CENTER);
         
         // Edit Pelanggan Panel (placeholder)
-        editPelangganPanel = new JPanel(new BorderLayout());
-        editPelangganPanel.add(new JLabel("Edit Data Pelanggan Panel", SwingConstants.CENTER), BorderLayout.CENTER);
+        editPelangganPanel = createEditPelangganPanel();
         
         // Kembalikan Mobil Panel (placeholder)
         kembalikanMobilPanel = new JPanel(new BorderLayout());
@@ -358,6 +604,8 @@ public class PegawaiDashboard extends JFrame {
         
         getContentPane().add(mainPanel);
     }
+
+
     
     private void addButtonHoverEffect(JButton button) {
         button.addMouseListener(new java.awt.event.MouseAdapter() {
