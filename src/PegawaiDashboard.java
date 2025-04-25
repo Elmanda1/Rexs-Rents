@@ -314,6 +314,11 @@ public class PegawaiDashboard extends JFrame {
         signOutButton.setForeground(Color.RED);
         signOutButton.setContentAreaFilled(false);
         signOutButton.setBorderPainted(false);
+        signOutButton.addActionListener(e -> {
+            // Dispose of the current GUIAdmin frame
+            dispose();
+            SwingUtilities.invokeLater(() -> new LoginFrame(new Admin("admin", "admin123", new Pegawai("pegawai", "12345")), new Pegawai("pegawai", "12345")).setVisible(true));
+        });
 
         userPanel.add(userLabel);
         userPanel.add(signOutButton);
@@ -491,8 +496,12 @@ public class PegawaiDashboard extends JFrame {
         contentPanel.add(editPelangganPanel, "editPelanggan");
         contentPanel.add(kembalikanMobilPanel, "kembalikanMobil");
 
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
-        mainPanel.add(menuPanel, BorderLayout.PAGE_START);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+        topPanel.add(headerPanel, BorderLayout.NORTH);
+        topPanel.add(menuPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         // Add hover effects to menu buttons
