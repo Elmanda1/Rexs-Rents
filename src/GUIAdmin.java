@@ -487,6 +487,11 @@ public class GUIAdmin extends JFrame {
         JLabel passwordLabel = new JLabel("Password Pegawai:");
         JTextField passwordField = new JTextField(15);
         JButton saveButton = new JButton("Simpan");
+        saveButton.setPreferredSize(new Dimension(100, 35));
+        saveButton.setBackground(new Color(255, 87, 51)); // Green for "Tambah"
+        saveButton.setForeground(Color.WHITE);
+        saveButton.setBorderPainted(false);
+        saveButton.setFocusPainted(false);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
