@@ -106,7 +106,7 @@ public class LoginFrame extends JFrame {
         JRadioButton adminRadio = new JRadioButton("Admin");
         adminRadio.setFont(poppinsFont);
         adminRadio.setBackground(new Color(240, 248, 255));
-        JRadioButton employeeRadio = new JRadioButton("Employee");
+        JRadioButton employeeRadio = new JRadioButton("Pegawai");
         employeeRadio.setFont(poppinsFont);
         employeeRadio.setBackground(new Color(240, 248, 255));
         ButtonGroup roleGroup = new ButtonGroup();
@@ -152,10 +152,12 @@ public class LoginFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Login sukses sebagai Admin!", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
                 SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true)); // Panggil menu admin
+                dispose();
             } else if (role.equals("Employee") && pegawai.login(username, password)) {
                 JOptionPane.showMessageDialog(null, "Login sukses sebagai Employee!", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
                 SwingUtilities.invokeLater(() -> new PegawaiDashboard().setVisible(true)); // Panggil menu pegawai
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Pengisian Invalid!", "Error", JOptionPane.ERROR_MESSAGE);
             }
