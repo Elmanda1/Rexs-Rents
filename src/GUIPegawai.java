@@ -1,5 +1,8 @@
 import java.awt.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -877,81 +880,48 @@ public class GUIPegawai extends JFrame {
         gbc.insets = new Insets(10, 5, 10, 15);
 
         // Form fields
-        JLabel idMobilLabel = new JLabel("ID Mobil");
-        JLabel modelLabel = new JLabel("Model");
-        JLabel merkLabel = new JLabel("Merk");
-        JLabel hargaSewaLabel = new JLabel("Harga Sewa");
-
-        formPanel.add(idMobilLabel, gbc);
-
+        formPanel.add(createStyledLabel("ID Mobil"), gbc);
         gbc.gridy++;
-        formPanel.add(modelLabel, gbc);
-
+        formPanel.add(createStyledLabel("Model"), gbc);
         gbc.gridy++;
-        formPanel.add(merkLabel, gbc);
-
+        formPanel.add(createStyledLabel("Merk"), gbc);
         gbc.gridy++;
-        formPanel.add(hargaSewaLabel, gbc);
+        formPanel.add(createStyledLabel("Harga Sewa"), gbc);
+        gbc.gridy++;
+        formPanel.add(createStyledLabel("Telat Hari"), gbc);
 
         // Form input fields
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 50;
-        gbc.ipady = 5;
 
-        JTextField idMobilField = new JTextField(10);
-        idMobilField.setEditable(false);
-        idMobilField.setBackground(new Color(220, 230, 250));
-        idMobilField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField idMobilField = createStyledTextField(false);
         formPanel.add(idMobilField, gbc);
 
         gbc.gridy++;
-        JTextField modelField = new JTextField(20);
-        modelField.setEditable(false);
-        modelField.setBackground(new Color(220, 230, 250));
-        modelField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField modelField = createStyledTextField(false);
         formPanel.add(modelField, gbc);
 
         gbc.gridy++;
-        JTextField merkField = new JTextField(20);
-        merkField.setEditable(false);
-        merkField.setBackground(new Color(220, 230, 250));
-        merkField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField merkField = createStyledTextField(false);
         formPanel.add(merkField, gbc);
 
         gbc.gridy++;
-        JTextField hargaSewaField = new JTextField(20);
-        hargaSewaField.setEditable(false);
-        hargaSewaField.setBackground(new Color(220, 230, 250));
-        hargaSewaField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField hargaSewaField = createStyledTextField(false);
         formPanel.add(hargaSewaField, gbc);
+
+        gbc.gridy++;
+        JTextField telatHariField = createStyledTextField(true);
+        formPanel.add(telatHariField, gbc);
 
         // Buttons
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton kembalikanButton = new JButton("Kembalikan");
-        kembalikanButton.setPreferredSize(new Dimension(100, 35));
-        kembalikanButton.setBackground(new Color(0, 153, 76)); // Green for "Kembalikan"
-        kembalikanButton.setForeground(Color.WHITE);
-        kembalikanButton.setBorderPainted(false);
-        kembalikanButton.setFocusPainted(false);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        buttonPanel.add(kembalikanButton);
-
-        formPanel.add(buttonPanel, gbc);
+        JButton kembalikanButton = createStyledButton("Kembalikan", new Color(0, 153, 76)); // Green
+        formPanel.add(kembalikanButton, gbc);
 
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -967,13 +937,6 @@ public class GUIPegawai extends JFrame {
 
         JTable table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getTableHeader().setBackground(new Color(30, 90, 220));
-        table.getTableHeader().setForeground(Color.BLACK); // Set header text color to black
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        table.setBackground(new Color(220, 230, 250));
-        table.setRowHeight(30);
-        table.setGridColor(new Color(200, 200, 200));
-
         JScrollPane scrollPane = new JScrollPane(table);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -1003,10 +966,33 @@ public class GUIPegawai extends JFrame {
         // Add action listener to the "Kembalikan" button
         kembalikanButton.addActionListener(e -> {
             String idMobil = idMobilField.getText();
+            String telatHari = telatHariField.getText();
+
             if (idMobil.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Pilih mobil yang ingin dikembalikan!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+
+            // Calculate fine if "Telat Hari" is filled
+            if (!telatHari.isEmpty()) {
+                try {
+                    int telat = Integer.parseInt(telatHari);
+                    double hargaSewa = Double.parseDouble(hargaSewaField.getText());
+                    double denda = telat * hargaSewa * 1.5;
+
+                    // Format fine in IDR
+                    NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                    String dendaFormatted = formatter.format(denda);
+
+                    JOptionPane.showMessageDialog(null, "Telat mengembalikan mobil " + telat + " hari.\n"
+                            + "Maka dikenakan denda sebesar " + dendaFormatted,
+                            "Denda", JOptionPane.INFORMATION_MESSAGE);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Input Telat Hari harus berupa angka!",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
 
             // Find the mobil and set its status to true
@@ -1033,6 +1019,7 @@ public class GUIPegawai extends JFrame {
             modelField.setText("");
             merkField.setText("");
             hargaSewaField.setText("");
+            telatHariField.setText("");
 
             JOptionPane.showMessageDialog(null, "Mobil berhasil dikembalikan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -1106,5 +1093,31 @@ public class GUIPegawai extends JFrame {
 
         // Generate the next ID in the format "P" followed by a 3-digit number
         return String.format("P%03d", maxId + 1);
+    }
+
+    private JTextField createStyledTextField(boolean editable) {
+        JTextField textField = new JTextField(20);
+        textField.setEditable(editable);
+        textField.setBackground(new Color(220, 230, 250));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        return textField;
+    }
+    
+    private JLabel createStyledLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.PLAIN, 14));
+        return label;
+    }
+    
+    private JButton createStyledButton(String text, Color backgroundColor) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(new Dimension(100, 35));
+        button.setBackground(backgroundColor);
+        button.setForeground(Color.WHITE);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        return button;
     }
 }
