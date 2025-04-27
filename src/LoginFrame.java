@@ -8,24 +8,20 @@ import java.util.Map;
 import javax.swing.*;
 
 public class LoginFrame extends JFrame {
-    private final Admin admin;
-    private final Pegawai pegawai;
     private Map<String, String> adminCredentials = new HashMap<>();
     private Map<String, String> employeeCredentials = new HashMap<>();
 
-    public LoginFrame(Admin admin, Pegawai pegawai) {
-        this.admin = admin;
-        this.pegawai = pegawai;
-        loadCredentials(); // Memuat data login dari login.csv
+    public LoginFrame() {
+        loadCredentials(); // Load login data from login.csv
     }
 
     private void loadCredentials() {
         try (BufferedReader br = new BufferedReader(new FileReader("login.csv"))) {
             String line;
-            br.readLine(); // Lewati header
+            br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
-                if (parts.length == 3) { // Pastikan ada 3 kolom: Username, Password, Role
+                if (parts.length == 3) { // Ensure there are 3 columns: Username, Password, Role
                     String username = parts[0];
                     String password = parts[1];
                     String role = parts[2];
@@ -37,7 +33,7 @@ public class LoginFrame extends JFrame {
                 }
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Gagal membaca file login.csv: " + e.getMessage(),
+            JOptionPane.showMessageDialog(this, "Failed to read login.csv: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -56,9 +52,7 @@ public class LoginFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame
         setLayout(new BorderLayout());
-
-        // Set frame to full screen
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Full screen
 
         // Load Poppins font
         Font poppinsFont;
@@ -70,16 +64,14 @@ public class LoginFrame extends JFrame {
             poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
         }
 
-        // GridBagConstraints for layout
+        // Main panel
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(new Color(240, 248, 255)); // Light blue background
+        add(mainPanel, BorderLayout.CENTER);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Main panel
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setBackground(new Color(240, 248, 255)); // Light blue background
-        add(mainPanel, BorderLayout.CENTER);
 
         // Logo
         JLabel userIcon = new JLabel();
@@ -91,14 +83,14 @@ public class LoginFrame extends JFrame {
         userIcon.setIcon(new ImageIcon(scaledImage));
         userIcon.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridx = 0;
-        gbc.gridy = 0; // Baris pertama
-        gbc.gridwidth = 2; // Biarkan logo mengambil dua kolom
+        gbc.gridy = 0; // First row
+        gbc.gridwidth = 2; // Let the logo take two columns
         mainPanel.add(userIcon, gbc);
 
         // Username label and text field
         gbc.insets = new Insets(10, 10, 10, 10); // Adjust margins
         gbc.gridx = 0;
-        gbc.gridy = 1; // Baris kedua
+        gbc.gridy = 1; // Second row
         gbc.gridwidth = 1;
 
         JLabel usernameLabel = new JLabel("Username");
@@ -175,57 +167,50 @@ public class LoginFrame extends JFrame {
         loginButton.setFocusPainted(false);
         mainPanel.add(loginButton, gbc);
 
-        // Tambahkan ActionListener ke tombol Login
+        // Add ActionListener to the login button
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             String role = adminRadio.isSelected() ? "Admin" : employeeRadio.isSelected() ? "Employee" : "";
 
             if (role.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Pilih Role sebelum login!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please select a role before logging in!", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (role.equals("Admin")) {
                 if (adminCredentials.containsKey(username) && adminCredentials.get(username).equals(password)) {
-                    JOptionPane.showMessageDialog(null, "Successfully Login as Admin!", "Success",
+                    JOptionPane.showMessageDialog(null, "Successfully logged in as Admin!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
-                    SwingUtilities.invokeLater(
-                            () -> new GUIAdmin(new Admin(username, password, null), null).setVisible(true));
+                    SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Username atau Password salah untuk Admin!", "Error",
+                    JOptionPane.showMessageDialog(null, "Invalid Admin username or password!", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             } else if (role.equals("Employee")) {
                 if (employeeCredentials.containsKey(username) && employeeCredentials.get(username).equals(password)) {
-                    JOptionPane.showMessageDialog(null, "Successfully Login as Employee!", "Success",
+                    JOptionPane.showMessageDialog(null, "Successfully logged in as Employee!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                     SwingUtilities.invokeLater(() -> new GUIPegawai().setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Username atau Password salah untuk Employee!", "Error",
+                    JOptionPane.showMessageDialog(null, "Invalid Employee username or password!", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        // Set frame visibility
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        // Buat objek Pegawai dan Admin
-        Pegawai pegawai = new Pegawai("pegawai", "12345");
-        Admin admin = new Admin("admin", "admin123", pegawai);
-        LoginFrame loginFrame = new LoginFrame(admin, pegawai);
-        loginFrame.initialize();
-        // Buka GUI LoginFrame dengan objek admin dan pegawai
-        SwingUtilities.invokeLater(() -> new LoginFrame(admin, pegawai));
+        SwingUtilities.invokeLater(() -> new LoginFrame().initialize());
     }
 }

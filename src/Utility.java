@@ -58,18 +58,4 @@ public class Utility {
             }
         });
     }
-
-    public static String generateNextId(String prefix, List<String> existingIds) {
-        int maxId = 0;
-        for (String id : existingIds) {
-            if (id.startsWith(prefix)) {
-                try {
-                    int numericPart = Integer.parseInt(id.substring(prefix.length()));
-                    maxId = Math.max(maxId, numericPart);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-        return prefix + String.format("%03d", maxId + 1);
-    }
 }

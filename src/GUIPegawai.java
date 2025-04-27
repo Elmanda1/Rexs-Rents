@@ -25,7 +25,6 @@ public class GUIPegawai extends JFrame {
         setTitle("Rex's Rents - Employee Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        // Set frame to full screen
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         try {
@@ -36,9 +35,9 @@ public class GUIPegawai extends JFrame {
         }
 
         setupUI();
-
         setVisible(true);
     }
+
 
     private void setupUI() {
         mainPanel = new JPanel(new BorderLayout());
@@ -76,7 +75,7 @@ public class GUIPegawai extends JFrame {
         // Saat logout di GUIPegawai
         signOutButton.addActionListener(e -> {
             dispose(); // Tutup GUIPegawai
-            LoginFrame loginFrame = new LoginFrame(null, null);
+            LoginFrame loginFrame = new LoginFrame();
             loginFrame.initialize(); // Pastikan initialize() dipanggil
         });
         gbc.gridx = 0;
@@ -406,7 +405,7 @@ public class GUIPegawai extends JFrame {
                 Pelanggan pelanggan = new Pelanggan(pelangganName, "", "", "", "");
         
                 // Create a new Transaksi object
-                Transaksi transaksiBaru = new Transaksi(java.time.LocalDate.now().toString(), null, pelanggan, selectedMobil, durasiInt);
+                Transaksi transaksiBaru = new Transaksi(java.time.LocalDate.now().toString(), pelanggan, selectedMobil, durasiInt);
                 daftarTransaksi.add(transaksiBaru); // Add to the list of transactions
         
                 // Save the transaction to transaksi.csv

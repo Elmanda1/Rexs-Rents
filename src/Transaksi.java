@@ -8,14 +8,13 @@ public class Transaksi {
     private static int jumlahTransaksi = 0;
     private String idTransaksi;
     private String tanggal;
-    private Pegawai pegawai;
     private Pelanggan pelanggan;
     private Mobil mobil;
     private int durasiSewa;
     private double totalHarga;
     private double keuntungan;
 
-    public Transaksi(String tanggal, Pegawai pegawai, Pelanggan pelanggan, Mobil mobil, int durasiSewa) {
+    public Transaksi(String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa) {
         // Validasi input
         if (tanggal == null || tanggal.isEmpty()) {
             throw new IllegalArgumentException("Tanggal tidak boleh kosong.");
@@ -36,7 +35,6 @@ public class Transaksi {
         // Set atribut
         this.idTransaksi = "TRX" + String.format("%04d", jumlahTransaksi);
         this.tanggal = tanggal;
-        this.pegawai = pegawai;
         this.pelanggan = pelanggan;
         this.mobil = mobil;
         this.durasiSewa = durasiSewa;
@@ -139,7 +137,7 @@ public class Transaksi {
                 Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
 
                 // Create a Transaksi object
-                Transaksi transaksi = new Transaksi(tanggal, null, pelanggan, mobil, durasi);
+                Transaksi transaksi = new Transaksi(tanggal, pelanggan, mobil, durasi);
                 transaksi.idTransaksi = idTransaksi; // Set the ID directly from the CSV
                 transaksi.totalHarga = hargaSewa; // Set the total price directly
                 daftarTransaksi.add(transaksi);
@@ -167,10 +165,6 @@ public class Transaksi {
 
     public String getTanggal() {
         return tanggal;
-    }
-
-    public Pegawai getPegawai() {
-        return pegawai;
     }
 
     public Pelanggan getPelanggan() {

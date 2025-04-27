@@ -19,13 +19,7 @@ public class GUIAdmin extends JFrame {
     private JButton signOutButton;
     private ArrayList<Mobil> daftarMobil = new ArrayList<>(Mobil.readFromCSV("daftarmobil.csv"));
 
-    private Admin admin;
-    private Pegawai pegawai;
-
-    public GUIAdmin(Admin admin, Pegawai pegawai) {
-        this.admin = admin;
-        this.pegawai = pegawai;
-
+    public GUIAdmin() {
         setTitle("Rex's Rents - Admin Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -75,7 +69,7 @@ public class GUIAdmin extends JFrame {
         signOutButton.setContentAreaFilled(true);
         signOutButton.addActionListener(e -> {
             dispose(); // Tutup GUIAdmin
-            LoginFrame loginFrame = new LoginFrame(admin, pegawai);
+            LoginFrame loginFrame = new LoginFrame();
             loginFrame.initialize(); // Pastikan initialize() dipanggil
         });
         gbc.gridx = 0;
@@ -612,7 +606,7 @@ public class GUIAdmin extends JFrame {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("login.csv"))) {
                 writer.write("Username;Password;Role");
                 writer.newLine();
-                writer.write(admin.getUsername() + ";" + admin.getPassword() + ";Admin");
+                writer.write("admin" + ";" + "admin" + ";Admin");
                 writer.newLine();
                 writer.write(username + ";" + password + ";Employee");
                 writer.newLine();
