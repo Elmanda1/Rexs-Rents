@@ -118,8 +118,13 @@ public class LoginFrame extends JFrame {
         passwordField.setFont(poppinsFont);
         passwordField.setBackground(new Color(220, 240, 255)); // Light blue background
         passwordField.setForeground(Color.BLACK); // Black text
+
+        //panggil fungsi createPasswordTogglePanel  
+        JPanel passwordPanel = createPasswordTogglePanel(passwordField);
+
+        // Tambahkan passwordPanel ke mainPanel (bukan passwordField langsung)
         gbc.gridx = 1;
-        mainPanel.add(passwordField, gbc);
+        mainPanel.add(passwordPanel, gbc);
 
         // Role selection using radio buttons
         gbc.gridx = 0;
@@ -208,6 +213,38 @@ public class LoginFrame extends JFrame {
         });
 
         setVisible(true);
+    }
+
+    //untuk password show hide
+    public JPanel createPasswordTogglePanel(JPasswordField passwordField) {
+        // Buat panel dengan BorderLayout untuk menempatkan field dan tombol secara horizontal
+        JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
+        passwordPanel.setBackground(new Color(240, 248, 255)); // Sesuaikan dengan background aplikasi
+        
+        // Tambahkan password field ke panel
+        passwordPanel.add(passwordField, BorderLayout.CENTER);
+        
+        // Buat tombol toggle untuk show/hide password
+        JToggleButton showPassword = new JToggleButton("Show");
+        showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Sesuaikan font
+        showPassword.setFocusPainted(false);
+        showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
+        
+        // Tambahkan action listener untuk mengubah visibility password
+        showPassword.addActionListener(e -> {
+            if (showPassword.isSelected()) {
+                passwordField.setEchoChar((char) 0); // Tampilkan password asli
+                showPassword.setText("Hide");
+            } else {
+                passwordField.setEchoChar('•'); // Sembunyikan password dengan bullet
+                showPassword.setText("Show");
+            }
+        });
+        
+        // Tambahkan tombol ke panel
+        passwordPanel.add(showPassword, BorderLayout.EAST);
+        
+        return passwordPanel;
     }
 
     public static void main(String[] args) {
