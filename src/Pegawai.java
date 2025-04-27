@@ -17,76 +17,6 @@ public class Pegawai extends Akun {
         this.daftarTransaksi = new ArrayList<>(Transaksi.readFromCSV("transaksi.csv")); // Inisialisasi daftar transaksi
     }
 
-    // Hapus deklarasi ulang Scanner di tampilkanMenu()
-    public void tampilkanMenu() {
-        int pilihan = 0; // Inisialisasi dengan nilai default
-        do {
-            clearScreen();
-            System.out.println("====================================");
-            System.out.println("||       Pegawai Rex's Rent       ||");
-            System.out.println("====================================");
-            System.out.println("|| 1. Tambah Data Pelanggan       ||");
-            System.out.println("|| 2. Edit Data Pelanggan         ||");
-            System.out.println("|| 3. Lihat Data Pelanggan        ||");
-            System.out.println("|| 4. Tambah Transaksi Pelanggan  ||");
-            System.out.println("|| 5. Lihat List Mobil Tersedia   ||");
-            System.out.println("|| 6. Kembalikan Mobil            ||");
-            System.out.println("|| 7. Logout                      ||");
-            System.out.println("====================================");
-            System.out.print("Pilih Menu: ");
-            try {
-                pilihan = obj.nextInt();
-                obj.nextLine(); // Membersihkan buffer
-
-                switch (pilihan) {
-                    case 1:
-                        clearScreen();
-                        tambahDataPelanggan();
-                        tekanEnter();
-                        break;
-                    case 2:
-                        clearScreen();
-                        editDataPelanggan();
-                        tekanEnter();
-                        break;
-                    case 3:
-                        clearScreen();
-                        liatDataPelanggan();
-                        tekanEnter();
-                        break;
-                    case 4:
-                        clearScreen();
-                        tambahTransaksi();
-                        tekanEnter();
-                        break;
-                    case 5:
-                        clearScreen();
-                        lihatListMobil();
-                        tekanEnter();
-                        break;
-                    case 6:
-                        clearScreen();
-                        kembalikanMobil(obj);
-                        tekanEnter();
-                        break;
-                    case 7:
-                        Pelanggan.writeToCSV(daftarPelanggan);
-                        Mobil.writeToCSV(daftarMobil);
-                        Transaksi.writeToCSV(daftarTransaksi);
-                        System.out.println("Keluar dari menu pegawai.\n");
-                        break;
-                    default:
-                        System.out.println("Pilihan tidak valid. Silakan coba lagi.");
-                        tekanEnter();
-                }
-            } catch (Exception e) {
-                System.out.println("Input tidak valid. Masukkan angka sesuai menu.");
-                obj.nextLine(); // Membersihkan buffer
-                tekanEnter();
-            }
-        } while (pilihan != 7);
-    }
-
     public void tambahDataPelanggan() {
         System.out.println("===========================================");
         System.out.println("||   Tambah Data Pelanggan Rex's Rent    ||");
@@ -453,24 +383,5 @@ public class Pegawai extends Akun {
 
     public static ArrayList<Transaksi> getDaftarTransaksi() {
         return daftarTransaksi;
-    }
-
-    // Clear screen
-    public static void clearScreen() {
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Gagal membersihkan layar: " + e.getMessage());
-        }
-    }
-
-    // Tekan enter untuk melanjutkan
-    public static void tekanEnter() {
-        System.out.print("\nTekan enter untuk melanjutkan...");
-        try {
-            System.in.read(); // Menunggu input dari pengguna
-        } catch (IOException e) {
-            System.out.println("Terjadi kesalahan saat menunggu input.");
-        }
     }
 }

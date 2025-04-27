@@ -17,67 +17,6 @@ public class Admin extends Akun {
         this.daftarTransaksi = new ArrayList<>(Transaksi.readFromCSV("transaksi.csv")); // Inisialisasi daftar transaksi
     }
 
-    public void tampilkanMenu() {
-        Scanner obj = new Scanner(System.in);
-        int pilihan = 0;
-        do {
-            clearScreen();
-            System.out.println("====================================");
-            System.out.println("||        Admin Rex's Rent        ||");
-            System.out.println("====================================");
-            System.out.println("|| 1. Lihat Riwayat Transaksi     ||");
-            System.out.println("|| 2. Lihat Evaluasi Bisnis       ||");
-            System.out.println("|| 3. Edit Data Mobil             ||");
-            System.out.println("|| 4. Tambah Data Mobil           ||");
-            System.out.println("|| 5. Edit Data Login Pegawai     ||");
-            System.out.println("|| 6. Logout                      ||");
-            System.out.println("====================================");
-            System.out.print("Pilih Menu: ");
-
-            try {
-                pilihan = obj.nextInt();
-                obj.nextLine(); // Bersihkan buffer setelah membaca angka
-            } catch (Exception e) {
-                System.out.println("Input tidak valid. Masukkan angka sesuai menu.");
-                obj.nextLine(); // Bersihkan buffer jika terjadi kesalahan
-                tekanEnter();
-            }
-
-            switch (pilihan) {
-                case 1:
-                    clearScreen();
-                    lihatRiwayat();
-                    tekanEnter();
-                    break;
-                case 2:
-                    clearScreen();
-                    evaluasi();
-                    tekanEnter();
-                    break;
-                case 3:
-                    clearScreen();
-                    editDataMobil(obj);
-                    tekanEnter();
-                    break;
-                case 4:
-                    clearScreen();
-                    tambahMobil(obj);
-                    tekanEnter();
-                    break;
-                case 5:
-                    clearScreen();
-                    ubahDataLoginPegawai(obj);
-                    tekanEnter();
-                    break;
-                case 6:
-                    Mobil.writeToCSV(daftarMobil);
-                    Transaksi.writeToCSV(daftarTransaksi);
-                    System.out.println("Keluar dari menu admin.");
-                    break;
-            }
-        } while (pilihan != 6);
-    }
-
     public void lihatRiwayat() {
         if (daftarTransaksi.isEmpty()) {
             System.out.println("Belum ada transaksi.");
@@ -286,25 +225,6 @@ public class Admin extends Akun {
         writeLoginToCSV("login.csv");
 
         System.out.println("Data login pegawai berhasil diubah dan disimpan.");
-    }
-
-    // Clear screen
-    public static void clearScreen() {
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Gagal membersihkan layar: " + e.getMessage());
-        }
-    }
-
-    // Tekan enter untuk melanjutkan
-    public static void tekanEnter() {
-        System.out.print("\nTekan enter untuk melanjutkan...");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            System.out.println("Terjadi kesalahan saat menunggu input.");
-        }
     }
 
     public void writeLoginToCSV(String filePath) {

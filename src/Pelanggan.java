@@ -62,25 +62,6 @@ public class Pelanggan {
     public void setGender(String gender) {
         this.gender = gender;
     }
-
-    public static String getHeader() {
-        return String.format(
-                "| %-4s | %-25s | %-6s | %-13s | %-16s | %-34s |",
-                "ID", "Nama", "Gender", "No HP", "No KTP", "Alamat");
-    }
-
-    public String getInfo() {
-        return String.format(
-                "| %-4s | %-25s | %-6s | %-13s | %-16s | %-34s |",
-                idPelanggan, nama, gender, noHp, noKtp, alamat);
-    }
-
-    public String getInfoTransaksi() {
-        return String.format(
-                "| %-4s | %-25s | %-6s |",
-                idPelanggan, nama, gender);
-    }
-
     public static ArrayList<Pelanggan> readFromCSV() {
         try (BufferedReader br = new BufferedReader(new FileReader("daftarpelanggan.csv"))) { // Perbaiki path
             String line;

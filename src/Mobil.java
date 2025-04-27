@@ -58,29 +58,6 @@ public class Mobil {
         this.status = status;
     }
 
-    public static String getHeader() {
-        return String.format(
-                "| %-10s | %-15s | %-12s | %-18s | %-12s |",
-                "ID Mobil", "Model", "Merk", "Harga Sewa", "Status");
-    }
-
-    public String getInfo() {
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-        String hargaFormatted = formatRupiah.format(hargaSewa).replace("Rp", "Rp ").replace(",00", ""); // Hapus desimal
-
-        return String.format(
-                "| %-10s | %-15s | %-12s | %-18s | %-12s |",
-                idMobil, model, merk, hargaFormatted, (status ? "Available" : "Unavailable"));
-    }
-
-    public String getInfoTransaksi() {
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-        String hargaFormatted = formatRupiah.format(hargaSewa).replace("Rp", "Rp ").replace(",00", ""); // Hapus desimal
-        return String.format(
-                "| %-10s | %-15s | %-12s | %-18s |",
-                idMobil, model, merk, hargaFormatted);
-    }
-
     @Override
     public String toString() {
         return idMobil + ";" + model + ";" + merk + ";" + hargaSewa + ";" + status;

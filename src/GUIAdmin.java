@@ -132,7 +132,7 @@ public class GUIAdmin extends JFrame {
         // Add panels for each menu item
         JPanel historyPanel = historyTransaksi();
         JPanel dataMobilPanel = dataMobil();
-        JPanel editLoginPanel = createEditLoginPanel();
+        JPanel editLoginPanel = editLoginPegawai();
 
         contentPanel.add(historyPanel, "history");
         contentPanel.add(dataMobilPanel, "dataMobil");
@@ -576,7 +576,7 @@ public class GUIAdmin extends JFrame {
         return panel;
     }
 
-    private JPanel createEditLoginPanel() {
+    private JPanel editLoginPegawai() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -725,12 +725,5 @@ public class GUIAdmin extends JFrame {
             }
         }
         return "M" + (maxId + 1);
-    }
-
-    public static void main(String[] args) {
-        Admin admin = new Admin("admin", "admin123", new Pegawai("pegawai", "12345"));
-        Pegawai pegawai = new Pegawai("pegawai", "12345");
-
-        SwingUtilities.invokeLater(() -> new GUIAdmin(admin, pegawai));
     }
 }
