@@ -148,7 +148,7 @@ public class GUIPegawai extends JFrame {
         // Set action listeners
         tambahTransaksiButton.addActionListener(e -> switchPanel("NewTransaction", tambahTransaksiButton));
         dataPelangganButton.addActionListener(e -> switchPanel("dataPelanggan", dataPelangganButton));
-        kembalikanMobilButton.addActionListener(e -> switchPanel("kembalikanMobil", kembalikanMobilButton));
+        kembalikanMobilButton.addActionListener(e -> switchPanel("KembalikanMobil", kembalikanMobilButton));
 
         getContentPane().add(mainPanel);
     }
@@ -400,11 +400,12 @@ public class GUIPegawai extends JFrame {
 
         tambahButton.addActionListener(event -> {
             String idMobil = idMobilField.getText();
+            String pelangganName = pelangganField.getText();
             String durasi = durasiField.getText();
             String hargaSewa = hargaSewaField.getText();
 
             // Validate input
-            if (idMobil.isEmpty() || durasi.isEmpty() || hargaSewa.isEmpty()) {
+            if (idMobil.isEmpty() || pelangganName.isEmpty() || durasi.isEmpty() || hargaSewa.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -415,17 +416,42 @@ public class GUIPegawai extends JFrame {
                 double hargaSewaDouble = Double.parseDouble(hargaSewa);
 
                 // Find the mobil in daftarMobil and set its status to false
+                Mobil selectedMobil = null;
                 for (Mobil mobil : daftarMobil) {
                     if (mobil.getIdMobil().equals(idMobil)) {
                         mobil.setStatus(false); // Set status to unavailable
-                        Mobil.writeToCSV(daftarMobil); // Save changes to CSV
+                        Mobil.writeToCSV(daftarMobil); // Save changes to mobil CSV
+                        selectedMobil = mobil;
                         break;
                     }
                 }
 
-                // Add transaction logic here (e.g., save to CSV, update table, etc.)
+                if (selectedMobil == null) {
+                    JOptionPane.showMessageDialog(null, "Mobil tidak ditemukan!",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Create a new Pelanggan object
+                Pelanggan pelanggan = new Pelanggan(pelangganName, "", "", "", "");
+
+                // Create a new Transaksi object
+                Transaksi transaksiBaru = new Transaksi(java.time.LocalDate.now().toString(), null, pelanggan, selectedMobil, durasiInt);
+                daftarTransaksi.add(transaksiBaru); // Add to the list of transactions
+
+                // Save the transaction to transaksi.csv
+                Transaksi.writeToCSV(daftarTransaksi);
+
                 JOptionPane.showMessageDialog(null, "Transaksi berhasil ditambahkan!",
                         "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+                // Clear the form fields
+                pelangganField.setText("");
+                idMobilField.setText("");
+                modelField.setText("");
+                merkField.setText("");
+                durasiField.setText("");
+                hargaSewaField.setText("");
 
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Durasi dan Harga Sewa harus berupa angka!",
@@ -741,9 +767,6 @@ public class GUIPegawai extends JFrame {
             // Simpan perubahan ke file CSV
             savePelangganData(pelangganTableModel);
 
-            JOptionPane.showMessageDialog(null, "Data pelanggan berhasil diperbarui.",
-                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
             // Kosongkan form setelah simpan
             idPelangganField.setText(generateNextIdPelanggan());
             namaField.setText("");
@@ -842,58 +865,98 @@ public class GUIPegawai extends JFrame {
 
     private JPanel kembalikanMobil() {
         JPanel panel = new JPanel(new BorderLayout());
-    
+
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 5, 10, 15);
-    
-        // Labels and fields
+
+        // Form fields
         JLabel idMobilLabel = new JLabel("ID Mobil");
         JLabel modelLabel = new JLabel("Model");
         JLabel merkLabel = new JLabel("Merk");
         JLabel hargaSewaLabel = new JLabel("Harga Sewa");
-    
-        JTextField idMobilField = new JTextField(10);
-        idMobilField.setEditable(false);
-        JTextField modelField = new JTextField(20);
-        modelField.setEditable(false);
-        JTextField merkField = new JTextField(20);
-        merkField.setEditable(false);
-        JTextField hargaSewaField = new JTextField(20);
-        hargaSewaField.setEditable(false);
-    
+
         formPanel.add(idMobilLabel, gbc);
-        gbc.gridx = 1;
-        formPanel.add(idMobilField, gbc);
-    
-        gbc.gridx = 0;
+
         gbc.gridy++;
         formPanel.add(modelLabel, gbc);
-        gbc.gridx = 1;
-        formPanel.add(modelField, gbc);
-    
-        gbc.gridx = 0;
+
         gbc.gridy++;
         formPanel.add(merkLabel, gbc);
-        gbc.gridx = 1;
-        formPanel.add(merkField, gbc);
-    
-        gbc.gridx = 0;
+
         gbc.gridy++;
         formPanel.add(hargaSewaLabel, gbc);
+
+        // Form input fields
         gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.ipadx = 50;
+        gbc.ipady = 5;
+
+        JTextField idMobilField = new JTextField(10);
+        idMobilField.setEditable(false);
+        idMobilField.setBackground(new Color(220, 230, 250));
+        idMobilField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(idMobilField, gbc);
+
+        gbc.gridy++;
+        JTextField modelField = new JTextField(20);
+        modelField.setEditable(false);
+        modelField.setBackground(new Color(220, 230, 250));
+        modelField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(modelField, gbc);
+
+        gbc.gridy++;
+        JTextField merkField = new JTextField(20);
+        merkField.setEditable(false);
+        merkField.setBackground(new Color(220, 230, 250));
+        merkField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        formPanel.add(merkField, gbc);
+
+        gbc.gridy++;
+        JTextField hargaSewaField = new JTextField(20);
+        hargaSewaField.setEditable(false);
+        hargaSewaField.setBackground(new Color(220, 230, 250));
+        hargaSewaField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         formPanel.add(hargaSewaField, gbc);
-    
-        // Table panel
+
+        // Buttons
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 5, 10, 15);
+
+        JButton kembalikanButton = new JButton("Kembalikan");
+        kembalikanButton.setPreferredSize(new Dimension(100, 35));
+        kembalikanButton.setBackground(new Color(0, 153, 76)); // Green for "Kembalikan"
+        kembalikanButton.setForeground(Color.WHITE);
+        kembalikanButton.setBorderPainted(false);
+        kembalikanButton.setFocusPainted(false);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.add(kembalikanButton);
+
+        formPanel.add(buttonPanel, gbc);
+
+        // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
-    
+
         String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa" };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -901,12 +964,19 @@ public class GUIPegawai extends JFrame {
                 return false;
             }
         };
-    
+
         JTable table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getTableHeader().setBackground(new Color(30, 90, 220));
+        table.getTableHeader().setForeground(Color.BLACK); // Set header text color to black
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        table.setBackground(new Color(220, 230, 250));
+        table.setRowHeight(30);
+        table.setGridColor(new Color(200, 200, 200));
+
         JScrollPane scrollPane = new JScrollPane(table);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
-    
+
         // Populate the table with unavailable mobil
         tableModel.setRowCount(0);
         for (Mobil mobil : daftarMobil) {
@@ -916,7 +986,7 @@ public class GUIPegawai extends JFrame {
                 });
             }
         }
-    
+
         // Add selection listener to the table
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -929,13 +999,8 @@ public class GUIPegawai extends JFrame {
                 }
             }
         });
-    
-        // Kembalikan button
-        JButton kembalikanButton = new JButton("Kembalikan");
-        kembalikanButton.setBackground(new Color(0, 153, 76)); // Green
-        kembalikanButton.setForeground(Color.WHITE);
-        kembalikanButton.setBorderPainted(false);
-        kembalikanButton.setFocusPainted(false);
+
+        // Add action listener to the "Kembalikan" button
         kembalikanButton.addActionListener(e -> {
             String idMobil = idMobilField.getText();
             if (idMobil.isEmpty()) {
@@ -943,7 +1008,7 @@ public class GUIPegawai extends JFrame {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-    
+
             // Find the mobil and set its status to true
             for (Mobil mobil : daftarMobil) {
                 if (mobil.getIdMobil().equals(idMobil)) {
@@ -952,7 +1017,7 @@ public class GUIPegawai extends JFrame {
                     break;
                 }
             }
-    
+
             // Refresh the table
             tableModel.setRowCount(0);
             for (Mobil mobil : daftarMobil) {
@@ -962,24 +1027,20 @@ public class GUIPegawai extends JFrame {
                     });
                 }
             }
-    
+
             // Clear the fields
             idMobilField.setText("");
             modelField.setText("");
             merkField.setText("");
             hargaSewaField.setText("");
-    
+
             JOptionPane.showMessageDialog(null, "Mobil berhasil dikembalikan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
         });
-    
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        buttonPanel.add(kembalikanButton);
-    
+
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
-    
+
         return panel;
     }
 
