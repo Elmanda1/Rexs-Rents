@@ -70,14 +70,9 @@ public class GUIAdmin extends JFrame {
         userPanel.add(userIcon, gbc);
 
         // SignOut Button
-        signOutButton = new JButton("Logout");
+        signOutButton = Utility.styleButton("Logout", Color.WHITE);
         signOutButton.setForeground(Color.RED);
-        signOutButton.setBackground(Color.WHITE);
         signOutButton.setContentAreaFilled(true);
-        signOutButton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.WHITE, 1),
-                BorderFactory.createEmptyBorder(5, 15, 5, 15)));
-        signOutButton.setFocusPainted(false);
         signOutButton.addActionListener(e -> {
             dispose(); // Tutup GUIAdmin
             LoginFrame loginFrame = new LoginFrame(admin, pegawai);
@@ -164,11 +159,6 @@ public class GUIAdmin extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel titleLabel = new JLabel("Histori Transaksi");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(titleLabel, BorderLayout.NORTH);
-
         String[] columnNames = {"ID Transaksi", "Pelanggan", "Model Mobil", "Merk Mobil", "Durasi (Hari)",
                 "Total Harga" };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -177,14 +167,8 @@ public class GUIAdmin extends JFrame {
                 return false;
             }
         };
-        JTable table = new JTable(tableModel);
-        table.setRowHeight(25);
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        table.getTableHeader().setBackground(new Color(30, 90, 220));
-        table.getTableHeader().setForeground(Color.BLACK);
-        table.setBackground(new Color(220, 230, 250));
-        table.setGridColor(new Color(200, 200, 200));
-
+        JTable table = Utility.styleTable(tableModel);
+        table.setRowSelectionAllowed(false);
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -205,8 +189,8 @@ public class GUIAdmin extends JFrame {
         JPanel pnlLabels = new JPanel();
         pnlLabels.setLayout(new BoxLayout(pnlLabels, BoxLayout.Y_AXIS)); // Vertical alignment for labels
 
-        JLabel lblTotalTransaksi = new JLabel("Total Transaksi: " + transaksiList.size());
-        JLabel lblTotalHarga = new JLabel(
+        JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi: " + transaksiList.size());
+        JLabel lblTotalHarga = Utility.styleLabel(
                 "Total Pendapatan: "
                         + formatRupiah.format(transaksiList.stream().mapToDouble(Transaksi::getTotalHarga).sum()));
 
@@ -241,11 +225,11 @@ public class GUIAdmin extends JFrame {
         gbc.insets = new Insets(10, 5, 10, 15);
 
         // Form fields
-        JLabel idMobilLabel = new JLabel("ID Mobil");
-        JLabel modelLabel = new JLabel("Model");
-        JLabel merkLabel = new JLabel("Merk");
-        JLabel hargaSewaLabel = new JLabel("Harga Sewa");
-        JLabel statusLabel = new JLabel("Status");
+        JLabel idMobilLabel = Utility.styleLabel("ID Mobil");
+        JLabel modelLabel = Utility.styleLabel("Model");
+        JLabel merkLabel = Utility.styleLabel("Merk");
+        JLabel hargaSewaLabel = Utility.styleLabel("Harga Sewa");
+        JLabel statusLabel = Utility.styleLabel("Status");
 
         formPanel.add(idMobilLabel, gbc);
 
@@ -270,12 +254,7 @@ public class GUIAdmin extends JFrame {
         gbc.ipady = 5;
 
         // ID Mobil Field (auto-generated)
-        JTextField idMobilField = new JTextField(10);
-        idMobilField.setEditable(false);
-        idMobilField.setBackground(new Color(220, 230, 250));
-        idMobilField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField idMobilField = Utility.styleTextField(false);
         formPanel.add(idMobilField, gbc);
 
         gbc.gridy++;
@@ -313,26 +292,9 @@ public class GUIAdmin extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton tambahButton = new JButton("Tambah");
-        tambahButton.setPreferredSize(new Dimension(100, 35));
-        tambahButton.setBackground(new Color(0, 153, 76)); // Green for "Tambah"
-        tambahButton.setForeground(Color.WHITE);
-        tambahButton.setBorderPainted(false);
-        tambahButton.setFocusPainted(false);
-
-        JButton simpanButton = new JButton("Simpan");
-        simpanButton.setPreferredSize(new Dimension(100, 35));
-        simpanButton.setBackground(Color.RED); // Red for "Simpan"
-        simpanButton.setForeground(Color.WHITE);
-        simpanButton.setBorderPainted(false);
-        simpanButton.setFocusPainted(false);
-
-        JButton deleteButton = new JButton("Delete");
-        deleteButton.setPreferredSize(new Dimension(100, 35));
-        deleteButton.setBackground(new Color(255, 102, 0)); // Orange for "Delete"
-        deleteButton.setForeground(Color.WHITE);
-        deleteButton.setBorderPainted(false);
-        deleteButton.setFocusPainted(false);
+        JButton tambahButton = Utility.styleButton("Tambah", (new Color(0, 153, 76))); // Green for "Tambah"
+        JButton simpanButton = Utility.styleButton("Simpan", (Color.RED)); // Red for "Simpan"
+        JButton deleteButton = Utility.styleButton("Delete", (new Color(255, 102, 0))); // Orange for "Delete"
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -353,15 +315,7 @@ public class GUIAdmin extends JFrame {
             }
         };
 
-        JTable mobilTable = new JTable(mobilTableModel);
-        mobilTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        mobilTable.getTableHeader().setBackground(new Color(30, 90, 220));
-        mobilTable.getTableHeader().setForeground(Color.BLACK);
-        mobilTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        mobilTable.setBackground(new Color(220, 230, 250));
-        mobilTable.setRowHeight(30);
-        mobilTable.setGridColor(new Color(200, 200, 200));
-
+        JTable mobilTable = Utility.styleTable(mobilTableModel);
         JScrollPane scrollPane = new JScrollPane(mobilTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -610,8 +564,7 @@ public class GUIAdmin extends JFrame {
         gbc.anchor = GridBagConstraints.WEST; // Align to the left
         gbc.gridx = 0;
         gbc.gridy = 1;
-        JLabel usernameLabel = new JLabel("Username Pegawai:");
-        usernameLabel.setFont(poppinsFont);
+        JLabel usernameLabel = Utility.styleLabel("Username Pegawai:");
         panel.add(usernameLabel, gbc);
 
         gbc.gridx = 1;
@@ -622,8 +575,7 @@ public class GUIAdmin extends JFrame {
         // Password label and field
         gbc.gridx = 0;
         gbc.gridy = 2;
-        JLabel passwordLabel = new JLabel("Password Pegawai:");
-        passwordLabel.setFont(poppinsFont);
+        JLabel passwordLabel = Utility.styleLabel("Password Pegawai:");
         panel.add(passwordLabel, gbc);
 
         gbc.gridx = 1;
@@ -636,12 +588,7 @@ public class GUIAdmin extends JFrame {
         gbc.gridy = 3;
         gbc.gridwidth = 2; // Span across two columns
         gbc.anchor = GridBagConstraints.CENTER;
-        JButton saveButton = new JButton("Simpan");
-        saveButton.setPreferredSize(new Dimension(100, 35));
-        saveButton.setBackground(new Color(255, 87, 51)); // Orange color
-        saveButton.setForeground(Color.WHITE);
-        saveButton.setBorderPainted(false);
-        saveButton.setFocusPainted(false);
+        JButton saveButton = Utility.styleButton("Simpan", new Color(255, 87, 51)); // Orange color
         panel.add(saveButton, gbc);
 
         // Add action listener for save button

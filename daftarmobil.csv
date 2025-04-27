@@ -5,7 +5,7 @@ M03;Xenia;Daihatsu;2.8E7;true
 M04;Brio;Honda;2.5E7;true
 M05;Mobilio;Honda;250000.0;true
 M06;Civic;Honda;500000.0;true
-M07;Jazz;Honda;300000.0;true
+M07;Jazz;Honda;300000.0;false
 M08;HR-V;Honda;600000.0;true
 M09;City;Honda;400000.0;true
 M10;Xpander;Mitsubishi;600000.0;true
@@ -23,6 +23,6 @@ M21;Camry;Toyota;800000.0;true
 M22;Hiace;Toyota;1000000.0;true
 M23;Alphard;Toyota;2700000.0;true
 M24;Swift;Honda;280000.0;true
-M25;Ertiga;Suzuki;300000.0;false
+M25;Ertiga;Suzuki;300000.0;true
 M26;Aventador;Lamborghini;9000000.0;true
 M27;Chiron;Bugatti;9.0E8;false

@@ -32,7 +32,7 @@ public class Pelanggan {
     }
 
     public String getNoKtp() {
-        return noHp;
+        return noKtp;
     }
 
     public String getAlamat() {
@@ -62,6 +62,7 @@ public class Pelanggan {
     public void setGender(String gender) {
         this.gender = gender;
     }
+    
     public static ArrayList<Pelanggan> readFromCSV() {
         try (BufferedReader br = new BufferedReader(new FileReader("daftarpelanggan.csv"))) { // Perbaiki path
             String line;

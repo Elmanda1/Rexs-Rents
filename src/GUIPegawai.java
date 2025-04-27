@@ -66,9 +66,8 @@ public class GUIPegawai extends JFrame {
         userPanel.add(userIcon, gbc);
 
         // SignOut Button
-        signOutButton = new JButton("Logout");
+        signOutButton = Utility.styleButton("Logout", Color.WHITE);
         signOutButton.setForeground(Color.RED);
-        signOutButton.setBackground(Color.WHITE);
         signOutButton.setContentAreaFilled(true);
         signOutButton.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, 1),
@@ -204,41 +203,21 @@ public class GUIPegawai extends JFrame {
         gbc.ipady = 5;
 
         // PelangganField
-        JTextField pelangganField = new JTextField(10);
-        pelangganField.setEditable(false);
-        pelangganField.setBackground(new Color(220, 230, 250));
-        pelangganField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField pelangganField = Utility.styleTextField(false);
         formPanel.add(pelangganField, gbc);
 
         gbc.gridy++;
         // ID Mobil Field (auto-generated)
-        JTextField idMobilField = new JTextField(10);
-        idMobilField.setEditable(false);
-        idMobilField.setBackground(new Color(220, 230, 250));
-        idMobilField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField idMobilField = Utility.styleTextField(false);
         formPanel.add(idMobilField, gbc);
         // model
         gbc.gridy++;
-        JTextField modelField = new JTextField(20);
-        modelField.setEditable(false);
-        modelField.setBackground(new Color(220, 230, 250));
-        modelField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField modelField = Utility.styleTextField(false);
         formPanel.add(modelField, gbc);
 
         // merk
         gbc.gridy++;
-        JTextField merkField = new JTextField(15);
-        merkField.setEditable(false);
-        merkField.setBackground(new Color(220, 230, 250));
-        merkField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        JTextField merkField = Utility.styleTextField(false);
         formPanel.add(merkField, gbc);
 
         // durasi
@@ -252,12 +231,7 @@ public class GUIPegawai extends JFrame {
 
         // hargasewa
         gbc.gridy++;
-        hargaSewaField = new JTextField(16);
-        hargaSewaField.setEditable(false);
-        hargaSewaField.setBackground(new Color(220, 230, 250));
-        hargaSewaField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        hargaSewaField = Utility.styleTextField(false);
         formPanel.add(hargaSewaField, gbc);
 
         // Buttons
@@ -265,12 +239,7 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton tambahButton = new JButton("Tambah");
-        tambahButton.setPreferredSize(new Dimension(100, 35));
-        tambahButton.setBackground(new Color(255, 102, 0)); // oren for "Tambah"
-        tambahButton.setForeground(Color.WHITE);
-        tambahButton.setBorderPainted(false);
-        tambahButton.setFocusPainted(false);
+        JButton tambahButton = Utility.styleButton("Tambah", new Color(255, 102, 0)); // oren for "Tambah"
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -289,15 +258,7 @@ public class GUIPegawai extends JFrame {
             }
         };
 
-        JTable tableAtas = new JTable(tableModelAtas);
-        tableAtas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableAtas.getTableHeader().setBackground(new Color(30, 90, 220));
-        tableAtas.getTableHeader().setForeground(Color.BLACK); // Set header text color to black
-        tableAtas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        tableAtas.setBackground(new Color(220, 230, 250));
-        tableAtas.setRowHeight(30);
-        tableAtas.setGridColor(new Color(200, 200, 200));
-
+        JTable tableAtas = Utility.styleTable(tableModelAtas);
         JScrollPane scrollPaneAtas = new JScrollPane(tableAtas);
 
         // Populate the table atas with Mobil data
@@ -320,13 +281,7 @@ public class GUIPegawai extends JFrame {
             }
         };
 
-        JTable tableBawah = new JTable(tableModelBawah);
-        tableBawah.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableBawah.getTableHeader().setBackground(new Color(30, 90, 220));
-        tableBawah.getTableHeader().setForeground(Color.BLACK); // Set header text color to black
-        tableBawah.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        tableBawah.setBackground(new Color(220, 230, 250));
-        tableBawah.setRowHeight(30);
+        JTable tableBawah = Utility.styleTable(tableModelBawah);
         tableBawah.setGridColor(new Color(200, 200, 200));
         JScrollPane scrollPaneBawah = new JScrollPane(tableBawah);
 
@@ -507,12 +462,12 @@ public class GUIPegawai extends JFrame {
         gbc.insets = new Insets(10, 5, 10, 15);
 
         // Form fields
-        JLabel idPelangganLabel = new JLabel("ID Pelanggan");
-        JLabel namaLabel = new JLabel("Nama");
-        JLabel noHPLabel = new JLabel("No HP");
-        JLabel noKTPLabel = new JLabel("No KTP");
-        JLabel alamatLabel = new JLabel("Alamat");
-        JLabel genderLabel = new JLabel("Gender");
+        JLabel idPelangganLabel = Utility.styleLabel("ID Pelanggan");
+        JLabel namaLabel = Utility.styleLabel("Nama");
+        JLabel noHPLabel = Utility.styleLabel("No HP");
+        JLabel noKTPLabel = Utility.styleLabel("No KTP");
+        JLabel alamatLabel = Utility.styleLabel("Alamat");
+        JLabel genderLabel = Utility.styleLabel("Gender");
 
         formPanel.add(idPelangganLabel, gbc);
 
@@ -540,12 +495,7 @@ public class GUIPegawai extends JFrame {
         gbc.ipady = 5;
 
         // ID Pelanggan Field (auto-generated)
-        idPelangganField = new JTextField(10); // Inisialisasi variabel instance
-        idPelangganField.setEditable(false);
-        idPelangganField.setBackground(new Color(220, 230, 250));
-        idPelangganField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        idPelangganField = Utility.styleTextField(false);
         gbc.gridx = 0;
         formPanel.add(idPelangganLabel, gbc); // Tambahkan label
         gbc.gridx = 1;
@@ -594,26 +544,9 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton tambahButton = new JButton("Tambah");
-        tambahButton.setPreferredSize(new Dimension(100, 35));
-        tambahButton.setBackground(new Color(0, 153, 76)); // Green for "Tambah"
-        tambahButton.setForeground(Color.WHITE);
-        tambahButton.setBorderPainted(false);
-        tambahButton.setFocusPainted(false);
-
-        JButton simpanButton = new JButton("Simpan");
-        simpanButton.setPreferredSize(new Dimension(100, 35));
-        simpanButton.setBackground(Color.RED); // Red for "Simpan"
-        simpanButton.setForeground(Color.WHITE);
-        simpanButton.setBorderPainted(false);
-        simpanButton.setFocusPainted(false);
-
-        JButton deleteButton = new JButton("Delete");
-        deleteButton.setPreferredSize(new Dimension(100, 35));
-        deleteButton.setBackground(new Color(255, 102, 0)); // Orange for "Delete"
-        deleteButton.setForeground(Color.WHITE);
-        deleteButton.setBorderPainted(false);
-        deleteButton.setFocusPainted(false);
+        JButton tambahButton = Utility.styleButton("Tambah", (new Color(0, 153, 76))); // Green for "Tambah"
+        JButton simpanButton = Utility.styleButton("Simpan", Color.RED); // Red for "Simpan"
+        JButton deleteButton = Utility.styleButton("Delete", new Color(255, 102, 0)); // Orange for "Delete"
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -634,15 +567,7 @@ public class GUIPegawai extends JFrame {
             }
         };
 
-        pelangganTable = new JTable(pelangganTableModel);
-        pelangganTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        pelangganTable.getTableHeader().setBackground(new Color(30, 90, 220));
-        pelangganTable.getTableHeader().setForeground(Color.BLACK); // Set header text color to black
-        pelangganTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        pelangganTable.setBackground(new Color(220, 230, 250));
-        pelangganTable.setRowHeight(30);
-        pelangganTable.setGridColor(new Color(200, 200, 200));
-
+        pelangganTable = Utility.styleTable(pelangganTableModel);
         JScrollPane scrollPane = new JScrollPane(pelangganTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -880,15 +805,15 @@ public class GUIPegawai extends JFrame {
         gbc.insets = new Insets(10, 5, 10, 15);
 
         // Form fields
-        formPanel.add(createStyledLabel("ID Mobil"), gbc);
+        formPanel.add(Utility.styleLabel("ID Mobil"), gbc);
         gbc.gridy++;
-        formPanel.add(createStyledLabel("Model"), gbc);
+        formPanel.add(Utility.styleLabel("Model"), gbc);
         gbc.gridy++;
-        formPanel.add(createStyledLabel("Merk"), gbc);
+        formPanel.add(Utility.styleLabel("Merk"), gbc);
         gbc.gridy++;
-        formPanel.add(createStyledLabel("Harga Sewa"), gbc);
+        formPanel.add(Utility.styleLabel("Harga Sewa"), gbc);
         gbc.gridy++;
-        formPanel.add(createStyledLabel("Telat Hari"), gbc);
+        formPanel.add(Utility.styleLabel("Telat Hari"), gbc);
 
         // Form input fields
         gbc.gridx = 1;
@@ -896,23 +821,23 @@ public class GUIPegawai extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        JTextField idMobilField = createStyledTextField(false);
+        JTextField idMobilField = Utility.styleTextField(false);
         formPanel.add(idMobilField, gbc);
 
         gbc.gridy++;
-        JTextField modelField = createStyledTextField(false);
+        JTextField modelField = Utility.styleTextField(false);
         formPanel.add(modelField, gbc);
 
         gbc.gridy++;
-        JTextField merkField = createStyledTextField(false);
+        JTextField merkField = Utility.styleTextField(false);
         formPanel.add(merkField, gbc);
 
         gbc.gridy++;
-        JTextField hargaSewaField = createStyledTextField(false);
+        JTextField hargaSewaField = Utility.styleTextField(false);
         formPanel.add(hargaSewaField, gbc);
 
         gbc.gridy++;
-        JTextField telatHariField = createStyledTextField(true);
+        JTextField telatHariField = Utility.styleTextField(true);
         formPanel.add(telatHariField, gbc);
 
         // Buttons
@@ -920,7 +845,7 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton kembalikanButton = createStyledButton("Kembalikan", new Color(0, 153, 76)); // Green
+        JButton kembalikanButton = Utility.styleButton("Kembalikan", new Color(0, 153, 76)); // Green
         formPanel.add(kembalikanButton, gbc);
 
         // Right table panel
@@ -935,9 +860,9 @@ public class GUIPegawai extends JFrame {
             }
         };
 
-        JTable table = new JTable(tableModel);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JTable table = Utility.styleTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         // Populate the table with unavailable mobil
@@ -1093,31 +1018,5 @@ public class GUIPegawai extends JFrame {
 
         // Generate the next ID in the format "P" followed by a 3-digit number
         return String.format("P%03d", maxId + 1);
-    }
-
-    private JTextField createStyledTextField(boolean editable) {
-        JTextField textField = new JTextField(20);
-        textField.setEditable(editable);
-        textField.setBackground(new Color(220, 230, 250));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        return textField;
-    }
-    
-    private JLabel createStyledLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 14));
-        return label;
-    }
-    
-    private JButton createStyledButton(String text, Color backgroundColor) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(100, 35));
-        button.setBackground(backgroundColor);
-        button.setForeground(Color.WHITE);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        return button;
     }
 }
