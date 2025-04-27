@@ -142,9 +142,9 @@ public class GUIAdmin extends JFrame {
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         // Add hover effects to menu buttons
-        addButtonHoverEffect(historyButton);
-        addButtonHoverEffect(dataMobilButton);
-        addButtonHoverEffect(editLoginButton);
+        Utility.addButtonHoverEffect(historyButton);
+        Utility.addButtonHoverEffect(dataMobilButton);
+        Utility.addButtonHoverEffect(editLoginButton);
 
         // Set action listeners
         historyButton.addActionListener(e -> switchPanel("history", historyButton));
@@ -355,29 +355,35 @@ public class GUIAdmin extends JFrame {
             String merk = merkField.getText();
             String hargaSewa = hargaSewaField.getText();
             String status = statusComboBox.getSelectedItem().toString();
-
-            // Validasi input
+        
+            // Validate input
             if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Semua field harus diisi",
+                JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            if (!model.matches("[a-zA-Z0-9 ]+")) {
-                JOptionPane.showMessageDialog(null, "Model hanya boleh mengandung huruf, angka, dan spasi.",
+        
+            if (!model.matches("[a-zA-Z0-9 ]+")) { // Model hanya boleh mengandung huruf, angka, dan spasi
+                JOptionPane.showMessageDialog(null, "Model hanya boleh mengandung huruf, angka, dan spasi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (!merk.matches("[a-zA-Z0-9 ]+")) {
-                JOptionPane.showMessageDialog(null, "Merk hanya boleh mengandung huruf, angka, dan spasi.",
+        
+            if (!merk.matches("[a-zA-Z0-9 ]+")) { // Merk hanya boleh mengandung huruf, angka, dan spasi
+                JOptionPane.showMessageDialog(null, "Merk hanya boleh mengandung huruf, angka, dan spasi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+        
+            if (!hargaSewa.matches("\\d+(\\.\\d+)?")) { // Harga sewa harus berupa angka
+                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        
             double harga;
             try {
-                // Hapus simbol atau format yang tidak valid (contoh: "Rp", ".", ",")
-                harga = Double.parseDouble(hargaSewa.replace("Rp", "").replace(".", "").replace(",", "").trim());
+                harga = Double.parseDouble(hargaSewa);
                 if (harga <= 0) {
                     JOptionPane.showMessageDialog(null, "Harga Sewa harus lebih besar dari 0.",
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -388,38 +394,32 @@ public class GUIAdmin extends JFrame {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Check if ID already exists in daftarMobil
+        
+            // Check if ID already exists
             for (Mobil mobil : daftarMobil) {
                 if (mobil.getIdMobil().equals(id)) {
                     JOptionPane.showMessageDialog(null, "ID Mobil sudah ada. Silakan gunakan ID baru.",
                             "Error", JOptionPane.ERROR_MESSAGE);
-                    // Clear form and generate next ID
-                    modelField.setText("");
-                    merkField.setText("");
-                    hargaSewaField.setText("");
-                    statusComboBox.setSelectedIndex(0);
-                    idMobilField.setText(generateNextIdMobil(mobilTableModel));
                     return;
                 }
             }
-
-            // Tambahkan mobil baru ke daftar dan tabel
+        
+            // Add new mobil to the list and table
             Mobil newMobil = new Mobil(id, model, merk, harga, status.equals("Available"));
-            daftarMobil.add(newMobil); // Tambahkan ke daftar mobil
-
+            daftarMobil.add(newMobil);
+        
             mobilTableModel.addRow(new Object[] {
                     newMobil.getIdMobil(), newMobil.getModel(), newMobil.getMerk(),
                     newMobil.getHargaSewa(), newMobil.isTersedia() ? "Available" : "Unavailable"
             });
-
-            // Simpan perubahan ke file CSV
+        
+            // Save mobil data to CSV
             Mobil.writeToCSV(daftarMobil);
-
-            JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan",
+        
+            JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
-            // Reset form setelah data berhasil ditambahkan
+        
+            // Reset form
             modelField.setText("");
             merkField.setText("");
             hargaSewaField.setText("");
@@ -624,22 +624,6 @@ public class GUIAdmin extends JFrame {
             }
         });
         return panel;
-    }
-
-    private void addButtonHoverEffect(JButton button) {
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                if (button.getBackground().equals(Color.WHITE)) {
-                    button.setBackground(new Color(240, 240, 240));
-                }
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (button.getBackground().equals(new Color(240, 240, 240))) {
-                    button.setBackground(Color.WHITE);
-                }
-            }
-        });
     }
 
     private void switchPanel(String panelName, JButton selectedButton) {

@@ -143,9 +143,9 @@ public class GUIPegawai extends JFrame {
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         // Add hover effects to menu buttons
-        addButtonHoverEffect(tambahTransaksiButton);
-        addButtonHoverEffect(dataPelangganButton);
-        addButtonHoverEffect(kembalikanMobilButton);
+        Utility.addButtonHoverEffect(tambahTransaksiButton);
+        Utility.addButtonHoverEffect(dataPelangganButton);
+        Utility.addButtonHoverEffect(kembalikanMobilButton);
 
         // Set action listeners
         tambahTransaksiButton.addActionListener(e -> switchPanel("NewTransaction", tambahTransaksiButton));
@@ -361,18 +361,30 @@ public class GUIPegawai extends JFrame {
             String pelangganName = pelangganField.getText();
             String durasi = durasiField.getText();
             String hargaSewa = hargaSewaField.getText();
-
+        
             // Validate input
             if (idMobil.isEmpty() || pelangganName.isEmpty() || durasi.isEmpty() || hargaSewa.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+        
+            if (!durasi.matches("\\d+")) { // Durasi harus berupa angka positif
+                JOptionPane.showMessageDialog(null, "Durasi harus berupa angka positif!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        
+            if (!hargaSewa.matches("\\d+(\\.\\d+)?")) { // Harga sewa harus berupa angka
+                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        
             try {
                 int durasiInt = Integer.parseInt(durasi);
                 double hargaSewaDouble = Double.parseDouble(hargaSewa);
-
+        
                 // Find the mobil in daftarMobil and set its status to false
                 Mobil selectedMobil = null;
                 for (Mobil mobil : daftarMobil) {
@@ -383,26 +395,26 @@ public class GUIPegawai extends JFrame {
                         break;
                     }
                 }
-
+        
                 if (selectedMobil == null) {
                     JOptionPane.showMessageDialog(null, "Mobil tidak ditemukan!",
                             "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
+        
                 // Create a new Pelanggan object
                 Pelanggan pelanggan = new Pelanggan(pelangganName, "", "", "", "");
-
+        
                 // Create a new Transaksi object
                 Transaksi transaksiBaru = new Transaksi(java.time.LocalDate.now().toString(), null, pelanggan, selectedMobil, durasiInt);
                 daftarTransaksi.add(transaksiBaru); // Add to the list of transactions
-
+        
                 // Save the transaction to transaksi.csv
                 Transaksi.writeToCSV(daftarTransaksi);
-
+        
                 JOptionPane.showMessageDialog(null, "Transaksi berhasil ditambahkan!",
                         "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
+        
                 // Clear the form fields
                 pelangganField.setText("");
                 idMobilField.setText("");
@@ -410,7 +422,7 @@ public class GUIPegawai extends JFrame {
                 merkField.setText("");
                 durasiField.setText("");
                 hargaSewaField.setText("");
-
+        
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Durasi dan Harga Sewa harus berupa angka!",
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -609,15 +621,33 @@ public class GUIPegawai extends JFrame {
             String noKTP = noKTPField.getText();
             String alamat = alamatField.getText();
             String gender = genderComboBox.getSelectedItem().toString();
-
-            // Validasi input
+        
+            // Validate input
             if (nama.trim().isEmpty() || noHP.trim().isEmpty() || noKTP.trim().isEmpty() || alamat.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Periksa apakah ID pelanggan sudah ada di tabel
+        
+            if (!nama.matches("[a-zA-Z\\s]+")) { // Nama hanya boleh mengandung huruf dan spasi
+                JOptionPane.showMessageDialog(null, "Nama hanya boleh mengandung huruf dan spasi!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        
+            if (!noHP.matches("\\d{10,13}")) { // No HP harus berupa angka dengan panjang 10-13 digit
+                JOptionPane.showMessageDialog(null, "No HP harus berupa angka dengan panjang 10-13 digit!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        
+            if (!noKTP.matches("\\d{16}")) { // No KTP harus berupa angka dengan panjang 16 digit
+                JOptionPane.showMessageDialog(null, "No KTP harus berupa angka dengan panjang 16 digit!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        
+            // Check if ID already exists
             boolean idExists = false;
             for (int i = 0; i < pelangganTableModel.getRowCount(); i++) {
                 if (pelangganTableModel.getValueAt(i, 0).toString().equals(id)) {
@@ -625,17 +655,17 @@ public class GUIPegawai extends JFrame {
                     break;
                 }
             }
-
+        
             if (idExists) {
                 JOptionPane.showMessageDialog(null, "ID Pelanggan sudah ada. Silakan gunakan ID baru.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // Tambahkan pelanggan baru ke daftar dan tabel
+        
+            // Add new pelanggan to the list and table
             Pelanggan pelangganBaru = new Pelanggan(nama, noHP, noKTP, alamat, gender);
-            daftarPelanggan.add(pelangganBaru); // Tambahkan ke daftar pelanggan
-
+            daftarPelanggan.add(pelangganBaru);
+        
             pelangganTableModel.addRow(new Object[] {
                     pelangganBaru.getIdPelanggan(),
                     pelangganBaru.getNama(),
@@ -644,21 +674,20 @@ public class GUIPegawai extends JFrame {
                     pelangganBaru.getAlamat(),
                     pelangganBaru.getGender()
             });
-
-            // Simpan data pelanggan ke file CSV
+        
+            // Save pelanggan data to CSV
             savePelangganData(pelangganTableModel);
-
+        
             JOptionPane.showMessageDialog(null, "Pelanggan berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
-            // Reset form setelah pelanggan berhasil ditambahkan
-            idPelangganField.setText("");
+        
+            // Reset form
+            idPelangganField.setText(generateNextIdPelanggan());
             namaField.setText("");
             noHPField.setText("");
             noKTPField.setText("");
             alamatField.setText("");
             genderComboBox.setSelectedIndex(0);
-            idPelangganField.setText(generateNextIdPelanggan());
         });
 
         // Add action listener to "Simpan" button
@@ -954,22 +983,6 @@ public class GUIPegawai extends JFrame {
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
-    }
-
-    private void addButtonHoverEffect(JButton button) {
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                if (button.getBackground().equals(Color.WHITE)) {
-                    button.setBackground(new Color(240, 240, 240));
-                }
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (button.getBackground().equals(new Color(240, 240, 240))) {
-                    button.setBackground(Color.WHITE);
-                }
-            }
-        });
     }
 
     private void switchPanel(String panelName, JButton selectedButton) {
