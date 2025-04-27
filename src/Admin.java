@@ -1,15 +1,20 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class Admin extends Akun {
-    private ArrayList<Mobil> daftarMobil = Mobil.readFromCSV();
-    private ArrayList<Transaksi> daftarTransaksi = Pegawai.getDaftarTransaksi();
-    private Pegawai pegawai;
+    private final Pegawai pegawai;
+    private final ArrayList<Mobil> daftarMobil;
+    private final ArrayList<Transaksi> daftarTransaksi; // Daftar transaksi
 
     public Admin(String username, String password, Pegawai pegawai) {
         super(username, password);
-        this.pegawai = pegawai; // inisialisasi objek pegawai
+        this.pegawai = pegawai;
+        this.daftarMobil = new ArrayList<>(Mobil.readFromCSV("daftarmobil.csv")); // Inisialisasi daftar mobil
+        this.daftarTransaksi = new ArrayList<>(Transaksi.readFromCSV("transaksi.csv")); // Inisialisasi daftar transaksi
     }
 
     public void tampilkanMenu() {
@@ -157,7 +162,7 @@ public class Admin extends Akun {
                 System.out.println("Model tidak boleh kosong.");
                 return;
             }
-            
+
             daftarMobil.get(index).setModel(modelBaru);
 
             System.out.print("Merk baru: ");
@@ -190,66 +195,66 @@ public class Admin extends Akun {
     }
 
     public void tambahMobil(Scanner obj) {
-    try {
-        String model;
-        System.out.println("===========================================");
-        System.out.println("||     Tambah Data Mobil Rex's Rent      ||");
-        System.out.println("===========================================");
-        do {
-            System.out.print("Masukkan model mobil: ");
-            model = obj.nextLine();
-            if (model.trim().isEmpty() || !model.matches("[a-zA-Z ]+")) {
-                System.out.println("Model tidak valid. Hanya boleh huruf dan tidak boleh kosong.");
-            } else if (model.length() > 50) {
-                System.out.println("Model terlalu panjang. Maksimal 50 karakter.");
-            }
-        } while (model.trim().isEmpty() || !model.matches("[a-zA-Z ]+") || model.length() > 50);
-
-        String merk;
-        do {
-            System.out.print("Masukkan merk mobil: ");
-            merk = obj.nextLine();
-            if (merk.trim().isEmpty() || !merk.matches("[a-zA-Z ]+")) {
-                System.out.println("Merk tidak valid. Hanya boleh huruf dan tidak boleh kosong.");
-            } else if (merk.length() > 50) {
-                System.out.println("Merk terlalu panjang. Maksimal 50 karakter.");
-            }
-        } while (merk.trim().isEmpty() || !merk.matches("[a-zA-Z ]+") || merk.length() > 50);
-
-        double hargaSewa;
-        do {
-            System.out.print("Masukkan harga sewa mobil: ");
-            try {
-                hargaSewa = obj.nextDouble();
-                obj.nextLine(); // Membersihkan buffer
-                if (hargaSewa <= 0) {
-                    System.out.println("Harga tidak valid. Harus berupa angka positif.");
+        try {
+            String model;
+            System.out.println("===========================================");
+            System.out.println("||     Tambah Data Mobil Rex's Rent      ||");
+            System.out.println("===========================================");
+            do {
+                System.out.print("Masukkan model mobil: ");
+                model = obj.nextLine();
+                if (model.trim().isEmpty() || !model.matches("[a-zA-Z ]+")) {
+                    System.out.println("Model tidak valid. Hanya boleh huruf dan tidak boleh kosong.");
+                } else if (model.length() > 50) {
+                    System.out.println("Model terlalu panjang. Maksimal 50 karakter.");
                 }
-            } catch (Exception e) {
-                System.out.println("Input harga tidak valid. Harus berupa angka.");
-                obj.nextLine(); // Membersihkan buffer
-                hargaSewa = -1; // Set nilai invalid untuk mengulang
-            }
-        } while (hargaSewa <= 0);
+            } while (model.trim().isEmpty() || !model.matches("[a-zA-Z ]+") || model.length() > 50);
 
-        // Buat ID mobil baru secara otomatis
-        String idMobil = "M" + String.format("%02d", daftarMobil.size() + 1);
+            String merk;
+            do {
+                System.out.print("Masukkan merk mobil: ");
+                merk = obj.nextLine();
+                if (merk.trim().isEmpty() || !merk.matches("[a-zA-Z ]+")) {
+                    System.out.println("Merk tidak valid. Hanya boleh huruf dan tidak boleh kosong.");
+                } else if (merk.length() > 50) {
+                    System.out.println("Merk terlalu panjang. Maksimal 50 karakter.");
+                }
+            } while (merk.trim().isEmpty() || !merk.matches("[a-zA-Z ]+") || merk.length() > 50);
 
-        // Tetapkan nomor mobil berdasarkan ukuran daftar
-        int nomorMobil = daftarMobil.size() + 1;
+            double hargaSewa;
+            do {
+                System.out.print("Masukkan harga sewa mobil: ");
+                try {
+                    hargaSewa = obj.nextDouble();
+                    obj.nextLine(); // Membersihkan buffer
+                    if (hargaSewa <= 0) {
+                        System.out.println("Harga tidak valid. Harus berupa angka positif.");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Input harga tidak valid. Harus berupa angka.");
+                    obj.nextLine(); // Membersihkan buffer
+                    hargaSewa = -1; // Set nilai invalid untuk mengulang
+                }
+            } while (hargaSewa <= 0);
 
-        // Buat objek mobil baru
-        Mobil mobilBaru = new Mobil(idMobil, model, merk, hargaSewa, true);
+            // Buat ID mobil baru secara otomatis
+            String idMobil = "M" + String.format("%02d", daftarMobil.size() + 1);
 
-        // Tambahkan mobil baru ke daftar mobil
-        daftarMobil.add(mobilBaru);
+            // Tetapkan nomor mobil berdasarkan ukuran daftar
+            int nomorMobil = daftarMobil.size() + 1;
 
-        System.out.println("Mobil berhasil ditambahkan dengan ID: " + idMobil);
-    } catch (Exception e) {
-        System.out.println("Terjadi kesalahan. Pastikan semua data dimasukkan dengan benar.");
-        obj.nextLine(); // Membersihkan buffer untuk menghindari error berikutnya
+            // Buat objek mobil baru
+            Mobil mobilBaru = new Mobil(idMobil, model, merk, hargaSewa, true);
+
+            // Tambahkan mobil baru ke daftar mobil
+            daftarMobil.add(mobilBaru);
+
+            System.out.println("Mobil berhasil ditambahkan dengan ID: " + idMobil);
+        } catch (Exception e) {
+            System.out.println("Terjadi kesalahan. Pastikan semua data dimasukkan dengan benar.");
+            obj.nextLine(); // Membersihkan buffer untuk menghindari error berikutnya
+        }
     }
-}
 
     public void ubahDataLoginPegawai(Scanner obj) {
         System.out.println("===========================================");
@@ -259,10 +264,10 @@ public class Admin extends Akun {
         do {
             System.out.print("Masukkan username baru untuk pegawai: ");
             usernameBaru = obj.nextLine();
-            if (usernameBaru.trim().isEmpty()) {
-                System.out.println("Username tidak valid. Username tidak boleh kosong.");
+            if (usernameBaru.trim().isEmpty() || !usernameBaru.matches("[a-zA-Z0-9]+")) {
+                System.out.println("Username tidak valid. Hanya boleh huruf dan angka, dan tidak boleh kosong.");
             }
-        } while (usernameBaru.trim().isEmpty());
+        } while (usernameBaru.trim().isEmpty() || !usernameBaru.matches("[a-zA-Z0-9]+"));
 
         String passwordBaru;
         do {
@@ -277,17 +282,20 @@ public class Admin extends Akun {
         pegawai.setUsername(usernameBaru);
         pegawai.setPassword(passwordBaru);
 
-        System.out.println("Data login pegawai berhasil diubah.");
+        // Simpan perubahan ke file CSV
+        writeLoginToCSV("login.csv");
+
+        System.out.println("Data login pegawai berhasil diubah dan disimpan.");
     }
 
     // Clear screen
     public static void clearScreen() {
-    try {
-        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    } catch (IOException | InterruptedException e) {
-        System.out.println("Gagal membersihkan layar: " + e.getMessage());
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Gagal membersihkan layar: " + e.getMessage());
+        }
     }
-}
 
     // Tekan enter untuk melanjutkan
     public static void tekanEnter() {
@@ -298,4 +306,21 @@ public class Admin extends Akun {
             System.out.println("Terjadi kesalahan saat menunggu input.");
         }
     }
+
+    public void writeLoginToCSV(String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Tulis header CSV
+            writer.write("Username;Password");
+            writer.newLine();
+
+            // Tulis data login pegawai
+            writer.write(pegawai.getUsername() + ";" + pegawai.getPassword());
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Gagal menyimpan data ke login.csv: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 }

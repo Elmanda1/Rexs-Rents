@@ -1,7 +1,8 @@
 ID;Model;Merk;HargaSewa;Status
-M01;520i G30;BMW;2500000.0;true
-M03;Xenia;Daihatsu;280000.0;true
-M04;Brio;Honda;250000.0;true
+M01;520i G30;BMW;2000000.0;true
+M02;X3 G01;BMW;2000000.0;true
+M03;Xenia;Daihatsu;2.8E7;true
+M04;Brio;Honda;2.5E7;true
 M05;Mobilio;Honda;250000.0;true
 M06;Civic;Honda;500000.0;true
 M07;Jazz;Honda;300000.0;true
@@ -24,5 +25,4 @@ M23;Alphard;Toyota;2700000.0;true
 M24;Swift;Honda;280000.0;true
 M25;Ertiga;Suzuki;300000.0;true
 M26;Aventador;Lamborghini;9000000.0;true
-M27;Chiron;Bugatti;9000000.0;false
-M28;HALO HALO;BANDUNG;3000000.0;false
+M27;Chiron;Bugatti;9000000.0;true

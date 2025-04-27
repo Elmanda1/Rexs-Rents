@@ -1,12 +1,10 @@
 import java.io.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class Transaksi {
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    private static ArrayList<Mobil> daftarMobil = Mobil.readFromCSV();
-
     private static int jumlahTransaksi = 0;
     private String idTransaksi;
     private String tanggal;
@@ -17,17 +15,50 @@ public class Transaksi {
     private double totalHarga;
     private double keuntungan;
 
-    public Transaksi(String tanggal, Pegawai pegawai, Pelanggan pelanggan, Mobil mobil,
-            int durasiSewa) {
-        // Menambahkan jumlahTransaksi dan membuat ID otomatis
-        jumlahTransaksi++;
+    public Transaksi(String tanggal, Pegawai pegawai, Pelanggan pelanggan, Mobil mobil, int durasiSewa) {
+        // Validasi input
+        if (tanggal == null || tanggal.isEmpty()) {
+            throw new IllegalArgumentException("Tanggal tidak boleh kosong.");
+        }
+        if (pelanggan == null) {
+            throw new IllegalArgumentException("Pelanggan tidak boleh null.");
+        }
+        if (mobil == null) {
+            throw new IllegalArgumentException("Mobil tidak boleh null.");
+        }
+        if (durasiSewa <= 0) {
+            throw new IllegalArgumentException("Durasi sewa harus lebih besar dari 0.");
+        }
+
+        // Perbarui jumlahTransaksi berdasarkan data di file CSV
+        jumlahTransaksi = getJumlahTransaksiDariCSV() + 1;
+
+        // Set atribut
         this.idTransaksi = "TRX" + String.format("%04d", jumlahTransaksi);
         this.tanggal = tanggal;
         this.pegawai = pegawai;
         this.pelanggan = pelanggan;
         this.mobil = mobil;
         this.durasiSewa = durasiSewa;
+
+        // Hitung total harga
+        this.totalHarga = mobil.getHargaSewa() * durasiSewa;
+
+        // Keuntungan awal diatur ke 0
         this.keuntungan = 0;
+    }
+
+    private static int getJumlahTransaksiDariCSV() {
+        int jumlah = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader("transaksi.csv"))) {
+            br.readLine(); // Skip header
+            while (br.readLine() != null) {
+                jumlah++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jumlah;
     }
 
     public void tambahKeuntungan(int denda) {
@@ -43,6 +74,11 @@ public class Transaksi {
         return keuntungan;
     }
 
+    public String getTotalHargaFormatted() {
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        return formatRupiah.format(this.totalHarga);
+    }
+
     public String getRingkasan() {
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         String totalHargaFormatted = formatRupiah.format(totalHarga).replace(",00", ""); // Hapus desimal
@@ -51,20 +87,18 @@ public class Transaksi {
     }
 
     public static void writeToCSV(ArrayList<Transaksi> daftarTransaksi) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) {
-            // Write header
-            bw.write("ID;Tanggal;Pegawai;Pelanggan;Mobil;Durasi;TotalHarga");
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) { // Perbaiki path
+            bw.write("IDTransaksi;Tanggal;NamaPelanggan;ModelMobil;MerkMobil;Durasi;HargaSewa");
             bw.newLine();
 
-            // Write each transaction
             for (Transaksi transaksi : daftarTransaksi) {
                 String line = String.format(
                         "%s;%s;%s;%s;%s;%d;%.2f",
                         transaksi.getIdTransaksi(),
                         transaksi.getTanggal(),
-                        transaksi.getPegawai() != null ? transaksi.getPegawai().getUsername() : "N/A",
-                        transaksi.getPelanggan().getInfoTransaksi(),
-                        transaksi.getMobil().getInfoTransaksi(),
+                        transaksi.getPelanggan().getNama(),
+                        transaksi.getMobil().getModel(),
+                        transaksi.getMobil().getMerk(),
                         transaksi.getDurasiSewa(),
                         transaksi.getTotalHarga());
                 bw.write(line);
@@ -75,66 +109,50 @@ public class Transaksi {
         }
     }
 
-    public static ArrayList<Transaksi> readFromCSV() {
+    public static ArrayList<Transaksi> readFromCSV(String filePath) {
         ArrayList<Transaksi> daftarTransaksi = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("transaksi.csv"))) {
+        List<Mobil> daftarMobil = Mobil.readFromCSV("daftarmobil.csv"); // Pastikan daftarMobil diisi
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            br.readLine(); // Skip header
+            br.readLine(); // Lewati header
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(";");
-                if (data.length < 7) { // Validate that the line has at least 7 fields
+                if (data.length < 7) {
                     System.out.println("Malformed line: " + line);
                     continue;
                 }
 
-                try {
-                    String idTransaksi = data[0];
-                    String tanggal = data[1];
-                    String pegawaiName = data[2]; // Pegawai name (not used here)
-                    String pelangganInfo = data[3];
-                    String mobilInfo = data[4];
-                    int durasiSewa = Integer.parseInt(data[5]);
-                    double totalHarga = Double.parseDouble(data[6]);
+                String idTransaksi = data[0];
+                String tanggal = data[1];
+                String namaPelanggan = data[2];
+                String modelMobil = data[3];
+                String merkMobil = data[4];
+                int durasi = Integer.parseInt(data[5]);
+                double hargaSewa = Double.parseDouble(data[6]);
 
-                    // Parse pelanggan and mobil info (adjust based on your format)
-                    String[] pelangganData = pelangganInfo.split(" | ");
-                    if (pelangganData.length < 2) {
-                        System.out.println("Malformed pelanggan info: " + pelangganInfo);
-                        continue;
-                    }
-                    String pelangganNama = pelangganData[1];
-                    Pelanggan pelanggan = new Pelanggan(pelangganNama, "", "", "", ""); // Simplified
+                // Cari mobil berdasarkan model dan merk
+                Mobil mobil = daftarMobil.stream()
+                        .filter(m -> m.getModel().equals(modelMobil) && m.getMerk().equals(merkMobil))
+                        .findFirst()
+                        .orElse(null);
 
-                    String[] mobilData = mobilInfo.split(" - ");
-                    if (mobilData.length < 1) {
-                        System.out.println("Malformed mobil info: " + mobilInfo);
-                        continue;
-                    }
-                    String mobilId = mobilData[0];
-                    Mobil mobil = daftarMobil.stream()
-                            .filter(m -> m.getIdMobil().equals(mobilId))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (mobil == null) {
-                        System.out.println("Mobil not found for ID: " + mobilId);
-                        continue;
-                    }
-
-                    // Create a new Transaksi object
-                    Transaksi transaksi = new Transaksi(tanggal, null, pelanggan, mobil, durasiSewa);
-                    transaksi.proses(); // Calculate totalHarga
-                    daftarTransaksi.add(transaksi);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error parsing numeric fields in line: " + line);
-                    e.printStackTrace();
+                if (mobil == null) {
+                    System.out.println("Mobil tidak ditemukan: " + modelMobil + " " + merkMobil);
+                    continue;
                 }
+
+                // Buat pelanggan sederhana
+                Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
+
+                // Buat transaksi
+                Transaksi transaksi = new Transaksi(tanggal, null, pelanggan, mobil, durasi);
+                transaksi.totalHarga = hargaSewa; // Set total harga langsung
+                daftarTransaksi.add(transaksi);
             }
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+        } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
-
         return daftarTransaksi;
     }
 
@@ -167,6 +185,18 @@ public class Transaksi {
 
     public double getTotalHarga() {
         return totalHarga;
+    }
+
+    public String getModelMobil() {
+        return mobil.getModel();
+    }
+
+    public String getMerkMobil() {
+        return mobil.getMerk();
+    }
+
+    public int getDurasi() {
+        return durasiSewa;
     }
 
     public static String getHeader() {
@@ -210,7 +240,7 @@ public class Transaksi {
     }
 
     public static void main(String[] args) {
-        ArrayList<Transaksi> daftarTransaksi = Transaksi.readFromCSV();
+        ArrayList<Transaksi> daftarTransaksi = Transaksi.readFromCSV("transaksi.csv");
         Transaksi.tampilkanRiwayat(daftarTransaksi);
     }
 }

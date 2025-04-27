@@ -1,5 +1,11 @@
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -10,13 +16,17 @@ public class GUIAdmin extends JFrame {
     private JButton historyButton;
     private JButton dataMobilButton;
     private JButton editLoginButton;
-    private JLabel userLabel;
     private JButton signOutButton;
-    private ArrayList<Mobil> daftarMobil = Mobil.readFromCSV();
-    private ArrayList<Transaksi> daftarTransaksi = Transaksi.readFromCSV();
+    private ArrayList<Mobil> daftarMobil = new ArrayList<>(Mobil.readFromCSV("daftarmobil.csv"));
 
-    public GUIAdmin() {
-        setTitle("Admin Dashboard");
+    private Admin admin;
+    private Pegawai pegawai;
+
+    public GUIAdmin(Admin admin, Pegawai pegawai) {
+        this.admin = admin;
+        this.pegawai = pegawai;
+
+        setTitle("Rex's Rents - Admin Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         // Set frame to full screen
@@ -34,6 +44,53 @@ public class GUIAdmin extends JFrame {
         setVisible(true);
     }
 
+    private ArrayList<Transaksi> readTransaksiFromCSV() {
+        ArrayList<Transaksi> transaksiList = new ArrayList<>();
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get("transaksi.csv");
+            if (!java.nio.file.Files.exists(path)) {
+                return transaksiList; // Return empty list if file doesn't exist
+            }
+
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path);
+            for (String line : lines) {
+                String[] data = line.split(";");
+                if (data.length >= 7) { // Pastikan ada cukup kolom
+                    String idTransaksi = data[0];
+                    String pelanggan = data[1];
+                    String modelMobil = data[2];
+                    String merkMobil = data[3];
+                    int durasi = Integer.parseInt(data[4]);
+                    double totalHarga = Double.parseDouble(data[5]);
+                    // Buat objek Pelanggan (sederhana)
+                    // Cari objek Mobil berdasarkan model dan merk
+                    Mobil mobil = daftarMobil.stream()
+                            .filter(m -> m.getModel().equals(modelMobil) && m.getMerk().equals(merkMobil))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (mobil == null) {
+                        System.out.println(
+                                "Mobil tidak ditemukan untuk model: " + modelMobil + " dan merk: " + merkMobil);
+                        continue;
+                    }
+
+                    // Buat objek Pelanggan (sederhana)
+                    Pelanggan pelangganObj = new Pelanggan(pelanggan, "", "", "", "");
+
+                    // Buat objek Transaksi
+                    Transaksi transaksi = new Transaksi(idTransaksi, null, pelangganObj, mobil, durasi);
+                    transaksiList.add(transaksi);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal membaca file transaksi.csv: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return transaksiList;
+    }
+
     private void setupUI() {
         mainPanel = new JPanel(new BorderLayout());
 
@@ -42,12 +99,11 @@ public class GUIAdmin extends JFrame {
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JLabel titleLabel = new JLabel("Admin Dashboard");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(new Color(25, 83, 215));
-
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);
+
+        JPanel logoutPanel = new JPanel(new GridBagLayout());
+        logoutPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5); // Add some padding between components
@@ -60,36 +116,28 @@ public class GUIAdmin extends JFrame {
         gbc.gridy = 0;
         userPanel.add(userIcon, gbc);
 
-        // User Label
-        userLabel = new JLabel("Admin");
-        userLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        userPanel.add(userLabel, gbc);
-
         // SignOut Button
         signOutButton = new JButton("Logout");
         signOutButton.setForeground(Color.RED);
         signOutButton.setBackground(Color.WHITE);
         signOutButton.setContentAreaFilled(true);
         signOutButton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 15, 5, 15)
-        ));
+                BorderFactory.createLineBorder(Color.WHITE, 1),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)));
         signOutButton.setFocusPainted(false);
         signOutButton.addActionListener(e -> {
-            // Dispose of the current GUIAdmin frame
-            dispose();
-            SwingUtilities.invokeLater(() -> new LoginFrame(new Admin("admin", "admin123", new Pegawai("pegawai", "12345")), new Pegawai("pegawai", "12345")).setVisible(true));
+            dispose(); // Tutup GUIAdmin
+            LoginFrame loginFrame = new LoginFrame(admin, pegawai);
+            loginFrame.initialize(); // Pastikan initialize() dipanggil
         });
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2; // Span the button across both columns
         gbc.anchor = GridBagConstraints.CENTER; // Center the button
-        userPanel.add(signOutButton, gbc);
+        logoutPanel.add(signOutButton, gbc);
 
-        headerPanel.add(titleLabel, BorderLayout.WEST);
-        headerPanel.add(userPanel, BorderLayout.EAST);
+        headerPanel.add(userPanel, BorderLayout.WEST);
+        headerPanel.add(logoutPanel, BorderLayout.EAST);
 
         // Menu Panel
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -105,8 +153,8 @@ public class GUIAdmin extends JFrame {
         dataMobilButton.setMargin(new Insets(8, 15, 8, 15));
         dataMobilButton.setFocusPainted(false);
 
-        editLoginButton = new JButton("Edit Login Pegawai");
-        editLoginButton.setPreferredSize(new Dimension(180, 40));
+        editLoginButton = new JButton("Edit Informasi Login Pegawai");
+        editLoginButton.setPreferredSize(new Dimension(250, 40));
         editLoginButton.setMargin(new Insets(8, 15, 8, 15));
         editLoginButton.setFocusPainted(false);
 
@@ -142,7 +190,7 @@ public class GUIAdmin extends JFrame {
         topPanel.add(headerPanel, BorderLayout.NORTH);
         topPanel.add(menuPanel, BorderLayout.SOUTH);
 
-        mainPanel.add(topPanel, BorderLayout.NORTH);        // Add header and menu panels to the main panel
+        mainPanel.add(topPanel, BorderLayout.NORTH); // Add header and menu panels to the main panel
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         // Add hover effects to menu buttons
@@ -159,6 +207,7 @@ public class GUIAdmin extends JFrame {
     }
 
     private JPanel createHistoryPanel() {
+        ArrayList<Transaksi> transaksiList = Transaksi.readFromCSV("transaksi.csv"); // Perbaiki path
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -167,7 +216,8 @@ public class GUIAdmin extends JFrame {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        String[] columnNames = { "No", "ID Transaksi", "Pelanggan", "Model Mobil", "Durasi (Hari)", "Total Harga" };
+        String[] columnNames = { "No", "ID Transaksi", "Pelanggan", "Model Mobil", "Merk Mobil", "Durasi (Hari)",
+                "Total Harga" };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(tableModel);
         table.setRowHeight(25);
@@ -183,21 +233,25 @@ public class GUIAdmin extends JFrame {
         // Populate the table with transaction data
         tableModel.setRowCount(0); // Clear table
         int no = 1;
-        double totalHarga = 0; // Variable to store the total harga
-        for (Transaksi t : daftarTransaksi) {
+        // Format Rupiah
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+        for (Transaksi t : transaksiList) {
             tableModel.addRow(new Object[] {
                     no++, t.getIdTransaksi(), t.getPelanggan().getNama(),
-                    t.getMobil().getModel(), t.getDurasiSewa(), t.getTotalHarga()
+                    t.getModelMobil(), t.getMerkMobil(), t.getDurasiSewa(),
+                    formatRupiah.format(t.getTotalHarga()) // Format harga total ke Rupiah
             });
-            totalHarga += t.getTotalHarga(); // Add the totalHarga of each transaction
         }
 
         // Label Panel
         JPanel pnlLabels = new JPanel();
         pnlLabels.setLayout(new BoxLayout(pnlLabels, BoxLayout.Y_AXIS)); // Vertical alignment for labels
 
-        JLabel lblTotalTransaksi = new JLabel("Total Transaksi: " + daftarTransaksi.size());
-        JLabel lblTotalHarga = new JLabel("Total Pendapatan: Rp " + totalHarga);
+        JLabel lblTotalTransaksi = new JLabel("Total Transaksi: " + transaksiList.size());
+        JLabel lblTotalHarga = new JLabel(
+                "Total Pendapatan: "
+                        + formatRupiah.format(transaksiList.stream().mapToDouble(Transaksi::getTotalHarga).sum()));
 
         // Align labels to the right
         lblTotalTransaksi.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -356,10 +410,12 @@ public class GUIAdmin extends JFrame {
 
         // Populate the table with Mobil data
         mobilTableModel.setRowCount(0); // Clear table
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         for (Mobil m : daftarMobil) {
             mobilTableModel.addRow(new Object[] {
                     m.getIdMobil(), m.getModel(), m.getMerk(),
-                    m.getHargaSewa(), m.isTersedia() ? "Available" : "Unavailable"
+                    formatRupiah.format(m.getHargaSewa()), // Format harga sewa ke Rupiah
+                    m.isTersedia() ? "Available" : "Unavailable"
             });
         }
 
@@ -375,13 +431,13 @@ public class GUIAdmin extends JFrame {
                     idMobilField.setText(mobilTableModel.getValueAt(selectedRow, 0).toString());
                     modelField.setText(mobilTableModel.getValueAt(selectedRow, 1).toString());
                     merkField.setText(mobilTableModel.getValueAt(selectedRow, 2).toString());
-                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString());
+                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "")
+                            .replace(".", "").trim());
                     statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
                 }
             }
         });
 
-        // Add action listener to "Tambah" button
         tambahButton.addActionListener(e -> {
             String id = idMobilField.getText();
             String model = modelField.getText();
@@ -389,39 +445,75 @@ public class GUIAdmin extends JFrame {
             String hargaSewa = hargaSewaField.getText();
             String status = statusComboBox.getSelectedItem().toString();
 
-            // Validation
+            // Validasi input
             if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            try {
-                double harga = Double.parseDouble(hargaSewa);
-                Mobil newMobil = new Mobil(id, model, merk, harga, status.equals("Available"));
-                daftarMobil.add(newMobil);
-
-                // Update table
-                mobilTableModel.addRow(new Object[] {
-                        newMobil.getIdMobil(), newMobil.getModel(), newMobil.getMerk(),
-                        newMobil.getHargaSewa(), newMobil.isTersedia() ? "Available" : "Unavailable"
-                });
-
-                Mobil.writeToCSV(daftarMobil); // Save changes to CSV
-
-                JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan",
-                        "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
-                // Clear input fields and generate the next ID
-                modelField.setText("");
-                merkField.setText("");
-                hargaSewaField.setText("");
-                statusComboBox.setSelectedIndex(0);
-                idMobilField.setText(generateNextIdMobil(mobilTableModel));
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka",
+            if (!model.matches("[a-zA-Z0-9 ]+")) {
+                JOptionPane.showMessageDialog(null, "Model hanya boleh mengandung huruf, angka, dan spasi.",
                         "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+            if (!merk.matches("[a-zA-Z0-9 ]+")) {
+                JOptionPane.showMessageDialog(null, "Merk hanya boleh mengandung huruf, angka, dan spasi.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            double harga;
+            try {
+                // Hapus simbol atau format yang tidak valid (contoh: "Rp", ".", ",")
+                harga = Double.parseDouble(hargaSewa.replace("Rp", "").replace(".", "").replace(",", "").trim());
+                if (harga <= 0) {
+                    JOptionPane.showMessageDialog(null, "Harga Sewa harus lebih besar dari 0.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Check if ID already exists in daftarMobil
+            for (Mobil mobil : daftarMobil) {
+                if (mobil.getIdMobil().equals(id)) {
+                    JOptionPane.showMessageDialog(null, "ID Mobil sudah ada. Silakan gunakan ID baru.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    // Clear form and generate next ID
+                    modelField.setText("");
+                    merkField.setText("");
+                    hargaSewaField.setText("");
+                    statusComboBox.setSelectedIndex(0);
+                    idMobilField.setText(generateNextIdMobil(mobilTableModel));
+                    return;
+                }
+            }
+
+            // Tambahkan mobil baru ke daftar dan tabel
+            Mobil newMobil = new Mobil(id, model, merk, harga, status.equals("Available"));
+            daftarMobil.add(newMobil); // Tambahkan ke daftar mobil
+
+            mobilTableModel.addRow(new Object[] {
+                    newMobil.getIdMobil(), newMobil.getModel(), newMobil.getMerk(),
+                    newMobil.getHargaSewa(), newMobil.isTersedia() ? "Available" : "Unavailable"
+            });
+
+            // Simpan perubahan ke file CSV
+            Mobil.writeToCSV(daftarMobil);
+
+            JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan",
+                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+            // Reset form setelah data berhasil ditambahkan
+            modelField.setText("");
+            merkField.setText("");
+            hargaSewaField.setText("");
+            statusComboBox.setSelectedIndex(0);
+            idMobilField.setText(generateNextIdMobil(mobilTableModel));
         });
 
         // Add action listener to "Simpan" button
@@ -433,42 +525,63 @@ public class GUIAdmin extends JFrame {
                 return;
             }
 
+            String id = idMobilField.getText();
             String model = modelField.getText();
             String merk = merkField.getText();
             String hargaSewa = hargaSewaField.getText();
             String status = statusComboBox.getSelectedItem().toString();
 
-            // Validation
+            // Validasi input
             if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            try {
-                double harga = Double.parseDouble(hargaSewa);
-
-                // Update table model
-                mobilTableModel.setValueAt(model, selectedRow, 1);
-                mobilTableModel.setValueAt(merk, selectedRow, 2);
-                mobilTableModel.setValueAt(harga, selectedRow, 3);
-                mobilTableModel.setValueAt(status, selectedRow, 4);
-
-                // Update the corresponding object in daftarMobil
-                Mobil updatedMobil = daftarMobil.get(selectedRow);
-                updatedMobil.setModel(model);
-                updatedMobil.setMerk(merk);
-                updatedMobil.setHargaSewa(harga);
-                updatedMobil.setStatus(status.equals("Available"));
-
-                Mobil.writeToCSV(daftarMobil); // Save changes to CSV
-
-                JOptionPane.showMessageDialog(null, "Data mobil berhasil diupdate",
-                        "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka",
+            if (!model.matches("[a-zA-Z0-9 ]+")) {
+                JOptionPane.showMessageDialog(null, "Model hanya boleh mengandung huruf, angka, dan spasi.",
                         "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+            if (!merk.matches("[a-zA-Z0-9 ]+")) {
+                JOptionPane.showMessageDialog(null, "Merk hanya boleh mengandung huruf, angka, dan spasi.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            double harga;
+            try {
+                // Hapus simbol atau format yang tidak valid (contoh: "Rp", ".", ",")
+                harga = Double.parseDouble(hargaSewa.replace("Rp", "").replace(".", "").replace(",", "").trim());
+                if (harga <= 0) {
+                    JOptionPane.showMessageDialog(null, "Harga Sewa harus lebih besar dari 0.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Perbarui data di daftarMobil
+            Mobil updatedMobil = daftarMobil.get(selectedRow);
+            updatedMobil.setModel(model);
+            updatedMobil.setMerk(merk);
+            updatedMobil.setHargaSewa(harga);
+            updatedMobil.setStatus(status.equals("Available"));
+
+            // Perbarui data di tabel
+            mobilTableModel.setValueAt(model, selectedRow, 1);
+            mobilTableModel.setValueAt(merk, selectedRow, 2);
+            mobilTableModel.setValueAt(harga, selectedRow, 3);
+            mobilTableModel.setValueAt(status, selectedRow, 4);
+
+            // Simpan perubahan ke file CSV
+            Mobil.writeToCSV(daftarMobil);
+
+            JOptionPane.showMessageDialog(null, "Data mobil berhasil diupdate",
+                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
         });
 
         // Add action listener to "Delete" button
@@ -511,48 +624,76 @@ public class GUIAdmin extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        // Load Poppins font
+        Font poppinsFont;
+        try {
+            poppinsFont = Font.createFont(Font.TRUETYPE_FONT, new File("Poppins-Regular.ttf")).deriveFont(16f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(poppinsFont);
+        } catch (Exception e) {
+            poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
+        }
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel usernameLabel = new JLabel("Username Pegawai:");
-        JTextField usernameField = new JTextField(15);
-        JLabel passwordLabel = new JLabel("Password Pegawai:");
-        JTextField passwordField = new JTextField(15);
-        JButton saveButton = new JButton("Simpan");
-        saveButton.setPreferredSize(new Dimension(100, 35));
-        saveButton.setBackground(new Color(255, 87, 51)); // Green for "Tambah"
-        saveButton.setForeground(Color.WHITE);
-        saveButton.setBorderPainted(false);
-        saveButton.setFocusPainted(false);
-
+        // Title label
+        JLabel titleLabel = new JLabel("Change Employee Login Information");
+        titleLabel.setFont(poppinsFont.deriveFont(Font.BOLD, 30f)); // Larger font for title
+        titleLabel.setForeground(new Color(255, 87, 51)); // Orange color
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 2; // Span across two columns
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(titleLabel, gbc);
+
+        // Username label and field
+        gbc.gridwidth = 1; // Reset to one column
+        gbc.anchor = GridBagConstraints.WEST; // Align to the left
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        JLabel usernameLabel = new JLabel("Username Pegawai:");
+        usernameLabel.setFont(poppinsFont);
         panel.add(usernameLabel, gbc);
 
         gbc.gridx = 1;
+        JTextField usernameField = new JTextField(15);
+        usernameField.setFont(poppinsFont);
         panel.add(usernameField, gbc);
 
+        // Password label and field
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
+        JLabel passwordLabel = new JLabel("Password Pegawai:");
+        passwordLabel.setFont(poppinsFont);
         panel.add(passwordLabel, gbc);
 
         gbc.gridx = 1;
+        JPasswordField passwordField = new JPasswordField(15);
+        passwordField.setFont(poppinsFont);
         panel.add(passwordField, gbc);
 
+        // Save button
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2; // Span across two columns
         gbc.anchor = GridBagConstraints.CENTER;
+        JButton saveButton = new JButton("Simpan");
+        saveButton.setPreferredSize(new Dimension(100, 35));
+        saveButton.setBackground(new Color(255, 87, 51)); // Orange color
+        saveButton.setForeground(Color.WHITE);
+        saveButton.setBorderPainted(false);
+        saveButton.setFocusPainted(false);
         panel.add(saveButton, gbc);
 
-        Pegawai pegawai = new Pegawai("pegawai", "password");
-
+        // Add action listener for save button
         saveButton.addActionListener(e -> {
             String username = usernameField.getText();
-            String password = passwordField.getText();
+            String password = new String(passwordField.getPassword());
 
-            // Validate input
+            // Validasi input
             if (username.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(GUIAdmin.this, "Username tidak boleh kosong.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -564,13 +705,21 @@ public class GUIAdmin extends JFrame {
                 return;
             }
 
-            pegawai.setUsername(username);
-            pegawai.setPassword(password);
-
-            JOptionPane.showMessageDialog(GUIAdmin.this, "Data login pegawai berhasil diubah.",
-                    "Simpan Data Pegawai", JOptionPane.INFORMATION_MESSAGE);
+            // Simpan perubahan ke login.csv
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("login.csv"))) {
+                writer.write("Username;Password;Role");
+                writer.newLine();
+                writer.write(admin.getUsername() + ";" + admin.getPassword() + ";Admin");
+                writer.newLine();
+                writer.write(username + ";" + password + ";Employee");
+                writer.newLine();
+                JOptionPane.showMessageDialog(GUIAdmin.this, "Data login pegawai berhasil diubah dan disimpan.",
+                        "Simpan Data Pegawai", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(GUIAdmin.this, "Gagal menyimpan data ke login.csv: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
-
         return panel;
     }
 
@@ -609,8 +758,8 @@ public class GUIAdmin extends JFrame {
 
     private String generateNextIdMobil(DefaultTableModel tableModel) {
         int maxId = 0;
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            String id = tableModel.getValueAt(i, 0).toString();
+        for (Mobil mobil : daftarMobil) {
+            String id = mobil.getIdMobil();
             if (id.startsWith("M")) {
                 try {
                     int numericPart = Integer.parseInt(id.substring(1));
@@ -622,7 +771,25 @@ public class GUIAdmin extends JFrame {
         return "M" + (maxId + 1);
     }
 
+    public static void writeToCSV(ArrayList<Mobil> daftarMobil) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("daftarmobil.csv"))) {
+            writer.write("ID;Model;Merk;Harga Sewa;Status");
+            writer.newLine();
+            for (Mobil mobil : daftarMobil) {
+                writer.write(String.format("%s;%s;%s;%.2f;%s",
+                        mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(),
+                        mobil.getHargaSewa(), mobil.isTersedia() ? "Available" : "Unavailable"));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new GUIAdmin());
+        Admin admin = new Admin("admin", "admin123", new Pegawai("pegawai", "12345"));
+        Pegawai pegawai = new Pegawai("pegawai", "12345");
+
+        SwingUtilities.invokeLater(() -> new GUIAdmin(admin, pegawai));
     }
 }

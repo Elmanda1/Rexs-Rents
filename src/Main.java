@@ -1,6 +1,9 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
-import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String... args) {
@@ -88,7 +91,6 @@ public class Main {
         if (admin.login(adminUname, adminPass)) {
             tekanEnter();
             clearScreen();
-            SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true));
         } else {
             System.out.println("Login Admin gagal. Username atau password salah.");
         }
@@ -106,7 +108,22 @@ public class Main {
         System.out.print("Password: ");
         String pegawaiPass = obj.nextLine();
 
-        if (pegawai.login(pegawaiUname, pegawaiPass)) {
+        // Validasi login berdasarkan file login.csv
+        Map<String, String> employeeCredentials = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("login.csv"))) {
+            String line;
+            br.readLine(); // Lewati header
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length == 3 && parts[0].equalsIgnoreCase("Employee")) {
+                    employeeCredentials.put(parts[1], parts[2]);
+                }
+            }
+        }
+
+        if (employeeCredentials.containsKey(pegawaiUname)
+                && employeeCredentials.get(pegawaiUname).equals(pegawaiPass)) {
+            System.out.println("Login Pegawai berhasil.");
             tekanEnter();
             clearScreen();
             pegawai.tampilkanMenu();

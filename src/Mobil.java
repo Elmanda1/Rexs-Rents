@@ -1,7 +1,7 @@
 import java.io.*;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class Mobil {
@@ -65,68 +65,59 @@ public class Mobil {
     }
 
     public String getInfo() {
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    String hargaFormatted = formatRupiah.format(hargaSewa).replace("Rp","Rp ").replace(",00", ""); // Hapus desimal
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        String hargaFormatted = formatRupiah.format(hargaSewa).replace("Rp", "Rp ").replace(",00", ""); // Hapus desimal
 
-    return String.format(
-            "| %-10s | %-15s | %-12s | %-18s | %-12s |",
-            idMobil, model, merk, hargaFormatted, (status ? "Available" : "Unavailable"));
-}
+        return String.format(
+                "| %-10s | %-15s | %-12s | %-18s | %-12s |",
+                idMobil, model, merk, hargaFormatted, (status ? "Available" : "Unavailable"));
+    }
 
-public String getInfoTransaksi() {
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    String hargaFormatted = formatRupiah.format(hargaSewa).replace("Rp","Rp ").replace(",00", ""); // Hapus desimal
-    return String.format(
-            "| %-10s | %-15s | %-12s | %-18s |",
-            idMobil, model, merk, hargaFormatted);
-}
+    public String getInfoTransaksi() {
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        String hargaFormatted = formatRupiah.format(hargaSewa).replace("Rp", "Rp ").replace(",00", ""); // Hapus desimal
+        return String.format(
+                "| %-10s | %-15s | %-12s | %-18s |",
+                idMobil, model, merk, hargaFormatted);
+    }
 
     @Override
     public String toString() {
         return idMobil + ";" + model + ";" + merk + ";" + hargaSewa + ";" + status;
     }
 
-    public static ArrayList<Mobil> readFromCSV() {
-    ArrayList<Mobil> daftarMobil = new ArrayList<>();
-    int nomorMobil = 1; // Inisialisasi nomor mobil
-
-    try (BufferedReader br = new BufferedReader(new FileReader("daftarMobil.csv"))) {
-        String line;
-        br.readLine(); // Skip header
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(";");
-
-            if (data.length < 5)
-                continue;
-
-            String id = data[0];
-            String model = data[1];
-            String merk = data[2];
-            double hargaSewa = Double.parseDouble(data[3]);
-            boolean status = Boolean.parseBoolean(data[4]);
-
-            Mobil mobil = new Mobil(id, model, merk, hargaSewa, status); // Tetapkan nomor mobil
-            daftarMobil.add(mobil);
+    public static List<Mobil> readFromCSV(String filePath) {
+        List<Mobil> daftarMobil = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine(); // Lewati header
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length == 5) {
+                    String idMobil = parts[0];
+                    String model = parts[1];
+                    String merk = parts[2];
+                    double hargaSewa = Double.parseDouble(parts[3]);
+                    boolean status = Boolean.parseBoolean(parts[4]);
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Gagal membaca file " + filePath + ": " + e.getMessage());
         }
-    } catch (IOException | NumberFormatException e) {
-        e.printStackTrace();
+        return daftarMobil;
     }
 
-    return daftarMobil;
-}
-
     public static void writeToCSV(ArrayList<Mobil> daftarMobil) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("daftarMobil.csv"))) {
-            // Write header
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("daftarmobil.csv"))) { // Perbaiki path
             bw.write("ID;Model;Merk;HargaSewa;Status");
             bw.newLine();
 
-            // Write each mobil
             for (Mobil m : daftarMobil) {
-                bw.write(m.toString());
+                bw.write(String.join(";", m.getIdMobil(), m.getModel(), m.getMerk(),
+                        String.valueOf(m.getHargaSewa()), String.valueOf(m.isTersedia())));
                 bw.newLine();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

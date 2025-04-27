@@ -7,10 +7,6 @@ public abstract class Akun {
         this.password = password;
     }
 
-    public boolean login(String uname, String pass) {
-        return this.username.equals(uname) && this.password.equals(pass);
-    }
-
     public String getUsername() {
         return username;
     }
@@ -19,7 +15,15 @@ public abstract class Akun {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean login(String username, String password) {
+        return this.username.equals(username) && this.password.equals(password);
     }
 }

@@ -6,14 +6,15 @@ import java.util.Scanner;
 
 public class Pegawai extends Akun {
     private static final Scanner obj = new Scanner(System.in);
-    private static ArrayList<Pelanggan> daftarPelanggan = Pelanggan.readFromCSV();
+    private final static ArrayList<Pelanggan> daftarPelanggan = Pelanggan.readFromCSV();
 
-    private ArrayList<Mobil> daftarMobil = Mobil.readFromCSV(); // Akan diatur dari Admin/Main
-
-    private static ArrayList<Transaksi> daftarTransaksi = Transaksi.readFromCSV();
+    private ArrayList<Mobil> daftarMobil = new ArrayList<>(Mobil.readFromCSV("daftarmobil.csv"));
+    private static ArrayList<Transaksi> daftarTransaksi = new ArrayList<>(Transaksi.readFromCSV("transaksi.csv"));
 
     public Pegawai(String username, String password) {
         super(username, password);
+        this.daftarMobil = new ArrayList<>(Mobil.readFromCSV("daftarmobil.csv")); // Inisialisasi daftar mobil
+        this.daftarTransaksi = new ArrayList<>(Transaksi.readFromCSV("transaksi.csv")); // Inisialisasi daftar transaksi
     }
 
     // Hapus deklarasi ulang Scanner di tampilkanMenu()

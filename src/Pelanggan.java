@@ -82,7 +82,7 @@ public class Pelanggan {
     }
 
     public static ArrayList<Pelanggan> readFromCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader("daftarpelanggan.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("daftarpelanggan.csv"))) { // Perbaiki path
             String line;
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
@@ -98,7 +98,7 @@ public class Pelanggan {
                 String gender = data[5];
 
                 Pelanggan pelanggan = new Pelanggan(nama, noHp, noKtp, alamat, gender);
-                pelanggan.idPelanggan = id; // Set the ID manually
+                pelanggan.idPelanggan = id;
                 daftarPelanggan.add(pelanggan);
             }
             System.out.println("Data pelanggan berhasil dibaca dari file.");
@@ -109,22 +109,18 @@ public class Pelanggan {
     }
 
     public static void writeToCSV(ArrayList<Pelanggan> daftarPelanggan) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("daftarpelanggan.csv"))) {
-            // Write header
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("daftarpelanggan.csv"))) { // Perbaiki path
             bw.write("ID;Nama;NoHP;NoKTP;Alamat;Gender");
             bw.newLine();
 
-            // Write each pelanggan
             for (Pelanggan pelanggan : daftarPelanggan) {
-                String line = String.format(
-                        "%s;%s;%s;%s;%s;%s",
+                bw.write(String.format("%s;%s;%s;%s;%s;%s",
                         pelanggan.getIdPelanggan(),
                         pelanggan.getNama(),
                         pelanggan.getNoHp(),
                         pelanggan.getNoKtp(),
                         pelanggan.getAlamat(),
-                        pelanggan.getGender());
-                bw.write(line);
+                        pelanggan.getGender()));
                 bw.newLine();
             }
             System.out.println("Data pelanggan berhasil disimpan ke file.");
