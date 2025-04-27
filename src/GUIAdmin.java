@@ -149,12 +149,15 @@ public class GUIAdmin extends JFrame {
     }
 
     private JPanel historyTransaksi() {
-        ArrayList<Transaksi> transaksiList = Transaksi.readFromCSV("transaksi.csv"); // Perbaiki path
+        ArrayList<Transaksi> transaksiList = Transaksi.readFromCSV("transaksi.csv"); // Ensure the path is correct
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columnNames = {"ID Transaksi", "Pelanggan", "Model Mobil", "Merk Mobil", "Durasi (Hari)",
-                "Total Harga" };
+        // Update column names to include Denda
+        String[] columnNames = {
+                "ID Transaksi", "Tanggal", "Nama Pelanggan", "Model Mobil",
+                "Merk Mobil", "Durasi (Hari)", "Harga Sewa", "Denda"
+        };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -168,14 +171,20 @@ public class GUIAdmin extends JFrame {
 
         // Populate the table with transaction data
         tableModel.setRowCount(0); // Clear table
-        // Format Rupiah
+
+        // Use NumberFormat for formatting currency
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
         for (Transaksi t : transaksiList) {
             tableModel.addRow(new Object[] {
-                    t.getIdTransaksi(), t.getPelanggan().getNama(),
-                    t.getModelMobil(), t.getMerkMobil(), t.getDurasiSewa(),
-                    formatRupiah.format(t.getTotalHarga()) // Format harga total ke Rupiah
+                    t.getIdTransaksi(),
+                    t.getTanggal(),
+                    t.getPelanggan().getNama(),
+                    t.getModelMobil(),
+                    t.getMerkMobil(),
+                    t.getDurasiSewa(),
+                    formatRupiah.format(t.getTotalHarga()), // Format total harga to Rupiah
+                    formatRupiah.format(t.getDenda()) // Format denda to Rupiah
             });
         }
 
@@ -187,13 +196,18 @@ public class GUIAdmin extends JFrame {
         JLabel lblTotalHarga = Utility.styleLabel(
                 "Total Pendapatan: "
                         + formatRupiah.format(transaksiList.stream().mapToDouble(Transaksi::getTotalHarga).sum()));
+        JLabel lblTotalDenda = Utility.styleLabel(
+                "Total Denda: "
+                        + formatRupiah.format(transaksiList.stream().mapToDouble(Transaksi::getDenda).sum()));
 
         // Align labels to the right
         lblTotalTransaksi.setAlignmentX(Component.RIGHT_ALIGNMENT);
         lblTotalHarga.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        lblTotalDenda.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
         pnlLabels.add(lblTotalTransaksi);
         pnlLabels.add(lblTotalHarga);
+        pnlLabels.add(lblTotalDenda);
 
         // Wrap the labels in a FlowLayout panel to push them to the right
         JPanel pnlLabelsWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -349,32 +363,32 @@ public class GUIAdmin extends JFrame {
             String merk = merkField.getText();
             String hargaSewa = hargaSewaField.getText();
             String status = statusComboBox.getSelectedItem().toString();
-        
+
             // Validate input
             if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             if (!model.matches("[a-zA-Z0-9 ]+")) { // Model hanya boleh mengandung huruf, angka, dan spasi
                 JOptionPane.showMessageDialog(null, "Model hanya boleh mengandung huruf, angka, dan spasi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             if (!merk.matches("[a-zA-Z0-9 ]+")) { // Merk hanya boleh mengandung huruf, angka, dan spasi
                 JOptionPane.showMessageDialog(null, "Merk hanya boleh mengandung huruf, angka, dan spasi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             if (!hargaSewa.matches("\\d+(\\.\\d+)?")) { // Harga sewa harus berupa angka
                 JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             double harga;
             try {
                 harga = Double.parseDouble(hargaSewa);
@@ -388,7 +402,7 @@ public class GUIAdmin extends JFrame {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        
+
             // Check if ID already exists
             for (Mobil mobil : daftarMobil) {
                 if (mobil.getIdMobil().equals(id)) {
@@ -397,22 +411,22 @@ public class GUIAdmin extends JFrame {
                     return;
                 }
             }
-        
+
             // Add new mobil to the list and table
             Mobil newMobil = new Mobil(id, model, merk, harga, status.equals("Available"));
             daftarMobil.add(newMobil);
-        
+
             mobilTableModel.addRow(new Object[] {
                     newMobil.getIdMobil(), newMobil.getModel(), newMobil.getMerk(),
                     newMobil.getHargaSewa(), newMobil.isTersedia() ? "Available" : "Unavailable"
             });
-        
+
             // Save mobil data to CSV
             Mobil.writeToCSV(daftarMobil);
-        
+
             JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
-        
+
             // Reset form
             modelField.setText("");
             merkField.setText("");

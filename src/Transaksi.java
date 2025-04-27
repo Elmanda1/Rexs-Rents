@@ -13,6 +13,7 @@ public class Transaksi {
     private int durasiSewa;
     private double totalHarga;
     private double keuntungan;
+    private double denda; // New attribute for penalty
 
     public Transaksi(String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa) {
         // Validasi input
@@ -40,10 +41,11 @@ public class Transaksi {
         this.durasiSewa = durasiSewa;
 
         // Hitung total harga
-        this.totalHarga = mobil.getHargaSewa() * durasiSewa;
+        this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda; // Initialize denda to 0
 
         // Keuntungan awal diatur ke 0
         this.keuntungan = 0;
+        this.denda = 0; // Initialize denda to 0
     }
 
     private static int getJumlahTransaksiDariCSV() {
@@ -64,7 +66,7 @@ public class Transaksi {
     }
 
     public void proses() {
-        this.totalHarga = mobil.getHargaSewa() * durasiSewa;
+        this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda;
         this.keuntungan += this.totalHarga; // Tambahkan total harga sewa ke keuntungan
     }
 
@@ -78,20 +80,22 @@ public class Transaksi {
     }
 
     public static void writeToCSV(ArrayList<Transaksi> daftarTransaksi) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) { // Perbaiki path
-            bw.write("IDTransaksi;Tanggal;NamaPelanggan;ModelMobil;MerkMobil;Durasi;HargaSewa");
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) {
+            // Update the header to include Denda
+            bw.write("IDTransaksi;Tanggal;NamaPelanggan;ModelMobil;MerkMobil;Durasi;HargaSewa;Denda");
             bw.newLine();
 
             for (Transaksi transaksi : daftarTransaksi) {
                 String line = String.format(
-                        "%s;%s;%s;%s;%s;%d;%.2f",
+                        "%s;%s;%s;%s;%s;%d;%.2f;%.2f",
                         transaksi.getIdTransaksi(),
                         transaksi.getTanggal(),
                         transaksi.getPelanggan().getNama(),
                         transaksi.getMobil().getModel(),
                         transaksi.getMobil().getMerk(),
                         transaksi.getDurasiSewa(),
-                        transaksi.getTotalHarga());
+                        transaksi.getTotalHarga(),
+                        transaksi.getDenda()); // Include denda in the output
                 bw.write(line);
                 bw.newLine();
             }
@@ -109,7 +113,7 @@ public class Transaksi {
             br.readLine(); // Skip the header
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(";");
-                if (data.length < 7) {
+                if (data.length < 8) { // Update to check for 8 fields
                     System.out.println("Malformed line: " + line);
                     continue;
                 }
@@ -121,6 +125,7 @@ public class Transaksi {
                 String merkMobil = data[4];
                 int durasi = Integer.parseInt(data[5]);
                 double hargaSewa = Double.parseDouble(data[6]);
+                double denda = Double.parseDouble(data[7]); // Read denda
 
                 // Find the corresponding Mobil object
                 Mobil mobil = daftarMobil.stream()
@@ -140,6 +145,7 @@ public class Transaksi {
                 Transaksi transaksi = new Transaksi(tanggal, pelanggan, mobil, durasi);
                 transaksi.idTransaksi = idTransaksi; // Set the ID directly from the CSV
                 transaksi.totalHarga = hargaSewa; // Set the total price directly
+                transaksi.denda = denda; // Set the denda directly
                 daftarTransaksi.add(transaksi);
             }
         } catch (IOException | NumberFormatException e) {
@@ -191,5 +197,15 @@ public class Transaksi {
         return String.format(
                 "| %-10s | %-20s | %-5s | %-15s | %-10s | %-15s | %-5s | %-16s |",
                 "ID Trans", "Tanggal", "ID Pel", "Pelanggan", "ID Mobil", "Mobil", "Durasi", "Total Harga");
+    }
+
+    // Add a setter for denda
+    public void setDenda(double denda) {
+        this.denda = denda;
+    }
+
+    // Add a getter for denda
+    public double getDenda() {
+        return denda;
     }
 }
