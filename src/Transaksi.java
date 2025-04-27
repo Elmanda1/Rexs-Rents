@@ -111,11 +111,11 @@ public class Transaksi {
 
     public static ArrayList<Transaksi> readFromCSV(String filePath) {
         ArrayList<Transaksi> daftarTransaksi = new ArrayList<>();
-        List<Mobil> daftarMobil = Mobil.readFromCSV("daftarmobil.csv"); // Pastikan daftarMobil diisi
+        List<Mobil> daftarMobil = Mobil.readFromCSV("daftarmobil.csv"); // Ensure daftarMobil is populated
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            br.readLine(); // Lewati header
+            br.readLine(); // Skip the header
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(";");
                 if (data.length < 7) {
@@ -131,23 +131,24 @@ public class Transaksi {
                 int durasi = Integer.parseInt(data[5]);
                 double hargaSewa = Double.parseDouble(data[6]);
 
-                // Cari mobil berdasarkan model dan merk
+                // Find the corresponding Mobil object
                 Mobil mobil = daftarMobil.stream()
                         .filter(m -> m.getModel().equals(modelMobil) && m.getMerk().equals(merkMobil))
                         .findFirst()
                         .orElse(null);
 
                 if (mobil == null) {
-                    System.out.println("Mobil tidak ditemukan: " + modelMobil + " " + merkMobil);
+                    System.out.println("Mobil not found: " + modelMobil + " " + merkMobil);
                     continue;
                 }
 
-                // Buat pelanggan sederhana
+                // Create a simple Pelanggan object
                 Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
 
-                // Buat transaksi
+                // Create a Transaksi object
                 Transaksi transaksi = new Transaksi(tanggal, null, pelanggan, mobil, durasi);
-                transaksi.totalHarga = hargaSewa; // Set total harga langsung
+                transaksi.idTransaksi = idTransaksi; // Set the ID directly from the CSV
+                transaksi.totalHarga = hargaSewa; // Set the total price directly
                 daftarTransaksi.add(transaksi);
             }
         } catch (IOException | NumberFormatException e) {

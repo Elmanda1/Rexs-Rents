@@ -44,53 +44,6 @@ public class GUIAdmin extends JFrame {
         setVisible(true);
     }
 
-    private ArrayList<Transaksi> readTransaksiFromCSV() {
-        ArrayList<Transaksi> transaksiList = new ArrayList<>();
-        try {
-            java.nio.file.Path path = java.nio.file.Paths.get("transaksi.csv");
-            if (!java.nio.file.Files.exists(path)) {
-                return transaksiList; // Return empty list if file doesn't exist
-            }
-
-            java.util.List<String> lines = java.nio.file.Files.readAllLines(path);
-            for (String line : lines) {
-                String[] data = line.split(";");
-                if (data.length >= 7) { // Pastikan ada cukup kolom
-                    String idTransaksi = data[0];
-                    String pelanggan = data[1];
-                    String modelMobil = data[2];
-                    String merkMobil = data[3];
-                    int durasi = Integer.parseInt(data[4]);
-                    double totalHarga = Double.parseDouble(data[5]);
-                    // Buat objek Pelanggan (sederhana)
-                    // Cari objek Mobil berdasarkan model dan merk
-                    Mobil mobil = daftarMobil.stream()
-                            .filter(m -> m.getModel().equals(modelMobil) && m.getMerk().equals(merkMobil))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (mobil == null) {
-                        System.out.println(
-                                "Mobil tidak ditemukan untuk model: " + modelMobil + " dan merk: " + merkMobil);
-                        continue;
-                    }
-
-                    // Buat objek Pelanggan (sederhana)
-                    Pelanggan pelangganObj = new Pelanggan(pelanggan, "", "", "", "");
-
-                    // Buat objek Transaksi
-                    Transaksi transaksi = new Transaksi(idTransaksi, null, pelangganObj, mobil, durasi);
-                    transaksiList.add(transaksi);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal membaca file transaksi.csv: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return transaksiList;
-    }
-
     private void setupUI() {
         mainPanel = new JPanel(new BorderLayout());
 
@@ -177,7 +130,7 @@ public class GUIAdmin extends JFrame {
         contentPanel = new JPanel(new CardLayout());
 
         // Add panels for each menu item
-        JPanel historyPanel = createHistoryPanel();
+        JPanel historyPanel = historyTransaksi();
         JPanel dataMobilPanel = dataMobil();
         JPanel editLoginPanel = createEditLoginPanel();
 
@@ -206,7 +159,7 @@ public class GUIAdmin extends JFrame {
         getContentPane().add(mainPanel);
     }
 
-    private JPanel createHistoryPanel() {
+    private JPanel historyTransaksi() {
         ArrayList<Transaksi> transaksiList = Transaksi.readFromCSV("transaksi.csv"); // Perbaiki path
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -216,9 +169,14 @@ public class GUIAdmin extends JFrame {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        String[] columnNames = { "No", "ID Transaksi", "Pelanggan", "Model Mobil", "Merk Mobil", "Durasi (Hari)",
+        String[] columnNames = {"ID Transaksi", "Pelanggan", "Model Mobil", "Merk Mobil", "Durasi (Hari)",
                 "Total Harga" };
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable table = new JTable(tableModel);
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
@@ -232,13 +190,12 @@ public class GUIAdmin extends JFrame {
 
         // Populate the table with transaction data
         tableModel.setRowCount(0); // Clear table
-        int no = 1;
         // Format Rupiah
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
         for (Transaksi t : transaksiList) {
             tableModel.addRow(new Object[] {
-                    no++, t.getIdTransaksi(), t.getPelanggan().getNama(),
+                    t.getIdTransaksi(), t.getPelanggan().getNama(),
                     t.getModelMobil(), t.getMerkMobil(), t.getDurasiSewa(),
                     formatRupiah.format(t.getTotalHarga()) // Format harga total ke Rupiah
             });
@@ -525,7 +482,6 @@ public class GUIAdmin extends JFrame {
                 return;
             }
 
-            String id = idMobilField.getText();
             String model = modelField.getText();
             String merk = merkField.getText();
             String hargaSewa = hargaSewaField.getText();
@@ -769,21 +725,6 @@ public class GUIAdmin extends JFrame {
             }
         }
         return "M" + (maxId + 1);
-    }
-
-    public static void writeToCSV(ArrayList<Mobil> daftarMobil) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("daftarmobil.csv"))) {
-            writer.write("ID;Model;Merk;Harga Sewa;Status");
-            writer.newLine();
-            for (Mobil mobil : daftarMobil) {
-                writer.write(String.format("%s;%s;%s;%.2f;%s",
-                        mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(),
-                        mobil.getHargaSewa(), mobil.isTersedia() ? "Available" : "Unavailable"));
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void main(String[] args) {
