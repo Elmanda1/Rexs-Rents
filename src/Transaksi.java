@@ -1,172 +1,30 @@
-import java.io.*;
+import java.sql.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class Transaksi {
-    private static int jumlahTransaksi = 0;
     private String idTransaksi;
     private String tanggal;
     private Pelanggan pelanggan;
     private Mobil mobil;
     private int durasiSewa;
     private double totalHarga;
-    private double keuntungan;
-    private double denda; // New attribute for penalty
+    private double denda;
 
-    public Transaksi(String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa) {
-        // Validasi input
-        if (tanggal == null || tanggal.isEmpty()) {
-            throw new IllegalArgumentException("Tanggal tidak boleh kosong.");
-        }
-        if (pelanggan == null) {
-            throw new IllegalArgumentException("Pelanggan tidak boleh null.");
-        }
-        if (mobil == null) {
-            throw new IllegalArgumentException("Mobil tidak boleh null.");
-        }
-        if (durasiSewa <= 0) {
-            throw new IllegalArgumentException("Durasi sewa harus lebih besar dari 0.");
-        }
-
-        // Perbarui jumlahTransaksi berdasarkan data di file CSV
-        jumlahTransaksi = getJumlahTransaksiDariCSV() + 1;
-
-        // Set atribut
-        this.idTransaksi = "TRX" + String.format("%04d", jumlahTransaksi);
+    public Transaksi(String idTransaksi, String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa, double denda) {
+        this.idTransaksi = idTransaksi;
         this.tanggal = tanggal;
         this.pelanggan = pelanggan;
         this.mobil = mobil;
         this.durasiSewa = durasiSewa;
-
-        // Hitung total harga
-        this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda; // Initialize denda to 0
-
-        // Keuntungan awal diatur ke 0
-        this.keuntungan = 0;
-        this.denda = 0; // Initialize denda to 0
-    }
-
-    private static int getJumlahTransaksiDariCSV() {
-        int jumlah = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader("transaksi.csv"))) {
-            br.readLine(); // Skip header
-            while (br.readLine() != null) {
-                jumlah++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return jumlah;
-    }
-
-    public void tambahKeuntungan(int denda) {
-        this.keuntungan += denda; // Tambahkan denda ke keuntungan
-    }
-
-    public void proses() {
+        this.denda = denda;
         this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda;
-        this.keuntungan += this.totalHarga; // Tambahkan total harga sewa ke keuntungan
     }
 
-    public double getKeuntungan() {
-        return keuntungan;
-    }
-
-    public String getTotalHargaFormatted() {
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-        return formatRupiah.format(this.totalHarga);
-    }
-
-    public static void writeToCSV(ArrayList<Transaksi> daftarTransaksi) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) {
-            // Update the header to include Denda
-            bw.write("IDTransaksi;Tanggal;NamaPelanggan;ModelMobil;MerkMobil;Durasi;HargaSewa;Denda");
-            bw.newLine();
-
-            for (Transaksi transaksi : daftarTransaksi) {
-                String line = String.format(
-                        "%s;%s;%s;%s;%s;%d;%.2f;%.2f",
-                        transaksi.getIdTransaksi(),
-                        transaksi.getTanggal(),
-                        transaksi.getPelanggan().getNama(),
-                        transaksi.getMobil().getModel(),
-                        transaksi.getMobil().getMerk(),
-                        transaksi.getDurasiSewa(),
-                        transaksi.getTotalHarga(),
-                        transaksi.getDenda()); // Include denda in the output
-                bw.write(line);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static ArrayList<Transaksi> readFromCSV(String filePath) {
-        ArrayList<Transaksi> daftarTransaksi = new ArrayList<>();
-        List<Mobil> daftarMobil = Mobil.readFromCSV("daftarmobil.csv"); // Ensure daftarMobil is populated
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            br.readLine(); // Skip the header
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(";");
-                if (data.length < 8) { // Update to check for 8 fields
-                    System.out.println("Malformed line: " + line);
-                    continue;
-                }
-
-                String idTransaksi = data[0];
-                String tanggal = data[1];
-                String namaPelanggan = data[2];
-                String modelMobil = data[3];
-                String merkMobil = data[4];
-                int durasi = Integer.parseInt(data[5]);
-                double hargaSewa = Double.parseDouble(data[6]);
-                double denda = Double.parseDouble(data[7]); // Read denda
-
-                // Find the corresponding Mobil object
-                Mobil mobil = daftarMobil.stream()
-                        .filter(m -> m.getModel().equals(modelMobil) && m.getMerk().equals(merkMobil))
-                        .findFirst()
-                        .orElse(null);
-
-                if (mobil == null) {
-                    System.out.println("Mobil not found: " + modelMobil + " " + merkMobil);
-                    continue;
-                }
-
-                // Create a simple Pelanggan object
-                Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
-
-                // Create a Transaksi object
-                Transaksi transaksi = new Transaksi(tanggal, pelanggan, mobil, durasi);
-                transaksi.idTransaksi = idTransaksi; // Set the ID directly from the CSV
-                transaksi.totalHarga = hargaSewa; // Set the total price directly
-                transaksi.denda = denda; // Set the denda directly
-                daftarTransaksi.add(transaksi);
-            }
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-        }
-        return daftarTransaksi;
-    }
-
-    // Getter untuk idTransaksi
     public String getIdTransaksi() {
         return idTransaksi;
-    }
-
-    // Getter untuk durasiSewa
-    public int getDurasiSewa() {
-        return durasiSewa;
-    }
-
-    // Getter untuk mobil
-    public Mobil getMobil() {
-        return mobil;
     }
 
     public String getTanggal() {
@@ -177,35 +35,126 @@ public class Transaksi {
         return pelanggan;
     }
 
+    public Mobil getMobil() {
+        return mobil;
+    }
+
+    public int getDurasiSewa() {
+        return durasiSewa;
+    }
+
     public double getTotalHarga() {
         return totalHarga;
     }
 
-    public String getModelMobil() {
-        return mobil.getModel();
-    }
-
-    public String getMerkMobil() {
-        return mobil.getMerk();
-    }
-
-    public int getDurasi() {
-        return durasiSewa;
-    }
-
-    public static String getHeader() {
-        return String.format(
-                "| %-10s | %-20s | %-5s | %-15s | %-10s | %-15s | %-5s | %-16s |",
-                "ID Trans", "Tanggal", "ID Pel", "Pelanggan", "ID Mobil", "Mobil", "Durasi", "Total Harga");
-    }
-
-    // Add a setter for denda
-    public void setDenda(double denda) {
-        this.denda = denda;
-    }
-
-    // Add a getter for denda
     public double getDenda() {
         return denda;
+    }
+
+    public void setDenda(double denda) {
+        this.denda = denda;
+        this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda;
+    }
+
+    // Add a new Transaksi record to the database
+    public static String addToDatabase(Transaksi transaksi) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "INSERT INTO tb_transaksi (id_transaksi, tanggal, id_pelanggan, id_mobil, durasi, denda, total_harga) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, transaksi.getIdTransaksi());
+            ps.setString(2, transaksi.getTanggal());
+            ps.setString(3, transaksi.getPelanggan().getIdPelanggan());
+            ps.setString(4, transaksi.getMobil().getIdMobil());
+            ps.setInt(5, transaksi.getDurasiSewa());
+            ps.setDouble(6, transaksi.getDenda());
+            ps.setDouble(7, transaksi.getTotalHarga());
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Transaksi berhasil disimpan.";
+            } else {
+                result = "Transaksi gagal disimpan.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Fetch all Transaksi records from the database
+    public static List<Transaksi> getAllTransaksi() {
+        List<Transaksi> daftarTransaksi = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga " +
+                           "FROM tb_transaksi t " +
+                           "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                           "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                           "ORDER BY t.id_transaksi ASC";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String idTransaksi = rs.getString("id_transaksi").trim();
+                String tanggal = rs.getString("tanggal").trim();
+                String namaPelanggan = rs.getString("nama_pelanggan").trim();
+                String idMobil = rs.getString("id_mobil").trim();
+                String model = rs.getString("model").trim();
+                String merk = rs.getString("merk").trim();
+                int durasi = rs.getInt("durasi");
+                double denda = rs.getDouble("denda");
+                double hargaSewa = rs.getDouble("total_harga") - denda;
+
+                Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
+                Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
+
+                Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
+                daftarTransaksi.add(transaksi);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return daftarTransaksi;
+    }
+
+    // Update the denda for a specific Transaksi in the database
+    public static String updateDendaInDatabase(String idTransaksi, double denda) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "UPDATE tb_transaksi SET denda = ?, total_harga = total_harga + ? WHERE id_transaksi = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setDouble(1, denda);
+            ps.setDouble(2, denda);
+            ps.setString(3, idTransaksi);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Denda berhasil diperbarui.";
+            } else {
+                result = "Denda gagal diperbarui.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Generate the next ID for a new Transaksi
+    public static String generateNextId() {
+        int maxId = 0;
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT MAX(CAST(SUBSTRING(id_transaksi, 4) AS UNSIGNED)) AS max_id FROM tb_transaksi";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                maxId = rs.getInt("max_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "TRX" + String.format("%04d", maxId + 1);
     }
 }

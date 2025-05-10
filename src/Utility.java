@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class Utility {
     public static JLabel styleLabel(String text) {
@@ -57,5 +59,24 @@ public class Utility {
                 }
             }
         });
+    }
+
+    public static Connection connectDB(){
+        Connection conn = null;
+
+        try{
+        // open koneksi MYSQL to Java using mysql-connector-j-8.0.31.jar
+        String database = "jdbc:mysql://localhost:3306/db_rexrents";
+        String username = "root";
+        String password = "";
+        conn = DriverManager.getConnection(database, username, password);
+
+        // Cek apakah koneksinya berhasil
+        System.out.println("Koneksi MySQL berhasil");
+        }
+        catch(Exception e){
+        System.out.println(e.getMessage());
+        }
+        return conn;
     }
 }

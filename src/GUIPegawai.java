@@ -1,6 +1,6 @@
 import java.awt.*;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,10 +13,7 @@ public class GUIPegawai extends JFrame {
     private JButton dataPelangganButton;
     private JButton kembalikanMobilButton;
     private JButton signOutButton;
-    private ArrayList<Pelanggan> daftarPelanggan = new ArrayList<>(Pelanggan.readFromCSV());
-    private ArrayList<Mobil> daftarMobil = new ArrayList<>(Mobil.readFromCSV("daftarmobil.csv"));
-    private ArrayList<Transaksi> daftarTransaksi = new ArrayList<>(Transaksi.readFromCSV("transaksi.csv"));
-    private JTextField durasiField, hargaSewaField;
+    private List<Mobil> daftarMobil = Mobil.getAllMobil(); // Fetch mobil data from the database
     private JTextField idPelangganField;
     private JTable pelangganTable;
 
@@ -171,7 +168,7 @@ public class GUIPegawai extends JFrame {
         JLabel idMobilLabel = new JLabel("ID Mobil");
         JLabel modelLabel = new JLabel("Model");
         JLabel merkLabel = new JLabel("Merk");
-        JLabel durasiLabel = new JLabel("Durasi sewa");
+        JLabel durasiLabel = new JLabel("Durasi Sewa");
         JLabel hargaSewaLabel = new JLabel("Harga Sewa");
 
         formPanel.add(pelangganLabel, gbc);
@@ -199,36 +196,31 @@ public class GUIPegawai extends JFrame {
         gbc.ipadx = 50;
         gbc.ipady = 5;
 
-        // PelangganField
         JTextField pelangganField = Utility.styleTextField(false);
         formPanel.add(pelangganField, gbc);
 
         gbc.gridy++;
-        // ID Mobil Field (auto-generated)
         JTextField idMobilField = Utility.styleTextField(false);
         formPanel.add(idMobilField, gbc);
-        // model
+
         gbc.gridy++;
         JTextField modelField = Utility.styleTextField(false);
         formPanel.add(modelField, gbc);
 
-        // merk
         gbc.gridy++;
         JTextField merkField = Utility.styleTextField(false);
         formPanel.add(merkField, gbc);
 
-        // durasi
         gbc.gridy++;
-        durasiField = new JTextField(10);
+        JTextField durasiField = new JTextField(10);
         durasiField.setBackground(new Color(220, 230, 250));
         durasiField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180)),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         formPanel.add(durasiField, gbc);
 
-        // hargasewa
         gbc.gridy++;
-        hargaSewaField = Utility.styleTextField(false);
+        JTextField hargaSewaField = Utility.styleTextField(false);
         formPanel.add(hargaSewaField, gbc);
 
         // Buttons
@@ -236,7 +228,7 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton tambahButton = Utility.styleButton("Tambah", new Color(255, 102, 0)); // oren for "Tambah"
+        JButton tambahButton = Utility.styleButton("Tambah", new Color(255, 102, 0)); // Orange for "Tambah"
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -262,13 +254,11 @@ public class GUIPegawai extends JFrame {
         tableModelAtas.setRowCount(0); // Clear table
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
-        for (Mobil m : daftarMobil) {
-            if (m.isTersedia()) {
-                tableModelAtas.addRow(new Object[] {
-                        m.getIdMobil(), m.getModel(), m.getMerk(),
-                        formatRupiah.format(m.getHargaSewa()) // Format harga sewa ke Rupiah
-                });
-            }
+        for (Mobil m : Mobil.getMobilTersedia()) {
+            tableModelAtas.addRow(new Object[] {
+                    m.getIdMobil(), m.getModel(), m.getMerk(),
+                    formatRupiah.format(m.getHargaSewa()) // Format harga sewa to Rupiah
+            });
         }
 
         // Tabel bawah (data pelanggan)
@@ -281,12 +271,11 @@ public class GUIPegawai extends JFrame {
         };
 
         JTable tableBawah = Utility.styleTable(tableModelBawah);
-        tableBawah.setGridColor(new Color(200, 200, 200));
         JScrollPane scrollPaneBawah = new JScrollPane(tableBawah);
 
         // Populate the table bawah with pelanggan data
         tableModelBawah.setRowCount(0); // Clear table
-        for (Pelanggan p : daftarPelanggan) {
+        for (Pelanggan p : Pelanggan.getAllPelanggan()) {
             tableModelBawah.addRow(new Object[] {
                     p.getIdPelanggan(), p.getNama(), p.getNoHp(),
                     p.getNoKtp(), p.getAlamat(), p.getGender()
@@ -303,15 +292,13 @@ public class GUIPegawai extends JFrame {
                     String merk = tableModelAtas.getValueAt(selectedRow, 2).toString(); // Merk
                     String hargaSewa = tableModelAtas.getValueAt(selectedRow, 3).toString(); // Harga Sewa
 
-                    // Hapus simbol "Rp" dan pemisah ribuan sebelum parsing
+                    // Remove "Rp" and thousand separators before parsing
                     hargaSewa = hargaSewa.replace("Rp", "").replace(".", "").replace(",", ".").trim();
 
-                    idMobilField.setText(id); // Set ID Mobil ke field
-                    modelField.setText(model); // Set Model ke field
-                    merkField.setText(merk); // Set Merk ke field
-                    // Format harga sewa ke Rupiah sebelum ditampilkan
-                    hargaSewaField.setText(formatRupiah.format(Double.parseDouble(hargaSewa))); // Format ke Rupiah //
-                                                                                                // // field
+                    idMobilField.setText(id); // Set ID Mobil to field
+                    modelField.setText(model); // Set Model to field
+                    merkField.setText(merk); // Set Merk to field
+                    hargaSewaField.setText(formatRupiah.format(Double.parseDouble(hargaSewa))); // Format to Rupiah
                 }
             }
         });
@@ -321,78 +308,18 @@ public class GUIPegawai extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tableBawah.getSelectedRow();
                 if (selectedRow != -1) {
-                    // Ambil nama pelanggan dari kolom ke-1 (index 1) tabel bawah
                     String namaPelanggan = tableModelBawah.getValueAt(selectedRow, 1).toString();
-
-                    // Set nama pelanggan ke namaPelangganField
                     pelangganField.setText(namaPelanggan);
                 }
             }
         });
 
-        hargaSewaField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                formatHargaSewa();
-            }
-
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                formatHargaSewa();
-            }
-
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                formatHargaSewa();
-            }
-
-            private void formatHargaSewa() {
-                try {
-                    String text = hargaSewaField.getText().replace("Rp", "").replace(".", "").replace(",", ".").trim();
-                    if (!text.isEmpty()) {
-                        double harga = Double.parseDouble(text);
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                        SwingUtilities.invokeLater(() -> hargaSewaField.setText(formatRupiah.format(harga)));
-                    }
-                } catch (NumberFormatException ex) {
-                    // Jika input tidak valid, biarkan kosong
-                }
-            }
-        });
-
-        // listener hargasewafield
-        hargaSewaField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                updateHargaSewaLabel();
-            }
-
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                updateHargaSewaLabel();
-            }
-
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                updateHargaSewaLabel();
-            }
-
-            private void updateHargaSewaLabel() {
-                try {
-                    // Format harga sewa ke Rupiah
-                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                    double harga = Double.parseDouble(hargaSewaField.getText().trim());
-                    hargaSewaLabel.setText("Harga Sewa: " + formatRupiah.format(harga));
-                } catch (NumberFormatException ex) {
-                }
-            }
-        });
-
+        // Add action listener to the "Tambah" button
         tambahButton.addActionListener(event -> {
             String idMobil = idMobilField.getText();
             String pelangganName = pelangganField.getText();
             String durasi = durasiField.getText();
             String hargaSewa = hargaSewaField.getText();
-
-            // Debugging: Log input values
-            System.out.println("ID Mobil: " + idMobil);
-            System.out.println("Nama Pelanggan: " + pelangganName);
-            System.out.println("Durasi: " + durasi);
-            System.out.println("Harga Sewa: " + hargaSewa);
 
             // Validate input
             if (idMobil.isEmpty() || pelangganName.isEmpty() || durasi.isEmpty() || hargaSewa.isEmpty()) {
@@ -410,14 +337,11 @@ public class GUIPegawai extends JFrame {
             try {
                 int durasiInt = Integer.parseInt(durasi);
 
-                // Cari mobil berdasarkan ID
-                Mobil selectedMobil = null;
-                for (Mobil mobil : daftarMobil) {
-                    if (mobil.getIdMobil().equals(idMobil)) {
-                        selectedMobil = mobil;
-                        break;
-                    }
-                }
+                // Find mobil by ID
+                Mobil selectedMobil = Mobil.getAllMobil().stream()
+                        .filter(mobil -> mobil.getIdMobil().equals(idMobil))
+                        .findFirst()
+                        .orElse(null);
 
                 if (selectedMobil == null) {
                     JOptionPane.showMessageDialog(null, "Mobil tidak ditemukan!",
@@ -425,36 +349,43 @@ public class GUIPegawai extends JFrame {
                     return;
                 }
 
-                // Debugging: Log mobil yang ditemukan
-                System.out.println("Mobil ditemukan: " + selectedMobil.getModel());
-
-                // Perbarui status mobil menjadi tidak tersedia
+                // Update mobil status to unavailable
                 selectedMobil.setStatus(false);
-                Mobil.writeToCSV(daftarMobil); // Simpan perubahan ke CSV
+                Mobil.updateInDatabase(selectedMobil); // Update mobil status in the database
 
-                // Buat objek pelanggan
-                Pelanggan pelanggan = new Pelanggan(pelangganName, "", "", "", "");
+                // Find pelanggan by name
+                Pelanggan pelanggan = Pelanggan.getAllPelanggan().stream()
+                        .filter(p -> p.getNama().equalsIgnoreCase(pelangganName))
+                        .findFirst()
+                        .orElse(null);
 
-                // Buat objek transaksi baru
-                Transaksi transaksiBaru = new Transaksi(java.time.LocalDate.now().toString(), pelanggan, selectedMobil,
-                        durasiInt);
-                transaksiBaru.setDenda(0.00); // Set denda ke 0.00
-                daftarTransaksi.add(transaksiBaru); // Tambahkan ke daftar transaksi
+                if (pelanggan == null) {
+                    JOptionPane.showMessageDialog(null, "Pelanggan tidak ditemukan!",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                // Debugging: Log transaksi yang ditambahkan
-                System.out.println("Transaksi berhasil ditambahkan: " + transaksiBaru.getIdTransaksi());
+                // Create a new transaksi
+                Transaksi transaksiBaru = new Transaksi(
+                        Transaksi.generateNextId(),
+                        java.time.LocalDate.now().toString(),
+                        pelanggan,
+                        selectedMobil,
+                        durasiInt,
+                        0.00 // No denda for new transactions
+                );
 
-                // Simpan transaksi ke file CSV
-                Transaksi.writeToCSV(daftarTransaksi);
+                String result = Transaksi.addToDatabase(transaksiBaru); // Save transaksi to the database
+                System.out.println(result);
 
-                // Refresh tabel
+                // Refresh tables
                 refreshTambahTransaksiPanel();
                 refreshKembalikanMobilPanel();
 
                 JOptionPane.showMessageDialog(null, "Transaksi berhasil ditambahkan!",
                         "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
-                idPelangganField.setText(generateNextIdPelanggan()); // Generate ID baru
+                // Clear form fields
                 pelangganField.setText("");
                 idMobilField.setText("");
                 modelField.setText("");
@@ -465,39 +396,20 @@ public class GUIPegawai extends JFrame {
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Durasi dan Harga Sewa harus berupa angka!",
                         "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace(); // Debugging: Log error
+                e.printStackTrace();
             }
         });
 
-        // Gunakan JSplitPane untuk membagi area tabel
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneAtas,
-                scrollPaneBawah);
-        splitPane.setResizeWeight(0.5); // Proporsi ukuran awal 50:50
-        splitPane.setDividerSize(5); // Ukuran garis pembagi
+        // Use JSplitPane to divide the table area
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneAtas, scrollPaneBawah);
+        splitPane.setResizeWeight(0.5); // Initial size ratio 50:50
+        splitPane.setDividerSize(5); // Divider size
 
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
         tablePanel.add(splitPane, BorderLayout.CENTER);
 
         return panel;
-    }
-
-    // menghitung hargasewa
-    private void calculateHargaSewa() {
-        if (durasiField == null || hargaSewaField == null) {
-            return;
-        }
-
-        try {
-            int durasi = Integer.parseInt(durasiField.getText().trim());
-            int hargaPerHari = Integer.parseInt(hargaSewaField.getText().trim());
-            int totalHarga = durasi * hargaPerHari;
-
-            java.text.NumberFormat formatter = java.text.NumberFormat.getInstance();
-            String totalFormatted = formatter.format(totalHarga);
-
-        } catch (NumberFormatException e) {
-        }
     }
 
     private JPanel dataPelanggan() {
@@ -546,49 +458,27 @@ public class GUIPegawai extends JFrame {
         gbc.ipadx = 50;
         gbc.ipady = 5;
 
-        // ID Pelanggan Field (auto-generated)
-        idPelangganField = Utility.styleTextField(false);
-        gbc.gridx = 0;
-        formPanel.add(idPelangganLabel, gbc); // Tambahkan label
-        gbc.gridx = 1;
+        JTextField idPelangganField = Utility.styleTextField(false);
         formPanel.add(idPelangganField, gbc);
 
         gbc.gridy++;
         JTextField namaField = new JTextField(20);
-        namaField.setBackground(new Color(220, 230, 250));
-        namaField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         formPanel.add(namaField, gbc);
 
         gbc.gridy++;
         JTextField noHPField = new JTextField(15);
-        noHPField.setBackground(new Color(220, 230, 250));
-        noHPField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         formPanel.add(noHPField, gbc);
 
         gbc.gridy++;
         JTextField noKTPField = new JTextField(16);
-        noKTPField.setBackground(new Color(220, 230, 250));
-        noKTPField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         formPanel.add(noKTPField, gbc);
 
         gbc.gridy++;
         JTextField alamatField = new JTextField(16);
-        alamatField.setBackground(new Color(220, 230, 250));
-        alamatField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         formPanel.add(alamatField, gbc);
 
         gbc.gridy++;
         JComboBox<String> genderComboBox = new JComboBox<>(new String[] { "L", "P" });
-        genderComboBox.setBackground(new Color(220, 230, 250));
-        genderComboBox.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
         formPanel.add(genderComboBox, gbc);
 
         // Buttons
@@ -596,7 +486,7 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton tambahButton = Utility.styleButton("Tambah", (new Color(0, 153, 76))); // Green for "Tambah"
+        JButton tambahButton = Utility.styleButton("Tambah", new Color(0, 153, 76)); // Green for "Tambah"
         JButton simpanButton = Utility.styleButton("Simpan", Color.RED); // Red for "Simpan"
         JButton deleteButton = Utility.styleButton("Delete", new Color(255, 102, 0)); // Orange for "Delete"
 
@@ -619,12 +509,13 @@ public class GUIPegawai extends JFrame {
             }
         };
 
-        pelangganTable = Utility.styleTable(pelangganTableModel);
+        JTable pelangganTable = Utility.styleTable(pelangganTableModel);
         JScrollPane scrollPane = new JScrollPane(pelangganTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
-        pelangganTableModel.setRowCount(0); // Clear table
-        for (Pelanggan p : daftarPelanggan) {
+        // Populate the table with data from the database
+        pelangganTableModel.setRowCount(0);
+        for (Pelanggan p : Pelanggan.getAllPelanggan()) {
             pelangganTableModel.addRow(new Object[] {
                     p.getIdPelanggan(), p.getNama(), p.getNoHp(),
                     p.getNoKtp(), p.getAlamat(), p.getGender()
@@ -632,31 +523,7 @@ public class GUIPegawai extends JFrame {
         }
 
         // Generate the next ID Pelanggan
-        String nextIdPelanggan = generateNextIdPelanggan();
-        idPelangganField.setText(nextIdPelanggan);
-
-        // action listener memilih tabel
-        pelangganTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedRow = pelangganTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    // Set the fields with the selected row's data
-                    String id = pelangganTableModel.getValueAt(selectedRow, 0).toString();
-                    String nama = pelangganTableModel.getValueAt(selectedRow, 1).toString();
-                    String noHP = pelangganTableModel.getValueAt(selectedRow, 2).toString();
-                    String noKTP = pelangganTableModel.getValueAt(selectedRow, 3).toString();
-                    String alamat = pelangganTableModel.getValueAt(selectedRow, 4).toString();
-                    String gender = pelangganTableModel.getValueAt(selectedRow, 5).toString();
-
-                    idPelangganField.setText(id); // Set the selected ID
-                    namaField.setText(nama);
-                    noHPField.setText(noHP);
-                    noKTPField.setText(noKTP);
-                    alamatField.setText(alamat);
-                    genderComboBox.setSelectedItem(gender);
-                }
-            }
-        });
+        idPelangganField.setText(Pelanggan.generateNextId());
 
         // Add action listener to the tambah button
         tambahButton.addActionListener(event -> {
@@ -674,72 +541,25 @@ public class GUIPegawai extends JFrame {
                 return;
             }
 
-            if (!nama.matches("[a-zA-Z\\s]+")) { // Nama hanya boleh mengandung huruf dan spasi
-                JOptionPane.showMessageDialog(null, "Nama hanya boleh mengandung huruf dan spasi!",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (!noHP.matches("\\d{10,13}")) { // No HP harus berupa angka dengan panjang 10-13 digit
-                JOptionPane.showMessageDialog(null, "No HP harus berupa angka dengan panjang 10-13 digit!",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (!noKTP.matches("\\d{16}")) { // No KTP harus berupa angka dengan panjang 16 digit
-                JOptionPane.showMessageDialog(null, "No KTP harus berupa angka dengan panjang 16 digit!",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Check if ID already exists
-            boolean idExists = false;
-            for (int i = 0; i < pelangganTableModel.getRowCount(); i++) {
-                if (pelangganTableModel.getValueAt(i, 0).toString().equals(id)) {
-                    idExists = true;
-                    break;
-                }
-            }
-
-            if (idExists) {
-                JOptionPane.showMessageDialog(null, "ID Pelanggan sudah ada. Silakan gunakan ID baru.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-
-                // Debugging: Log untuk memastikan reset dijalankan
-                System.out.println("Reset form setelah ID pelanggan ditemukan sudah ada.");
-
-                // Reset form setelah ID pelanggan ditemukan sudah ada
-                idPelangganField.setText(generateNextIdPelanggan());
-                namaField.setText("");
-                noHPField.setText("");
-                noKTPField.setText("");
-                alamatField.setText("");
-                genderComboBox.setSelectedIndex(0);
-
-                return; // Pastikan return ada di sini setelah reset
-            }
-
-            // Add new pelanggan to the list and table
+            // Add new pelanggan to the database
             Pelanggan pelangganBaru = new Pelanggan(nama, noHP, noKTP, alamat, gender);
-            daftarPelanggan.add(pelangganBaru);
+            String result = Pelanggan.addToDatabase(pelangganBaru);
+            System.out.println(result);
 
-            pelangganTableModel.addRow(new Object[] {
-                    pelangganBaru.getIdPelanggan(),
-                    pelangganBaru.getNama(),
-                    pelangganBaru.getNoHp(),
-                    pelangganBaru.getNoKtp(),
-                    pelangganBaru.getAlamat(),
-                    pelangganBaru.getGender()
-            });
-
-            // Save pelanggan data to CSV
-            savePelangganData(pelangganTableModel);
+            // Refresh table
+            pelangganTableModel.setRowCount(0);
+            for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                pelangganTableModel.addRow(new Object[] {
+                        p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                        p.getNoKtp(), p.getAlamat(), p.getGender()
+                });
+            }
 
             JOptionPane.showMessageDialog(null, "Pelanggan berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
             // Reset form
-            idPelangganField.setText(generateNextIdPelanggan());
+            idPelangganField.setText(Pelanggan.generateNextId());
             namaField.setText("");
             noHPField.setText("");
             noKTPField.setText("");
@@ -747,7 +567,7 @@ public class GUIPegawai extends JFrame {
             genderComboBox.setSelectedIndex(0);
         });
 
-        // Add action listener to "Simpan" button
+        // Add action listener to the simpan button
         simpanButton.addActionListener(e -> {
             int selectedRow = pelangganTable.getSelectedRow();
             if (selectedRow == -1) {
@@ -763,26 +583,25 @@ public class GUIPegawai extends JFrame {
             String alamat = alamatField.getText();
             String gender = genderComboBox.getSelectedItem().toString();
 
-            // Validasi input
-            if (nama.trim().isEmpty() || noHP.trim().isEmpty() || noKTP.trim().isEmpty() || alamat.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Semua field harus diisi.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+            // Update pelanggan in the database
+            Pelanggan pelanggan = new Pelanggan(id, nama, noHP, noKTP, alamat, gender);
+            String result = Pelanggan.updateInDatabase(pelanggan);
+            System.out.println(result);
+
+            // Refresh table
+            pelangganTableModel.setRowCount(0);
+            for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                pelangganTableModel.addRow(new Object[] {
+                        p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                        p.getNoKtp(), p.getAlamat(), p.getGender()
+                });
             }
 
-            // Perbarui data di tabel
-            pelangganTableModel.setValueAt(id, selectedRow, 0);
-            pelangganTableModel.setValueAt(nama, selectedRow, 1);
-            pelangganTableModel.setValueAt(noHP, selectedRow, 2);
-            pelangganTableModel.setValueAt(noKTP, selectedRow, 3);
-            pelangganTableModel.setValueAt(alamat, selectedRow, 4);
-            pelangganTableModel.setValueAt(gender, selectedRow, 5);
+            JOptionPane.showMessageDialog(null, "Pelanggan berhasil diperbarui!",
+                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
-            // Simpan perubahan ke file CSV
-            savePelangganData(pelangganTableModel);
-
-            // Kosongkan form setelah simpan
-            idPelangganField.setText(generateNextIdPelanggan());
+            // Reset form
+            idPelangganField.setText(Pelanggan.generateNextId());
             namaField.setText("");
             noHPField.setText("");
             noKTPField.setText("");
@@ -790,6 +609,7 @@ public class GUIPegawai extends JFrame {
             genderComboBox.setSelectedIndex(0);
         });
 
+        // Add action listener to the delete button
         deleteButton.addActionListener(e -> {
             int selectedRow = pelangganTable.getSelectedRow();
             if (selectedRow == -1) {
@@ -798,60 +618,37 @@ public class GUIPegawai extends JFrame {
                 return;
             }
 
-            int confirm = JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus pelanggan ini?",
-                    "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
+            String id = pelangganTableModel.getValueAt(selectedRow, 0).toString();
 
-            if (confirm == JOptionPane.YES_OPTION) {
-                ((DefaultTableModel) pelangganTable.getModel()).removeRow(selectedRow);
+            // Delete pelanggan from the database
+            String result = Pelanggan.deleteFromDatabase(id);
+            System.out.println(result);
 
-                savePelangganData((DefaultTableModel) pelangganTable.getModel());
-
-                JOptionPane.showMessageDialog(null, "Pelanggan berhasil dihapus.",
-                        "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
-                // Reset form setelah hapus
-                idPelangganField.setText(generateNextIdPelanggan());
-                namaField.setText("");
-                noHPField.setText("");
-                noKTPField.setText("");
-                alamatField.setText("");
-                genderComboBox.setSelectedIndex(0);
+            // Refresh table
+            pelangganTableModel.setRowCount(0);
+            for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                pelangganTableModel.addRow(new Object[] {
+                        p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                        p.getNoKtp(), p.getAlamat(), p.getGender()
+                });
             }
+
+            JOptionPane.showMessageDialog(null, "Pelanggan berhasil dihapus!",
+                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+            // Reset form
+            idPelangganField.setText(Pelanggan.generateNextId());
+            namaField.setText("");
+            noHPField.setText("");
+            noKTPField.setText("");
+            alamatField.setText("");
+            genderComboBox.setSelectedIndex(0);
         });
 
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
-    }
-
-    private void savePelangganData(DefaultTableModel model) {
-        try {
-            java.nio.file.Path path = java.nio.file.Paths.get("daftarpelanggan.csv");
-            if (!java.nio.file.Files.exists(path)) {
-                java.nio.file.Files.createFile(path);
-            }
-
-            java.util.List<String> lines = new java.util.ArrayList<>();
-            lines.add("ID;Nama;NoHP;NoKTP;Alamat;Gender");
-
-            for (int i = 0; i < model.getRowCount(); i++) {
-                StringBuilder sb = new StringBuilder();
-                for (int j = 0; j < model.getColumnCount(); j++) {
-                    sb.append(model.getValueAt(i, j));
-                    if (j < model.getColumnCount() - 1) {
-                        sb.append(";");
-                    }
-                }
-                lines.add(sb.toString());
-            }
-
-            java.nio.file.Files.write(path, lines);
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error saving customer data: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     private JPanel kembalikanMobil() {
@@ -931,12 +728,10 @@ public class GUIPegawai extends JFrame {
 
         // Populate the table with unavailable mobil
         tableModel.setRowCount(0);
-        for (Mobil mobil : daftarMobil) {
-            if (!mobil.isTersedia()) {
-                tableModel.addRow(new Object[] {
-                        mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
-                });
-            }
+        for (Mobil mobil : Mobil.getMobilTidakTersedia()) {
+            tableModel.addRow(new Object[] {
+                    mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
+            });
         }
 
         // Add selection listener to the table
@@ -987,33 +782,34 @@ public class GUIPegawai extends JFrame {
                 }
             }
 
-            // Find the mobil and set its status to true
-            for (Mobil mobil : daftarMobil) {
-                if (mobil.getIdMobil().equals(idMobil)) {
-                    mobil.setStatus(true); // Set status to available
-                    Mobil.writeToCSV(daftarMobil); // Save changes to CSV
-                    break;
-                }
+            // Update mobil status to available
+            Mobil mobil = Mobil.getAllMobil().stream()
+                    .filter(m -> m.getIdMobil().equals(idMobil))
+                    .findFirst()
+                    .orElse(null);
+
+            if (mobil != null) {
+                mobil.setStatus(true);
+                Mobil.updateInDatabase(mobil); // Update mobil status in the database
             }
 
             // Update the corresponding Transaksi with the calculated Denda
-            for (Transaksi transaksi : daftarTransaksi) {
-                if (transaksi.getMobil().getIdMobil().equals(idMobil)) {
-                    transaksi.setDenda(denda); // Set the Denda
-                    Transaksi.writeToCSV(daftarTransaksi); // Save changes to transaksi.csv
-                    break;
-                }
+            Transaksi transaksi = Transaksi.getAllTransaksi().stream()
+                    .filter(t -> t.getMobil().getIdMobil().equals(idMobil))
+                    .findFirst()
+                    .orElse(null);
+
+            if (transaksi != null) {
+                transaksi.setDenda(denda);
+                Transaksi.updateDendaInDatabase(transaksi.getIdTransaksi(), denda); // Update denda in the database
             }
 
             // Refresh the table
             tableModel.setRowCount(0);
-            for (Mobil mobil : daftarMobil) {
-                if (!mobil.isTersedia()) {
-                    tableModel.addRow(new Object[] {
-                            mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(),
-                            formatRupiah.format(mobil.getHargaSewa())
-                    });
-                }
+            for (Mobil m : Mobil.getMobilTidakTersedia()) {
+                tableModel.addRow(new Object[] {
+                        m.getIdMobil(), m.getModel(), m.getMerk(), formatRupiah.format(m.getHargaSewa())
+                });
             }
 
             // Clear the fields
@@ -1052,7 +848,6 @@ public class GUIPegawai extends JFrame {
         // Jika panel Customer Data dibuka, load data dan generate next ID pelanggan
         if (panelName.equals("dataPelanggan")) {
             if (pelangganTable != null) {
-                DefaultTableModel pelangganTableModel = (DefaultTableModel) pelangganTable.getModel();
                 String nextIdPelanggan = generateNextIdPelanggan();
                 idPelangganField.setText(nextIdPelanggan);
             }
@@ -1063,7 +858,7 @@ public class GUIPegawai extends JFrame {
         int maxId = 0;
 
         // Iterate through the list of Pelanggan to find the highest ID
-        for (Pelanggan pelanggan : daftarPelanggan) {
+        for (Pelanggan pelanggan : Pelanggan.getAllPelanggan()) {
             String id = pelanggan.getIdPelanggan();
             if (id.startsWith("P")) {
                 try {
@@ -1093,12 +888,11 @@ public class GUIPegawai extends JFrame {
 
         // Populate the table with available mobil
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        daftarMobil = Mobil.getMobilTersedia(); // Fetch available mobil from the database
         for (Mobil mobil : daftarMobil) {
-            if (mobil.isTersedia()) {
-                tableModel.addRow(new Object[] {
-                        mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
-                });
-            }
+            tableModel.addRow(new Object[] {
+                    mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
+            });
         }
     }
 
@@ -1114,12 +908,11 @@ public class GUIPegawai extends JFrame {
 
         // Populate the table with unavailable mobil
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        daftarMobil = Mobil.getMobilTidakTersedia(); // Fetch unavailable mobil from the database
         for (Mobil mobil : daftarMobil) {
-            if (!mobil.isTersedia()) {
-                tableModel.addRow(new Object[] {
-                        mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
-                });
-            }
+            tableModel.addRow(new Object[] {
+                    mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
+            });
         }
     }
 }

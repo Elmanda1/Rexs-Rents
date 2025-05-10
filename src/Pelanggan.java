@@ -1,8 +1,8 @@
-import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pelanggan {
-    private static ArrayList<Pelanggan> daftarPelanggan = new ArrayList<>();
     private String idPelanggan;
     private String nama;
     private String noHp;
@@ -10,13 +10,34 @@ public class Pelanggan {
     private String alamat;
     private String gender;
 
+    // Default constructor
+    public Pelanggan() {
+        this.idPelanggan = "";
+        this.nama = "";
+        this.noHp = "";
+        this.noKtp = "";
+        this.alamat = "";
+        this.gender = "";
+    }
+
+    // Constructor with parameters
+    public Pelanggan(String idPelanggan, String nama, String noHp, String noKtp, String alamat, String gender) {
+        this.idPelanggan = idPelanggan != null ? idPelanggan : "";
+        this.nama = nama != null ? nama : "";
+        this.noHp = noHp != null ? noHp : "";
+        this.noKtp = noKtp != null ? noKtp : "";
+        this.alamat = alamat != null ? alamat : "";
+        this.gender = gender != null ? gender : "";
+    }
+
+    // Constructor with five parameters (no ID)
     public Pelanggan(String nama, String noHp, String noKtp, String alamat, String gender) {
-        this.idPelanggan = "P" + String.format("%03d", daftarPelanggan.size() + 1);
-        this.nama = nama;
-        this.noHp = noHp;
-        this.noKtp = noKtp;
-        this.alamat = alamat;
-        this.gender = gender;
+        this.idPelanggan = ""; // Default value for ID
+        this.nama = nama != null ? nama : "";
+        this.noHp = noHp != null ? noHp : "";
+        this.noKtp = noKtp != null ? noKtp : "";
+        this.alamat = alamat != null ? alamat : "";
+        this.gender = gender != null ? gender : "";
     }
 
     public String getIdPelanggan() {
@@ -62,52 +83,118 @@ public class Pelanggan {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    
-    public static ArrayList<Pelanggan> readFromCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader("daftarpelanggan.csv"))) { // Perbaiki path
-            String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(";");
-                if (data.length < 6)
-                    continue;
 
-                String id = data[0];
-                String nama = data[1];
-                String noHp = data[2];
-                String noKtp = data[3];
-                String alamat = data[4];
-                String gender = data[5];
+    // Fetch all Pelanggan records from the database
+    public static List<Pelanggan> getAllPelanggan() {
+        List<Pelanggan> daftarPelanggan = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT * FROM tb_pelanggan ORDER BY id_pelanggan ASC";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
 
-                Pelanggan pelanggan = new Pelanggan(nama, noHp, noKtp, alamat, gender);
-                pelanggan.idPelanggan = id;
-                daftarPelanggan.add(pelanggan);
+            while (rs.next()) {
+                String idPelanggan = rs.getString("id_pelanggan").trim();
+                String nama = rs.getString("nama").trim();
+                String noHp = rs.getString("noHP").trim();
+                String noKtp = rs.getString("noKTP").trim();
+                String alamat = rs.getString("alamat").trim();
+                String gender = rs.getString("gender").trim();
+
+                daftarPelanggan.add(new Pelanggan(idPelanggan, nama, noHp, noKtp, alamat, gender));
             }
-            System.out.println("Data pelanggan berhasil dibaca dari file.");
-        } catch (IOException e) {
-            System.out.println("Gagal membaca file: " + e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return daftarPelanggan;
     }
 
-    public static void writeToCSV(ArrayList<Pelanggan> daftarPelanggan) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("daftarpelanggan.csv"))) { // Perbaiki path
-            bw.write("ID;Nama;NoHP;NoKTP;Alamat;Gender");
-            bw.newLine();
+    // Add a new Pelanggan record to the database
+    public static String addToDatabase(Pelanggan pelanggan) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "INSERT INTO tb_pelanggan (id_pelanggan, nama, no_hp, no_ktp, alamat, gender) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(query);
 
-            for (Pelanggan pelanggan : daftarPelanggan) {
-                bw.write(String.format("%s;%s;%s;%s;%s;%s",
-                        pelanggan.getIdPelanggan(),
-                        pelanggan.getNama(),
-                        pelanggan.getNoHp(),
-                        pelanggan.getNoKtp(),
-                        pelanggan.getAlamat(),
-                        pelanggan.getGender()));
-                bw.newLine();
+            ps.setString(1, pelanggan.getIdPelanggan());
+            ps.setString(2, pelanggan.getNama());
+            ps.setString(3, pelanggan.getNoHp());
+            ps.setString(4, pelanggan.getNoKtp());
+            ps.setString(5, pelanggan.getAlamat());
+            ps.setString(6, pelanggan.getGender());
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Pelanggan berhasil ditambahkan.";
+            } else {
+                result = "Pelanggan gagal ditambahkan.";
             }
-            System.out.println("Data pelanggan berhasil disimpan ke file.");
-        } catch (IOException e) {
-            System.out.println("Gagal menyimpan file: " + e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return result;
+    }
+
+    // Update an existing Pelanggan record in the database
+    public static String updateInDatabase(Pelanggan pelanggan) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "UPDATE tb_pelanggan SET nama = ?, no_hp = ?, no_ktp = ?, alamat = ?, gender = ? WHERE id_pelanggan = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, pelanggan.getNama());
+            ps.setString(2, pelanggan.getNoHp());
+            ps.setString(3, pelanggan.getNoKtp());
+            ps.setString(4, pelanggan.getAlamat());
+            ps.setString(5, pelanggan.getGender());
+            ps.setString(6, pelanggan.getIdPelanggan());
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Pelanggan berhasil diupdate.";
+            } else {
+                result = "Pelanggan gagal diupdate.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Delete a Pelanggan record from the database
+    public static String deleteFromDatabase(String idPelanggan) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "DELETE FROM tb_pelanggan WHERE id_pelanggan = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, idPelanggan);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Pelanggan berhasil dihapus.";
+            } else {
+                result = "Pelanggan gagal dihapus.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Generate the next ID for a new Pelanggan
+    public static String generateNextId() {
+        int maxId = 0;
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT MAX(CAST(SUBSTRING(id_pelanggan, 2) AS UNSIGNED)) AS max_id FROM tb_pelanggan";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                maxId = rs.getInt("max_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "P" + String.format("%03d", maxId + 1);
     }
 }
