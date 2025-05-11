@@ -1,203 +1,198 @@
-import java.io.*;
-import java.text.NumberFormat;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
 
 public class Transaksi {
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    private static ArrayList<Mobil> daftarMobil = Mobil.readFromCSV();
-
-    private static int jumlahTransaksi = 0;
     private String idTransaksi;
     private String tanggal;
-    private Pegawai pegawai;
     private Pelanggan pelanggan;
     private Mobil mobil;
     private int durasiSewa;
     private double totalHarga;
+    private double denda;
 
-    public Transaksi(String tanggal, Pegawai pegawai, Pelanggan pelanggan, Mobil mobil,
-            int durasiSewa) {
-        // Menambahkan jumlahTransaksi dan membuat ID otomatis
-        jumlahTransaksi++;
-        this.idTransaksi = "TRX" + String.format("%04d", jumlahTransaksi);
+    public Transaksi(String idTransaksi, String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa, double denda) {
+        this.idTransaksi = idTransaksi;
         this.tanggal = tanggal;
-        this.pegawai = pegawai;
         this.pelanggan = pelanggan;
         this.mobil = mobil;
         this.durasiSewa = durasiSewa;
+        this.denda = denda;
+        this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda;
     }
 
-    public void proses() {
-        this.totalHarga = mobil.getHargaSewa() * durasiSewa;
-    }
-
-    public String getRingkasan() {
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    String totalHargaFormatted = formatRupiah.format(totalHarga).replace(",00", ""); // Hapus desimal
-    return idTransaksi + " | " + tanggal + " | " + pelanggan.getInfoTransaksi() + mobil.getInfoTransaksi()
-            + durasiSewa + " hari | " + totalHargaFormatted;
-}
-
-    public static void writeToCSV(ArrayList<Transaksi> daftarTransaksi) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("transaksi.csv"))) {
-            // Write header
-            bw.write("ID;Tanggal;Pegawai;Pelanggan;Mobil;Durasi;TotalHarga");
-            bw.newLine();
-
-            // Write each transaction
-            for (Transaksi transaksi : daftarTransaksi) {
-                String line = String.format(
-                        "%s;%s;%s;%s;%s;%d;%.2f",
-                        transaksi.getIdTransaksi(),
-                        transaksi.getTanggal(),
-                        transaksi.getPegawai() != null ? transaksi.getPegawai().getUsername() : "N/A",
-                        transaksi.getPelanggan().getInfoTransaksi(),
-                        transaksi.getMobil().getInfoTransaksi(),
-                        transaksi.getDurasiSewa(),
-                        transaksi.getTotalHarga());
-                bw.write(line);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static ArrayList<Transaksi> readFromCSV() {
-        ArrayList<Transaksi> daftarTransaksi = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("transaksi.csv"))) {
-            String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(";");
-                if (data.length < 7) { // Validate that the line has at least 7 fields
-                    System.out.println("Malformed line: " + line);
-                    continue;
-                }
-
-                try {
-                    String idTransaksi = data[0];
-                    String tanggal = data[1];
-                    String pegawaiName = data[2]; // Pegawai name (not used here)
-                    String pelangganInfo = data[3];
-                    String mobilInfo = data[4];
-                    int durasiSewa = Integer.parseInt(data[5]);
-                    double totalHarga = Double.parseDouble(data[6]);
-
-                    // Parse pelanggan and mobil info (adjust based on your format)
-                    String[] pelangganData = pelangganInfo.split(" | ");
-                    if (pelangganData.length < 2) {
-                        System.out.println("Malformed pelanggan info: " + pelangganInfo);
-                        continue;
-                    }
-                    String pelangganNama = pelangganData[1];
-                    Pelanggan pelanggan = new Pelanggan(pelangganNama, "", "", "", ""); // Simplified
-
-                    String[] mobilData = mobilInfo.split(" - ");
-                    if (mobilData.length < 1) {
-                        System.out.println("Malformed mobil info: " + mobilInfo);
-                        continue;
-                    }
-                    String mobilId = mobilData[0];
-                    Mobil mobil = daftarMobil.stream()
-                            .filter(m -> m.getIdMobil().equals(mobilId))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (mobil == null) {
-                        System.out.println("Mobil not found for ID: " + mobilId);
-                        continue;
-                    }
-
-                    // Create a new Transaksi object
-                    Transaksi transaksi = new Transaksi(tanggal, null, pelanggan, mobil, durasiSewa);
-                    transaksi.proses(); // Calculate totalHarga
-                    daftarTransaksi.add(transaksi);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error parsing numeric fields in line: " + line);
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return daftarTransaksi;
-    }
-
-    // Getter untuk idTransaksi
     public String getIdTransaksi() {
         return idTransaksi;
-    }
-
-    // Getter untuk durasiSewa
-    public int getDurasiSewa() {
-        return durasiSewa;
-    }
-
-    // Getter untuk mobil
-    public Mobil getMobil() {
-        return mobil;
     }
 
     public String getTanggal() {
         return tanggal;
     }
 
-    public Pegawai getPegawai() {
-        return pegawai;
-    }
-
     public Pelanggan getPelanggan() {
         return pelanggan;
+    }
+
+    public Mobil getMobil() {
+        return mobil;
+    }
+
+    public int getDurasiSewa() {
+        return durasiSewa;
     }
 
     public double getTotalHarga() {
         return totalHarga;
     }
 
-    public static String getHeader() {
-        return String.format(
-            "| %-10s | %-20s | %-5s | %-15s | %-10s | %-15s | %-5s | %-16s |",
-            "ID Trans", "Tanggal", "ID Pel", "Pelanggan", "ID Mobil", "Mobil", "Durasi", "Total Harga");
+    public double getDenda() {
+        return denda;
     }
 
-   public static void tampilkanRiwayat(ArrayList<Transaksi> daftarTransaksi) {
-    if (daftarTransaksi.isEmpty()) {
-        System.out.println("Tidak ada riwayat transaksi.");
-        return;
+    public void setDenda(double denda) {
+        this.denda = denda;
+        this.totalHarga = mobil.getHargaSewa() * durasiSewa + denda;
     }
 
-    // Tampilkan header tabel
-    System.out.println(
-        "===========================================================================================================================");
-    System.out.println(
-        "||                                                  Riwayat Transaksi                                                    ||");
-    System.out.println(
-        "===========================================================================================================================");
-    System.out.println(getHeader());
-    System.out.println(
-        "---------------------------------------------------------------------------------------------------------------------------");
+    // Add a new Transaksi record to the database
+    public static String addToDatabase(Transaksi transaksi) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "INSERT INTO tb_transaksi (id_transaksi, tanggal, id_pelanggan, id_mobil, durasi, denda, total_harga) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(query);
 
-    // Tampilkan setiap transaksi
-    for (Transaksi transaksi : daftarTransaksi) {
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-        String totalHargaFormatted = formatRupiah.format(transaksi.getTotalHarga()).replace(",00", "").replace("Rp","Rp "); // Hapus desimal
-        System.out.printf("| %-10s | %-20s | %-6s | %-15s | %-10s | %-15s | %-6d | %-16s |\n",
-            transaksi.getIdTransaksi(), transaksi.getTanggal(), transaksi.getPelanggan().getIdPelanggan(),
-            transaksi.getPelanggan().getNama(), transaksi.getMobil().getIdMobil(), transaksi.getMobil().getModel(),
-            transaksi.getDurasiSewa(), totalHargaFormatted);
+            ps.setString(1, transaksi.getIdTransaksi());
+            ps.setString(2, transaksi.getTanggal());
+            ps.setString(3, transaksi.getPelanggan().getIdPelanggan());
+            ps.setString(4, transaksi.getMobil().getIdMobil());
+            ps.setInt(5, transaksi.getDurasiSewa());
+            ps.setDouble(6, transaksi.getDenda());
+            ps.setDouble(7, transaksi.getTotalHarga());
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Transaksi berhasil disimpan.";
+            } else {
+                result = "Transaksi gagal disimpan.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
-    // Tampilkan footer tabel
-    System.out.println(
-        "===========================================================================================================================");
-}
+    // Fetch all Transaksi records from the database
+    public static List<Transaksi> getAllTransaksi() {
+        List<Transaksi> daftarTransaksi = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga " +
+                           "FROM tb_transaksi t " +
+                           "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                           "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                           "ORDER BY t.id_transaksi ASC";
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String idTransaksi = rs.getString("id_transaksi").trim();
+                    String tanggal = rs.getString("tanggal").trim();
+                    String namaPelanggan = rs.getString("nama_pelanggan").trim();
+                    String idMobil = rs.getString("id_mobil").trim();
+                    String model = rs.getString("model").trim();
+                    String merk = rs.getString("merk").trim();
+                    int durasi = rs.getInt("durasi");
+                    double denda = rs.getDouble("denda");
+                    double hargaSewa = rs.getDouble("total_harga") - denda;
 
-    public static void main(String[] args) {
-        ArrayList<Transaksi> daftarTransaksi = Transaksi.readFromCSV();
-        Transaksi.tampilkanRiwayat(daftarTransaksi);
+                    Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
+                    Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
+
+                    Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
+                    daftarTransaksi.add(transaksi);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return daftarTransaksi;
+    }
+
+    // Update the denda for a specific Transaksi in the database
+    public static String updateDendaInDatabase(String idTransaksi, double denda) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "UPDATE tb_transaksi SET denda = ?, total_harga = total_harga + ? WHERE id_transaksi = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setDouble(1, denda);
+            ps.setDouble(2, denda);
+            ps.setString(3, idTransaksi);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Denda berhasil diperbarui.";
+            } else {
+                result = "Denda gagal diperbarui.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Generate the next ID for a new Transaksi
+    public static String generateNextId() {
+        int maxId = 0;
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT MAX(CAST(SUBSTRING(id_transaksi, 4) AS UNSIGNED)) AS max_id FROM tb_transaksi";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                maxId = rs.getInt("max_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "TRX" + String.format("%04d", maxId + 1);
+    }
+
+    // Search Transaksi records by keyword
+    public static List<Transaksi> searchByKeyword(String keyword) {
+        List<Transaksi> daftarTransaksi = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga " +
+                           "FROM tb_transaksi t " +
+                           "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                           "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                           "WHERE t.id_transaksi LIKE ? OR t.tanggal LIKE ? OR p.nama LIKE ? OR m.model LIKE ? OR m.merk LIKE ?" +
+                           "ORDER BY t.tanggal ASC";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            ps.setString(3, "%" + keyword + "%");
+            ps.setString(4, "%" + keyword + "%");
+            ps.setString(5, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String idTransaksi = rs.getString("id_transaksi").trim();
+                String tanggal = rs.getString("tanggal").trim();
+                String namaPelanggan = rs.getString("nama_pelanggan").trim();
+                String idMobil = rs.getString("id_mobil").trim();
+                String model = rs.getString("model").trim();
+                String merk = rs.getString("merk").trim();
+                int durasi = rs.getInt("durasi");
+                double denda = rs.getDouble("denda");
+                double hargaSewa = rs.getDouble("total_harga") - denda;
+
+                Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
+                Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
+
+                Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
+                daftarTransaksi.add(transaksi);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return daftarTransaksi;
     }
 }
