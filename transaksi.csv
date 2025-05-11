@@ -1,9 +1,0 @@
-IDTransaksi;Tanggal;NamaPelanggan;ModelMobil;MerkMobil;Durasi;HargaSewa;Denda
-TRX0001;2025-04-28;Andi Saputra;City;Honda;3;400000.00;0.00
-TRX0002;2025-04-29;Rapip Ganteng;Xpander;Mitsubishi;2;600000.00;0.00
-TRX0003;2025-04-30;Halim Santoso;Stargazer;Hyundai;4;450000.00;0.00
-TRX0004;2025-05-01;Laila Azzahra;Ioniq 5;Hyundai;2;1200000.00;0.00
-TRX0005;2025-05-02;Rafi Ahmad;Agya;Toyota;5;250000.00;0.00
-TRX0006;2025-05-03;Satria Hidayat;Yaris;Toyota;3;400000.00;0.00
-TRX0007;2025-05-04;Falah Putri;Ertiga;Suzuki;7;300000.00;0.00
-TRX0008;2025-04-30;Rafi Ahmad;Chiron;Bugatti;9;135000000.00;0.00

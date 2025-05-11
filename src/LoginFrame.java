@@ -1,10 +1,10 @@
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import javax.swing.*;
 
 public class LoginFrame extends JFrame {
@@ -12,19 +12,18 @@ public class LoginFrame extends JFrame {
     private Map<String, String> employeeCredentials = new HashMap<>();
 
     public LoginFrame() {
-        loadCredentials(); // Load login data from login.csv
+        loadCredentialsFromDB(); // Load login data from the database
     }
 
-    private void loadCredentials() {
-        try (BufferedReader br = new BufferedReader(new FileReader("login.csv"))) {
-            String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length == 3) { // Ensure there are 3 columns: Username, Password, Role
-                    String username = parts[0];
-                    String password = parts[1];
-                    String role = parts[2];
+    private void loadCredentialsFromDB() {
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT username, password, role FROM tb_akun";
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String username = rs.getString("username").trim();
+                    String password = rs.getString("password").trim();
+                    String role = rs.getString("role").trim();
+
                     if (role.equalsIgnoreCase("Admin")) {
                         adminCredentials.put(username, password);
                     } else if (role.equalsIgnoreCase("Employee")) {
@@ -32,8 +31,8 @@ public class LoginFrame extends JFrame {
                     }
                 }
             }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Failed to read login.csv: " + e.getMessage(),
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load credentials from database: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
