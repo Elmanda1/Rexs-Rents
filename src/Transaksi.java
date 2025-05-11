@@ -116,27 +116,29 @@ public class Transaksi {
     }
 
     // Update the denda for a specific Transaksi in the database
-    public static String updateDendaInDatabase(String idTransaksi, double denda) {
-        String result = "";
-        try (Connection con = Utility.connectDB()) {
-            String query = "UPDATE tb_transaksi SET denda = ?, total_harga = total_harga + ? WHERE id_transaksi = ?";
-            PreparedStatement ps = con.prepareStatement(query);
+    public static String updateDendaInDatabase(double denda) {
+    String result = "";
+    try (Connection con = Utility.connectDB()) {
+        // Query untuk mengupdate denda pada transaksi dengan ID terbesar
+        String query = "UPDATE tb_transaksi SET denda = ?, total_harga = total_harga + ? " +
+                       "WHERE id_transaksi = (SELECT MAX(id_transaksi) FROM tb_transaksi)";
+        PreparedStatement ps = con.prepareStatement(query);
 
-            ps.setDouble(1, denda);
-            ps.setDouble(2, denda);
-            ps.setString(3, idTransaksi);
+        ps.setDouble(1, denda);
+        ps.setDouble(2, denda);
 
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                result = "Denda berhasil diperbarui.";
-            } else {
-                result = "Denda gagal diperbarui.";
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected > 0) {
+            result = "Denda berhasil diperbarui untuk transaksi dengan ID terbesar.";
+        } else {
+            result = "Denda gagal diperbarui. Tidak ada transaksi yang ditemukan.";
         }
-        return result;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        result = "Terjadi kesalahan: " + e.getMessage();
     }
+    return result;
+}
 
     // Generate the next ID for a new Transaksi
     public static String generateNextId() {

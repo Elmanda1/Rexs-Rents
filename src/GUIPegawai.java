@@ -15,6 +15,8 @@ public class GUIPegawai extends JFrame {
     private List<Mobil> daftarMobil = Mobil.getAllMobil(); // Fetch mobil data from the database
     private JTextField idPelangganField;
     private JTable pelangganTable;
+    private JLabel clockLabel;
+
 
     public GUIPegawai() {
         setTitle("Rex's Rents - Employee Dashboard");
@@ -40,6 +42,8 @@ public class GUIPegawai extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        clockLabel = Utility.createClockLabel();
+        headerPanel.add(clockLabel, BorderLayout.CENTER);
 
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);
@@ -96,7 +100,7 @@ public class GUIPegawai extends JFrame {
         dataPelangganButton.setFocusPainted(false);
 
         kembalikanMobilButton = new JButton("Car Return");
-        kembalikanMobilButton.setPreferredSize(new Dimension(250, 40));
+        kembalikanMobilButton.setPreferredSize(new Dimension(150, 40));
         kembalikanMobilButton.setMargin(new Insets(8, 15, 8, 15));
         kembalikanMobilButton.setFocusPainted(false);
 
@@ -485,7 +489,9 @@ public class GUIPegawai extends JFrame {
         splitPane.setResizeWeight(0.5); // Initial size ratio 50:50
         splitPane.setDividerSize(5); // Divider size
 
-        panel.add(formPanel, BorderLayout.WEST);
+        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 4));
+        wrapperPanel.add(formPanel);
+        panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
         tablePanel.add(splitPane, BorderLayout.CENTER);
 
@@ -640,6 +646,7 @@ public class GUIPegawai extends JFrame {
 
         // Add action listener to the tambah button
         tambahButton.addActionListener(event -> {
+            String id = idPelangganField.getText();
             String nama = namaField.getText();
             String noHP = noHPField.getText();
             String noKTP = noKTPField.getText();
@@ -651,6 +658,23 @@ public class GUIPegawai extends JFrame {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+
+            // Check if ID already exists
+            for (Pelanggan pelanggan : Pelanggan.getAllPelanggan()) {
+                if (pelanggan.getIdPelanggan().equals(id)) {
+                    JOptionPane.showMessageDialog(null, "ID Pelanggan sudah ada. Silakan gunakan ID baru.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+
+                    // Reset form
+                    idPelangganField.setText(Pelanggan.generateNextId());
+                    namaField.setText("");
+                    noHPField.setText("");
+                    noKTPField.setText("");
+                    alamatField.setText("");
+                    genderComboBox.setSelectedIndex(0);
+                    return;
+                }
             }
 
             // Add new pelanggan to the database
@@ -771,7 +795,9 @@ public class GUIPegawai extends JFrame {
             }
         });
 
-        panel.add(formPanel, BorderLayout.WEST);
+        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 4));
+        wrapperPanel.add(formPanel);
+        panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
@@ -927,7 +953,7 @@ public class GUIPegawai extends JFrame {
 
             if (transaksi != null) {
                 transaksi.setDenda(denda);
-                Transaksi.updateDendaInDatabase(transaksi.getIdTransaksi(), denda); // Update denda in the database
+                Transaksi.updateDendaInDatabase(denda); // Update denda in the database
             }
 
             // Refresh the table
@@ -949,7 +975,9 @@ public class GUIPegawai extends JFrame {
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        panel.add(formPanel, BorderLayout.WEST);
+        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        wrapperPanel.add(formPanel);
+        panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
@@ -1002,25 +1030,29 @@ public class GUIPegawai extends JFrame {
     }
 
     private void refreshTambahTransaksiPanel() {
-        // Locate the table model for the tambahTransaksi panel
-        JPanel tambahTransaksiPanel = (JPanel) contentPanel.getComponent(0); // Assuming it's the first panel
-        JSplitPane splitPane = (JSplitPane) ((JPanel) tambahTransaksiPanel.getComponent(1)).getComponent(0);
-        JScrollPane scrollPane = (JScrollPane) splitPane.getTopComponent(); // Access the top component of JSplitPane
-        JTable table = (JTable) scrollPane.getViewport().getView();
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+    // Ambil panel "tambahTransaksi"
+    JPanel tambahTransaksiPanel = (JPanel) contentPanel.getComponent(0); // Panel pertama di contentPanel
 
-        // Clear the table
-        tableModel.setRowCount(0);
+    // Ambil tablePanel dari tambahTransaksiPanel
+    JPanel tablePanel = (JPanel) tambahTransaksiPanel.getComponent(1); // Komponen kedua di tambahTransaksiPanel
+    // Ambil JSplitPane dari tablePanel
+    JSplitPane splitPane = (JSplitPane) tablePanel.getComponent(1);
+    JScrollPane scrollPane = (JScrollPane) splitPane.getTopComponent();
+    JTable table = (JTable) scrollPane.getViewport().getView();
+    DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
-        // Populate the table with available mobil
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-        daftarMobil = Mobil.getMobilTersedia(); // Fetch available mobil from the database
-        for (Mobil mobil : daftarMobil) {
-            tableModel.addRow(new Object[] {
-                    mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
-            });
-        }
+    // Clear the table
+    tableModel.setRowCount(0);
+
+    // Populate the table with available mobil
+    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+    daftarMobil = Mobil.getMobilTersedia(); // Fetch available mobil from the database
+    for (Mobil mobil : daftarMobil) {
+        tableModel.addRow(new Object[] {
+                mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
+        });
     }
+}
 
     private void refreshKembalikanMobilPanel() {
         // Locate the table model for the kembalikanMobil panel
