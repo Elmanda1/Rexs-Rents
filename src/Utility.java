@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class Utility {
     public static JLabel styleLabel(String text) {
@@ -90,5 +92,33 @@ public class Utility {
             e.printStackTrace();
         }
         return conn; // Ensure the connection is returned without closing it here
+    }
+
+    public static class PlaceholderTextField extends JTextField {
+        private final String placeholder;
+
+        public PlaceholderTextField(String placeholder) {
+            this.placeholder = placeholder;
+            setText(placeholder);
+            setForeground(Color.GRAY);
+
+            addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (getText().equals(PlaceholderTextField.this.placeholder)) {
+                        setText("");
+                        setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (getText().isEmpty()) {
+                        setText(PlaceholderTextField.this.placeholder);
+                        setForeground(Color.GRAY);
+                    }
+                }
+            });
+        }
     }
 }

@@ -12,6 +12,7 @@ public class GUIAdmin extends JFrame {
     private JButton historyButton;
     private JButton dataMobilButton;
     private JButton editLoginButton;
+    private JButton dataKeuanganButton;
     private JButton signOutButton;
 
     public GUIAdmin() {
@@ -77,7 +78,7 @@ public class GUIAdmin extends JFrame {
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
         historyButton = new JButton("Histori Transaksi");
-        historyButton.setPreferredSize(new Dimension(150, 40));
+        historyButton.setPreferredSize(new Dimension(200, 40));
         historyButton.setMargin(new Insets(8, 15, 8, 15));
         historyButton.setFocusPainted(false);
 
@@ -91,6 +92,11 @@ public class GUIAdmin extends JFrame {
         editLoginButton.setMargin(new Insets(8, 15, 8, 15));
         editLoginButton.setFocusPainted(false);
 
+        dataKeuanganButton = new JButton("Data Keuangan");
+        dataKeuanganButton.setPreferredSize(new Dimension(200, 40));
+        dataKeuanganButton.setMargin(new Insets(8, 15, 8, 15));
+        dataKeuanganButton.setFocusPainted(false);
+
         historyButton.setBackground(new Color(25, 83, 215));
         historyButton.setForeground(Color.WHITE);
         historyButton.setBorderPainted(false);
@@ -101,9 +107,13 @@ public class GUIAdmin extends JFrame {
         editLoginButton.setBackground(Color.WHITE);
         editLoginButton.setBorderPainted(false);
 
+        dataKeuanganButton.setBackground(Color.WHITE);
+        dataKeuanganButton.setBorderPainted(false);
+
         menuPanel.add(historyButton);
         menuPanel.add(dataMobilButton);
         menuPanel.add(editLoginButton);
+        menuPanel.add(dataKeuanganButton);
 
         // Content Panel
         contentPanel = new JPanel(new CardLayout());
@@ -111,10 +121,12 @@ public class GUIAdmin extends JFrame {
         JPanel historyPanel = historyTransaksi();
         JPanel dataMobilPanel = dataMobil();
         JPanel editLoginPanel = editLoginPegawai();
+        JPanel dataKeuanganPanel = dataKeuangan();
 
         contentPanel.add(historyPanel, "history");
         contentPanel.add(dataMobilPanel, "dataMobil");
         contentPanel.add(editLoginPanel, "editLogin");
+        contentPanel.add(dataKeuanganPanel, "dataKeuangan");
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
@@ -131,6 +143,7 @@ public class GUIAdmin extends JFrame {
         historyButton.addActionListener(e -> switchPanel("history", historyButton));
         dataMobilButton.addActionListener(e -> switchPanel("dataMobil", dataMobilButton));
         editLoginButton.addActionListener(e -> switchPanel("editLogin", editLoginButton));
+        dataKeuanganButton.addActionListener(e -> switchPanel("dataKeuangan", dataKeuanganButton));
 
         getContentPane().add(mainPanel);
     }
@@ -170,29 +183,39 @@ public class GUIAdmin extends JFrame {
             });
         }
 
-        JPanel pnlLabels = new JPanel();
-        pnlLabels.setLayout(new BoxLayout(pnlLabels, BoxLayout.Y_AXIS));
+        // Add search functionality for History Transaksi
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi: " + transaksiList.size());
-        JLabel lblTotalHarga = Utility.styleLabel(
-                "Total Pendapatan: "
-                        + formatRupiah.format(transaksiList.stream().mapToDouble(Transaksi::getTotalHarga).sum()));
-        JLabel lblTotalDenda = Utility.styleLabel(
-                "Total Denda: "
-                        + formatRupiah.format(transaksiList.stream().mapToDouble(Transaksi::getDenda).sum()));
+        JTextField searchField = new Utility.PlaceholderTextField("Search Transaksi...");
 
-        lblTotalTransaksi.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        lblTotalHarga.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        lblTotalDenda.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        searchPanel.add(searchField, BorderLayout.CENTER);
 
-        pnlLabels.add(lblTotalTransaksi);
-        pnlLabels.add(lblTotalHarga);
-        pnlLabels.add(lblTotalDenda);
+        panel.add(searchPanel, BorderLayout.NORTH);
 
-        JPanel pnlLabelsWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        pnlLabelsWrapper.add(pnlLabels);
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String keyword = searchField.getText().trim();
+                    if (!keyword.isEmpty()) {
+                        tableModel.setRowCount(0); // Clear the table model
 
-        panel.add(pnlLabelsWrapper, BorderLayout.SOUTH);
+                        // Fetch filtered data from the database
+                        List<Transaksi> filteredTransaksi = Transaksi.searchByKeyword(keyword);
+
+                        for (Transaksi t : filteredTransaksi) {
+                            tableModel.addRow(new Object[] {
+                                    t.getIdTransaksi(), t.getTanggal(), t.getPelanggan().getNama(),
+                                    t.getMobil().getModel(), t.getMobil().getMerk(), t.getDurasiSewa(),
+                                    formatRupiah.format(t.getTotalHarga()), formatRupiah.format(t.getDenda())
+                            });
+                        }
+                    } else {
+                        refreshHistoryTable(tableModel); // Reset to show all data
+                    }
+                }
+            }
+        });
 
         return panel;
     }
@@ -410,6 +433,44 @@ public class GUIAdmin extends JFrame {
             }
         });
 
+        // Add search functionality for Data Mobil
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextField searchField = new Utility.PlaceholderTextField("Search Mobil...");
+
+        searchPanel.add(searchField, BorderLayout.CENTER);
+
+        tablePanel.add(searchPanel, BorderLayout.NORTH);
+
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String keyword = searchField.getText().trim();
+                    if (keyword.isEmpty()) {
+                        refreshMobilTable(mobilTableModel); // Reset to show all data
+                        return;
+                    } else {
+                        List<Mobil> filteredMobil = Mobil.search(keyword);
+                        mobilTableModel.setRowCount(0); // Clear the table model
+
+                        if (filteredMobil.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Data tidak ditemukan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+
+                        for (Mobil m : filteredMobil) {
+                            mobilTableModel.addRow(new Object[] {
+                                    m.getIdMobil(), m.getModel(), m.getMerk(),
+                                    formatRupiah.format(m.getHargaSewa()),
+                                    m.isTersedia() ? "Available" : "Unavailable"
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
@@ -428,6 +489,27 @@ public class GUIAdmin extends JFrame {
                     m.getIdMobil(), m.getModel(), m.getMerk(),
                     formatRupiah.format(m.getHargaSewa()),
                     m.isTersedia() ? "Available" : "Unavailable"
+            });
+        }
+    }
+
+    private void refreshHistoryTable(DefaultTableModel tableModel) {
+        tableModel.setRowCount(0); // Clear the table model
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+        // Fetch the latest data from the database
+        List<Transaksi> daftarTransaksi = Transaksi.getAllTransaksi();
+
+        for (Transaksi t : daftarTransaksi) {
+            tableModel.addRow(new Object[] {
+                    t.getIdTransaksi(),
+                    t.getTanggal(),
+                    t.getPelanggan().getNama(),
+                    t.getMobil().getModel(),
+                    t.getMobil().getMerk(),
+                    t.getDurasiSewa(),
+                    formatRupiah.format(t.getTotalHarga()),
+                    formatRupiah.format(t.getDenda())
             });
         }
     }
@@ -483,6 +565,43 @@ public class GUIAdmin extends JFrame {
         return panel;
     }
 
+    private JPanel dataKeuangan() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JPanel pnlLabels = new JPanel();
+        pnlLabels.setLayout(new BoxLayout(pnlLabels, BoxLayout.Y_AXIS));
+        pnlLabels.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi: " + Transaksi.getAllTransaksi().size());
+        JLabel lblTotalHarga = Utility.styleLabel(
+                "Total Pendapatan: "
+                        + NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+                                .format(Transaksi.getAllTransaksi().stream().mapToDouble(Transaksi::getTotalHarga).sum()));
+        JLabel lblTotalDenda = Utility.styleLabel(
+                "Total Denda: "
+                        + NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+                                .format(Transaksi.getAllTransaksi().stream().mapToDouble(Transaksi::getDenda).sum()));
+
+        lblTotalTransaksi.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTotalHarga.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTotalDenda.setFont(new Font("Arial", Font.BOLD, 16));
+
+        lblTotalTransaksi.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblTotalHarga.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblTotalDenda.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        pnlLabels.add(lblTotalTransaksi);
+        pnlLabels.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing between labels
+        pnlLabels.add(lblTotalHarga);
+        pnlLabels.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing between labels
+        pnlLabels.add(lblTotalDenda);
+
+        panel.add(pnlLabels, BorderLayout.CENTER);
+
+        return panel;
+    }
+
     private void switchPanel(String panelName, JButton selectedButton) {
         CardLayout cl = (CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, panelName);
@@ -493,6 +612,8 @@ public class GUIAdmin extends JFrame {
         dataMobilButton.setForeground(Color.BLACK);
         editLoginButton.setBackground(Color.WHITE);
         editLoginButton.setForeground(Color.BLACK);
+        dataKeuanganButton.setBackground(Color.WHITE);
+        dataKeuanganButton.setForeground(Color.BLACK);
 
         selectedButton.setBackground(new Color(25, 83, 215));
         selectedButton.setForeground(Color.WHITE);

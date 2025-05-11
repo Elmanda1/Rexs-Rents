@@ -208,12 +208,16 @@ public class Mobil {
     }
 
     // Search Mobil records by model
-    public static List<Mobil> searchByModel(String modelKeyword) {
+    public static List<Mobil> search(String keyword) {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT * FROM tb_mobil WHERE model LIKE ? ORDER BY model ASC";
+            String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil " +
+                           "WHERE id_mobil LIKE ? OR model LIKE ? OR merk LIKE ? " +
+                           "ORDER BY model ASC";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, modelKeyword + "%");
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            ps.setString(3, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
