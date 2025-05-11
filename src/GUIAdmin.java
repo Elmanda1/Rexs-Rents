@@ -322,14 +322,7 @@ public class GUIAdmin extends JFrame {
             String result = Mobil.addToDatabase(id, model, merk, harga, isAvailable);
             System.out.println(result);
 
-            mobilTableModel.setRowCount(0);
-            for (Mobil m : Mobil.getAllMobil()) {
-                mobilTableModel.addRow(new Object[] {
-                        m.getIdMobil(), m.getModel(), m.getMerk(),
-                        formatRupiah.format(m.getHargaSewa()),
-                        m.isTersedia() ? "Available" : "Unavailable"
-                });
-            }
+            refreshMobilTable(mobilTableModel);
 
             JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -368,17 +361,16 @@ public class GUIAdmin extends JFrame {
             String result = Mobil.updateInDatabase(mobil);
             System.out.println(result);
 
-            mobilTableModel.setRowCount(0);
-            for (Mobil m : Mobil.getAllMobil()) {
-                mobilTableModel.addRow(new Object[] {
-                        m.getIdMobil(), m.getModel(), m.getMerk(),
-                        formatRupiah.format(m.getHargaSewa()),
-                        m.isTersedia() ? "Available" : "Unavailable"
-                });
-            }
+            refreshMobilTable(mobilTableModel);
 
             JOptionPane.showMessageDialog(null, "Data mobil berhasil diperbarui!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+            idMobilField.setText(Mobil.generateNextId());
+            modelField.setText("");
+            merkField.setText("");
+            hargaSewaField.setText("");
+            statusComboBox.setSelectedIndex(0);
         });
 
         deleteButton.addActionListener(e -> {
@@ -393,23 +385,51 @@ public class GUIAdmin extends JFrame {
             String result = Mobil.deleteFromDatabase(id);
             System.out.println(result);
 
-            mobilTableModel.setRowCount(0);
-            for (Mobil m : Mobil.getAllMobil()) {
-                mobilTableModel.addRow(new Object[] {
-                        m.getIdMobil(), m.getModel(), m.getMerk(),
-                        formatRupiah.format(m.getHargaSewa()),
-                        m.isTersedia() ? "Available" : "Unavailable"
-                });
-            }
+            refreshMobilTable(mobilTableModel);
 
             JOptionPane.showMessageDialog(null, "Data mobil berhasil dihapus!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+            idMobilField.setText(Mobil.generateNextId());
+            modelField.setText("");
+            merkField.setText("");
+            hargaSewaField.setText("");
+            statusComboBox.setSelectedIndex(0);
+        });
+
+        mobilTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = mobilTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    idMobilField.setText(mobilTableModel.getValueAt(selectedRow, 0).toString());
+                    modelField.setText(mobilTableModel.getValueAt(selectedRow, 1).toString());
+                    merkField.setText(mobilTableModel.getValueAt(selectedRow, 2).toString());
+                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "").replace(",", ""));
+                    statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
+                }
+            }
         });
 
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
+    }
+
+    private void refreshMobilTable(DefaultTableModel mobilTableModel) {
+        mobilTableModel.setRowCount(0); // Clear the table model
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+        // Fetch the latest data from the database
+        List<Mobil> daftarMobil = Mobil.getAllMobil();
+
+        for (Mobil m : daftarMobil) {
+            mobilTableModel.addRow(new Object[] {
+                    m.getIdMobil(), m.getModel(), m.getMerk(),
+                    formatRupiah.format(m.getHargaSewa()),
+                    m.isTersedia() ? "Available" : "Unavailable"
+            });
+        }
     }
 
     private JPanel editLoginPegawai() {

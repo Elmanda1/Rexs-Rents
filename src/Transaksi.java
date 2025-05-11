@@ -92,25 +92,24 @@ public class Transaksi {
                            "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
                            "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
                            "ORDER BY t.id_transaksi ASC";
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String idTransaksi = rs.getString("id_transaksi").trim();
+                    String tanggal = rs.getString("tanggal").trim();
+                    String namaPelanggan = rs.getString("nama_pelanggan").trim();
+                    String idMobil = rs.getString("id_mobil").trim();
+                    String model = rs.getString("model").trim();
+                    String merk = rs.getString("merk").trim();
+                    int durasi = rs.getInt("durasi");
+                    double denda = rs.getDouble("denda");
+                    double hargaSewa = rs.getDouble("total_harga") - denda;
 
-            while (rs.next()) {
-                String idTransaksi = rs.getString("id_transaksi").trim();
-                String tanggal = rs.getString("tanggal").trim();
-                String namaPelanggan = rs.getString("nama_pelanggan").trim();
-                String idMobil = rs.getString("id_mobil").trim();
-                String model = rs.getString("model").trim();
-                String merk = rs.getString("merk").trim();
-                int durasi = rs.getInt("durasi");
-                double denda = rs.getDouble("denda");
-                double hargaSewa = rs.getDouble("total_harga") - denda;
+                    Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
+                    Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
 
-                Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
-                Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
-
-                Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
-                daftarTransaksi.add(transaksi);
+                    Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
+                    daftarTransaksi.add(transaksi);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

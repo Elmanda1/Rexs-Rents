@@ -645,6 +645,20 @@ public class GUIPegawai extends JFrame {
             genderComboBox.setSelectedIndex(0);
         });
 
+        pelangganTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = pelangganTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    idPelangganField.setText(pelangganTableModel.getValueAt(selectedRow, 0).toString());
+                    namaField.setText(pelangganTableModel.getValueAt(selectedRow, 1).toString());
+                    noHPField.setText(pelangganTableModel.getValueAt(selectedRow, 2).toString());
+                    noKTPField.setText(pelangganTableModel.getValueAt(selectedRow, 3).toString());
+                    alamatField.setText(pelangganTableModel.getValueAt(selectedRow, 4).toString());
+                    genderComboBox.setSelectedItem(pelangganTableModel.getValueAt(selectedRow, 5).toString());
+                }
+            }
+        });
+
         panel.add(formPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 

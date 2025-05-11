@@ -3,6 +3,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class Utility {
     public static JLabel styleLabel(String text) {
@@ -61,22 +64,31 @@ public class Utility {
         });
     }
 
-    public static Connection connectDB(){
+    public static Connection connectDB() {
         Connection conn = null;
 
-        try{
-        // open koneksi MYSQL to Java using mysql-connector-j-8.0.31.jar
-        String database = "jdbc:mysql://localhost:3306/db_rexrents";
-        String username = "root";
-        String password = "";
-        conn = DriverManager.getConnection(database, username, password);
+        try {
+            // Open connection to MySQL using mysql-connector-j-8.0.31.jar
+            String database = "jdbc:mysql://localhost:3306/db_rexrents";
+            String username = "root";
+            String password = "";
+            conn = DriverManager.getConnection(database, username, password);
 
-        // Cek apakah koneksinya berhasil
-        System.out.println("Koneksi MySQL berhasil");
+            try (Statement stmt = conn.createStatement()) {
+                ResultSet rs = stmt.executeQuery("SELECT DATABASE()");
+                if (rs.next()) {
+                    System.out.println("Connected to database: " + rs.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+            // Log detailed error message
+            System.err.println("Error connecting to the database: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            // Catch any other exceptions
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
         }
-        catch(Exception e){
-        System.out.println(e.getMessage());
-        }
-        return conn;
+        return conn; // Ensure the connection is returned without closing it here
     }
 }

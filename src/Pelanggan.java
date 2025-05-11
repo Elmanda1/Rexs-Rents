@@ -89,18 +89,17 @@ public class Pelanggan {
         List<Pelanggan> daftarPelanggan = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
             String query = "SELECT * FROM tb_pelanggan ORDER BY id_pelanggan ASC";
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String idPelanggan = rs.getString("id_pelanggan").trim();
+                    String nama = rs.getString("nama").trim();
+                    String noHp = rs.getString("noHP").trim();
+                    String noKtp = rs.getString("noKTP").trim();
+                    String alamat = rs.getString("alamat").trim();
+                    String gender = rs.getString("gender").trim();
 
-            while (rs.next()) {
-                String idPelanggan = rs.getString("id_pelanggan").trim();
-                String nama = rs.getString("nama").trim();
-                String noHp = rs.getString("noHP").trim();
-                String noKtp = rs.getString("noKTP").trim();
-                String alamat = rs.getString("alamat").trim();
-                String gender = rs.getString("gender").trim();
-
-                daftarPelanggan.add(new Pelanggan(idPelanggan, nama, noHp, noKtp, alamat, gender));
+                    daftarPelanggan.add(new Pelanggan(idPelanggan, nama, noHp, noKtp, alamat, gender));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,21 +111,23 @@ public class Pelanggan {
     public static String addToDatabase(Pelanggan pelanggan) {
         String result = "";
         try (Connection con = Utility.connectDB()) {
-            String query = "INSERT INTO tb_pelanggan (id_pelanggan, nama, no_hp, no_ktp, alamat, gender) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement ps = con.prepareStatement(query);
+            String query = "INSERT INTO tb_pelanggan (id_pelanggan, nama, noHP, noKTP, alamat, gender) VALUES (?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(query)) {
+                // Ensure the ID is generated if not provided
+                String idPelanggan = pelanggan.getIdPelanggan().isEmpty() ? generateNextId() : pelanggan.getIdPelanggan();
+                ps.setString(1, idPelanggan);
+                ps.setString(2, pelanggan.getNama());
+                ps.setString(3, pelanggan.getNoHp());
+                ps.setString(4, pelanggan.getNoKtp());
+                ps.setString(5, pelanggan.getAlamat());
+                ps.setString(6, pelanggan.getGender());
 
-            ps.setString(1, pelanggan.getIdPelanggan());
-            ps.setString(2, pelanggan.getNama());
-            ps.setString(3, pelanggan.getNoHp());
-            ps.setString(4, pelanggan.getNoKtp());
-            ps.setString(5, pelanggan.getAlamat());
-            ps.setString(6, pelanggan.getGender());
-
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                result = "Pelanggan berhasil ditambahkan.";
-            } else {
-                result = "Pelanggan gagal ditambahkan.";
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected > 0) {
+                    result = "Pelanggan berhasil ditambahkan.";
+                } else {
+                    result = "Pelanggan gagal ditambahkan.";
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -138,7 +139,7 @@ public class Pelanggan {
     public static String updateInDatabase(Pelanggan pelanggan) {
         String result = "";
         try (Connection con = Utility.connectDB()) {
-            String query = "UPDATE tb_pelanggan SET nama = ?, no_hp = ?, no_ktp = ?, alamat = ?, gender = ? WHERE id_pelanggan = ?";
+            String query = "UPDATE tb_pelanggan SET nama = ?, noHP = ?, noKTP = ?, alamat = ?, gender = ? WHERE id_pelanggan = ?";
             PreparedStatement ps = con.prepareStatement(query);
 
             ps.setString(1, pelanggan.getNama());

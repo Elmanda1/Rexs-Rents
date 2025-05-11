@@ -67,18 +67,17 @@ public class Mobil {
     public static List<Mobil> getAllMobil() {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT * FROM tb_mobil ORDER BY id_mobil ASC";
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil ORDER BY id_mobil ASC";
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String idMobil = rs.getString("id_mobil").trim();
+                    String model = rs.getString("model").trim();
+                    String merk = rs.getString("merk").trim();
+                    double hargaSewa = rs.getDouble("hargasewa");
+                    boolean status = rs.getBoolean("status");
 
-            while (rs.next()) {
-                String idMobil = rs.getString("id_mobil").trim();
-                String model = rs.getString("model").trim();
-                String merk = rs.getString("merk").trim();
-                double hargaSewa = rs.getDouble("hargasewa");
-                boolean status = rs.getBoolean("status");
-
-                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,17 +90,16 @@ public class Mobil {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
             String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil WHERE status = TRUE ORDER BY id_mobil ASC";
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String idMobil = rs.getString("id_mobil").trim();
+                    String model = rs.getString("model").trim();
+                    String merk = rs.getString("merk").trim();
+                    double hargaSewa = rs.getDouble("hargasewa");
+                    boolean status = rs.getBoolean("status");
 
-            while (rs.next()) {
-                String idMobil = rs.getString("id_mobil").trim();
-                String model = rs.getString("model").trim();
-                String merk = rs.getString("merk").trim();
-                double hargaSewa = rs.getDouble("hargasewa");
-                boolean status = rs.getBoolean("status");
-
-                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,17 +111,16 @@ public class Mobil {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
             String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil WHERE status = false ORDER BY id_mobil ASC";
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
+            try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String idMobil = rs.getString("id_mobil").trim();
+                    String model = rs.getString("model").trim();
+                    String merk = rs.getString("merk").trim();
+                    double hargaSewa = rs.getDouble("hargasewa");
+                    boolean status = rs.getBoolean("status");
 
-            while (rs.next()) {
-                String idMobil = rs.getString("id_mobil").trim();
-                String model = rs.getString("model").trim();
-                String merk = rs.getString("merk").trim();
-                double hargaSewa = rs.getDouble("hargasewa");
-                boolean status = rs.getBoolean("status");
-
-                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -135,23 +132,24 @@ public class Mobil {
     public static String addToDatabase(String idMobil, String model, String merk, double hargaSewa, boolean status) {
         String result = "";
         try (Connection con = Utility.connectDB()) {
-            String query = "INSERT INTO tb_mobil (id_mobil, model, merk, harga_sewa, status) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement ps = con.prepareStatement(query);
+            String query = "INSERT INTO tb_mobil (id_mobil, model, merk, hargasewa, status) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(query)) {
+                ps.setString(1, idMobil);
+                ps.setString(2, model);
+                ps.setString(3, merk);
+                ps.setDouble(4, hargaSewa);
+                ps.setBoolean(5, status);
 
-            ps.setString(1, idMobil);
-            ps.setString(2, model);
-            ps.setString(3, merk);
-            ps.setDouble(4, hargaSewa);
-            ps.setBoolean(5, status);
-
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                result = "Data Mobil berhasil disimpan.";
-            } else {
-                result = "Data Mobil gagal disimpan.";
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected > 0) {
+                    result = "Data Mobil berhasil disimpan.";
+                } else {
+                    result = "Data Mobil gagal disimpan.";
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            result = "Terjadi kesalahan: " + e.getMessage();
         }
         return result;
     }
@@ -160,7 +158,7 @@ public class Mobil {
     public static String updateInDatabase(Mobil mobil) {
         String result = "";
         try (Connection con = Utility.connectDB()) {
-            String query = "UPDATE tb_mobil SET model = ?, merk = ?, harga_sewa = ?, status = ? WHERE id_mobil = ?";
+            String query = "UPDATE tb_mobil SET model = ?, merk = ?, hargasewa = ?, status = ? WHERE id_mobil = ?";
             PreparedStatement ps = con.prepareStatement(query);
 
             ps.setString(1, mobil.getModel());
@@ -185,16 +183,23 @@ public class Mobil {
     public static String deleteFromDatabase(String idMobil) {
         String result = "";
         try (Connection con = Utility.connectDB()) {
-            String query = "DELETE FROM tb_mobil WHERE id_mobil = ?";
-            PreparedStatement ps = con.prepareStatement(query);
+            // First, delete dependent records in tb_transaksi
+            String deleteTransaksiQuery = "DELETE FROM tb_transaksi WHERE id_mobil = ?";
+            try (PreparedStatement psTransaksi = con.prepareStatement(deleteTransaksiQuery)) {
+                psTransaksi.setString(1, idMobil);
+                psTransaksi.executeUpdate();
+            }
 
-            ps.setString(1, idMobil);
-
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                result = "Data Mobil berhasil dihapus.";
-            } else {
-                result = "Data Mobil gagal dihapus.";
+            // Then, delete the Mobil record
+            String deleteMobilQuery = "DELETE FROM tb_mobil WHERE id_mobil = ?";
+            try (PreparedStatement psMobil = con.prepareStatement(deleteMobilQuery)) {
+                psMobil.setString(1, idMobil);
+                int rowsAffected = psMobil.executeUpdate();
+                if (rowsAffected > 0) {
+                    result = "Data Mobil berhasil dihapus.";
+                } else {
+                    result = "Data Mobil gagal dihapus.";
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -215,7 +220,7 @@ public class Mobil {
                 String idMobil = rs.getString("id_mobil").trim();
                 String model = rs.getString("model").trim();
                 String merk = rs.getString("merk").trim();
-                double hargaSewa = rs.getDouble("harga_sewa");
+                double hargaSewa = rs.getDouble("hargasewa");
                 boolean status = rs.getBoolean("status");
 
                 daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
@@ -240,6 +245,6 @@ public class Mobil {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "M" + String.format("%03d", maxId + 1);
+        return "M" + String.format("%02d", maxId + 1);
     }
 }
