@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Utility {
     public static JLabel styleLabel(String text) {
@@ -120,5 +122,57 @@ public class Utility {
                 }
             });
         }
+    }
+
+    public static JLabel createClockLabel() {
+    JLabel clockLabel = new JLabel();
+    clockLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    clockLabel.setForeground(new Color(255, 102, 0));
+    clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+    // Timer to update the clock every second
+    Timer timer = new Timer(1000, e -> {
+        String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+        clockLabel.setText(currentTime);
+    });
+    timer.start();
+
+    // Initialize immediately
+    String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+    clockLabel.setText(currentTime);
+
+    return clockLabel;
+    }
+
+    //untuk password show hide
+    public static JPanel createPasswordTogglePanel(JPasswordField passwordField) {
+        // Buat panel dengan BorderLayout untuk menempatkan field dan tombol secara horizontal
+        JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
+        passwordPanel.setBackground(new Color(240, 248, 255)); // Sesuaikan dengan background aplikasi
+        
+        // Tambahkan password field ke panel
+        passwordPanel.add(passwordField, BorderLayout.CENTER);
+        
+        // Buat tombol toggle untuk show/hide password
+        JToggleButton showPassword = new JToggleButton("Show");
+        showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Sesuaikan font
+        showPassword.setFocusPainted(false);
+        showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
+        
+        // Tambahkan action listener untuk mengubah visibility password
+        showPassword.addActionListener(e -> {
+            if (showPassword.isSelected()) {
+                passwordField.setEchoChar((char) 0); // Tampilkan password asli
+                showPassword.setText("Hide");
+            } else {
+                passwordField.setEchoChar('•'); // Sembunyikan password dengan bullet
+                showPassword.setText("Show");
+            }
+        });
+        
+        // Tambahkan tombol ke panel
+        passwordPanel.add(showPassword, BorderLayout.EAST);
+        
+        return passwordPanel;
     }
 }

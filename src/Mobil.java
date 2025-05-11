@@ -168,11 +168,13 @@ public class Mobil {
             ps.setString(5, mobil.getIdMobil());
 
             int rowsAffected = ps.executeUpdate();
-            if (rowsAffected > 0) {
-                result = "Data Mobil berhasil diubah.";
-            } else {
-                result = "Data Mobil gagal diubah.";
-            }
+        if (rowsAffected > 0) {
+            result = "Data Mobil berhasil diubah.";
+            System.out.println("Update berhasil untuk mobil ID: " + mobil.getIdMobil());
+        } else {
+            result = "Data Mobil gagal diubah.";
+            System.out.println("Update gagal untuk mobil ID: " + mobil.getIdMobil());
+        }
         } catch (SQLException e) {
             e.printStackTrace();
         }

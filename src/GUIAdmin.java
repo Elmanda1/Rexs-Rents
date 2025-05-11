@@ -1,9 +1,13 @@
 import java.awt.*;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class GUIAdmin extends JFrame {
     private JPanel mainPanel;
@@ -14,6 +18,7 @@ public class GUIAdmin extends JFrame {
     private JButton editLoginButton;
     private JButton dataKeuanganButton;
     private JButton signOutButton;
+    private JLabel clockLabel;
 
     public GUIAdmin() {
         setTitle("Rex's Rents - Admin Dashboard");
@@ -39,6 +44,8 @@ public class GUIAdmin extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        clockLabel = Utility.createClockLabel();
+        headerPanel.add(clockLabel, BorderLayout.CENTER); 
 
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);
@@ -333,12 +340,29 @@ public class GUIAdmin extends JFrame {
                 return;
             }
 
+            
+
             if (!hargaSewa.matches("\\d+(\\.\\d+)?")) {
                 JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka!",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // Check if ID already exists
+            for (Mobil mobil : Mobil.getAllMobil()) {
+                if (mobil.getIdMobil().equals(id)) {
+                    JOptionPane.showMessageDialog(null, "ID Mobil sudah ada. Silakan gunakan ID baru.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+
+                    // Reset form
+                    modelField.setText("");
+                    merkField.setText("");
+                    hargaSewaField.setText("");
+                    statusComboBox.setSelectedIndex(0);
+                    idMobilField.setText(Mobil.generateNextId());
+                    return;
+                }
+            }
             double harga = Double.parseDouble(hargaSewa);
             boolean isAvailable = status.equals("Available");
 
@@ -350,11 +374,12 @@ public class GUIAdmin extends JFrame {
             JOptionPane.showMessageDialog(null, "Data mobil berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
-            idMobilField.setText(Mobil.generateNextId());
+            // Reset form
             modelField.setText("");
             merkField.setText("");
             hargaSewaField.setText("");
             statusComboBox.setSelectedIndex(0);
+            idMobilField.setText(Mobil.generateNextId());
         });
 
         simpanButton.addActionListener(e -> {
@@ -371,6 +396,7 @@ public class GUIAdmin extends JFrame {
             String hargaSewa = hargaSewaField.getText();
             String status = statusComboBox.getSelectedItem().toString();
 
+            // Validasi input
             if (model.trim().isEmpty() || merk.trim().isEmpty() || hargaSewa.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Semua field harus diisi",
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -427,7 +453,8 @@ public class GUIAdmin extends JFrame {
                     idMobilField.setText(mobilTableModel.getValueAt(selectedRow, 0).toString());
                     modelField.setText(mobilTableModel.getValueAt(selectedRow, 1).toString());
                     merkField.setText(mobilTableModel.getValueAt(selectedRow, 2).toString());
-                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "").replace(",", ""));
+                    hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "")
+                                                    .replace(",", "").replace(".", "").replaceAll("\\d{2}$", ""));
                     statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
                 }
             }
@@ -471,7 +498,9 @@ public class GUIAdmin extends JFrame {
             }
         });
 
-        panel.add(formPanel, BorderLayout.WEST);
+        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 7));
+        wrapperPanel.add(formPanel);
+        panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
 
         return panel;
@@ -537,6 +566,8 @@ public class GUIAdmin extends JFrame {
         panel.add(passwordLabel, gbc);
 
         JPasswordField passwordField = new JPasswordField(15);
+        
+        JPanel passwordPanel = Utility.createPasswordTogglePanel(passwordField);
         gbc.gridx = 1;
         panel.add(passwordField, gbc);
 
@@ -548,59 +579,134 @@ public class GUIAdmin extends JFrame {
         panel.add(saveButton, gbc);
 
         saveButton.addActionListener(e -> {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
 
-            if (username.trim().isEmpty() || password.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        if (username.trim().isEmpty() || password.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            // Save login information to the database (implement logic here)
+        // Simpan informasi login ke database
+        String result = updateLoginPegawai(username, password);
+        if (result.equals("success")) {
             JOptionPane.showMessageDialog(null, "Data login pegawai berhasil diubah!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Gagal mengubah data login: " + result,
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
         });
 
-        return panel;
+            return panel;
+        }
+
+        private String updateLoginPegawai(String username, String password) {
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "UPDATE tb_akun SET username = ?, password = ? WHERE role = 'Employee'";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "success";
+            } else {
+                result = "Username tidak ditemukan.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = "Terjadi kesalahan: " + e.getMessage();
+        }
+        return result;
     }
 
     private JPanel dataKeuangan() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel pnlLabels = new JPanel();
-        pnlLabels.setLayout(new BoxLayout(pnlLabels, BoxLayout.Y_AXIS));
-        pnlLabels.setAlignmentX(Component.CENTER_ALIGNMENT);
+    Font poppinsFont;
+        try {
+            poppinsFont = Font.createFont(Font.TRUETYPE_FONT, new File("Poppins-Regular.ttf")).deriveFont(16f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(poppinsFont);
+        } catch (Exception e) {
+            poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
+        }
+    
+    JPanel panel = new JPanel(new GridBagLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi: " + Transaksi.getAllTransaksi().size());
-        JLabel lblTotalHarga = Utility.styleLabel(
-                "Total Pendapatan: "
-                        + NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                                .format(Transaksi.getAllTransaksi().stream().mapToDouble(Transaksi::getTotalHarga).sum()));
-        JLabel lblTotalDenda = Utility.styleLabel(
-                "Total Denda: "
-                        + NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                                .format(Transaksi.getAllTransaksi().stream().mapToDouble(Transaksi::getDenda).sum()));
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
 
-        lblTotalTransaksi.setFont(new Font("Arial", Font.BOLD, 16));
-        lblTotalHarga.setFont(new Font("Arial", Font.BOLD, 16));
-        lblTotalDenda.setFont(new Font("Arial", Font.BOLD, 16));
+    // Create labels
+    JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi");
+    lblTotalTransaksi.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+    JLabel lblTotalPendapatan = Utility.styleLabel("Total Pendapatan");
+    lblTotalPendapatan.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+    JLabel lblTotalDenda = Utility.styleLabel("Total Denda");
+    lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
 
-        lblTotalTransaksi.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lblTotalHarga.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lblTotalDenda.setAlignmentX(Component.CENTER_ALIGNMENT);
+    // Create text fields with values
+    JTextField txtTotalTransaksi = new JTextField(String.valueOf(Transaksi.getAllTransaksi().size()));
+    JTextField txtTotalPendapatan = new JTextField(
+            NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+                    .format(Transaksi.getAllTransaksi().stream()
+                            .mapToDouble(Transaksi::getTotalHarga).sum()));
+    JTextField txtTotalDenda = new JTextField(
+            NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+                    .format(Transaksi.getAllTransaksi().stream()
+                            .mapToDouble(Transaksi::getDenda).sum()));
 
-        pnlLabels.add(lblTotalTransaksi);
-        pnlLabels.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing between labels
-        pnlLabels.add(lblTotalHarga);
-        pnlLabels.add(Box.createRigidArea(new Dimension(0, 10))); // Add spacing between labels
-        pnlLabels.add(lblTotalDenda);
+    // Style the text fields
+    Color lightBlue = new Color(230, 236, 255);
+    Dimension fieldSize = new Dimension(300, 40);
 
-        panel.add(pnlLabels, BorderLayout.CENTER);
-
-        return panel;
+    for (JTextField field : new JTextField[]{txtTotalTransaksi, txtTotalPendapatan, txtTotalDenda}) {
+        field.setEditable(false);
+        field.setBackground(lightBlue);
+        field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        field.setPreferredSize(fieldSize);
+        field.setFont(new Font("Arial", Font.PLAIN, 14));
     }
+
+    // Add components to panel
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.weightx = 0.3;
+    panel.add(lblTotalTransaksi, gbc);
+
+    gbc.gridx = 1;
+    gbc.weightx = 0.7;
+    panel.add(txtTotalTransaksi, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.weightx = 0.3;
+    panel.add(lblTotalPendapatan, gbc);
+
+    gbc.gridx = 1;
+    gbc.weightx = 0.7;
+    panel.add(txtTotalPendapatan, gbc);
+
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbc.weightx = 0.3;
+    panel.add(lblTotalDenda, gbc);
+
+    gbc.gridx = 1;
+    gbc.weightx = 0.7;
+    panel.add(txtTotalDenda, gbc);
+
+    // Create wrapper panel for centering
+    JPanel wrapperPanel = new JPanel(new GridBagLayout());
+    wrapperPanel.add(panel);
+
+    return wrapperPanel;
+}
 
     private void switchPanel(String panelName, JButton selectedButton) {
         CardLayout cl = (CardLayout) contentPanel.getLayout();
