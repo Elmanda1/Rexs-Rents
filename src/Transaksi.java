@@ -1,8 +1,6 @@
 import java.sql.*;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Transaksi {
     private String idTransaksi;
@@ -155,5 +153,46 @@ public class Transaksi {
             e.printStackTrace();
         }
         return "TRX" + String.format("%04d", maxId + 1);
+    }
+
+    // Search Transaksi records by keyword
+    public static List<Transaksi> searchByKeyword(String keyword) {
+        List<Transaksi> daftarTransaksi = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga " +
+                           "FROM tb_transaksi t " +
+                           "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                           "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                           "WHERE t.id_transaksi LIKE ? OR t.tanggal LIKE ? OR p.nama LIKE ? OR m.model LIKE ? OR m.merk LIKE ?" +
+                           "ORDER BY t.tanggal ASC";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            ps.setString(3, "%" + keyword + "%");
+            ps.setString(4, "%" + keyword + "%");
+            ps.setString(5, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String idTransaksi = rs.getString("id_transaksi").trim();
+                String tanggal = rs.getString("tanggal").trim();
+                String namaPelanggan = rs.getString("nama_pelanggan").trim();
+                String idMobil = rs.getString("id_mobil").trim();
+                String model = rs.getString("model").trim();
+                String merk = rs.getString("merk").trim();
+                int durasi = rs.getInt("durasi");
+                double denda = rs.getDouble("denda");
+                double hargaSewa = rs.getDouble("total_harga") - denda;
+
+                Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
+                Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
+
+                Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
+                daftarTransaksi.add(transaksi);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return daftarTransaksi;
     }
 }

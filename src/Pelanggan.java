@@ -198,4 +198,29 @@ public class Pelanggan {
         }
         return "P" + String.format("%03d", maxId + 1);
     }
+
+    // Search Pelanggan records by name
+    public static List<Pelanggan> searchByName(String nameKeyword) {
+        List<Pelanggan> daftarPelanggan = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT * FROM tb_pelanggan WHERE nama LIKE ? ORDER BY nama ASC";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, nameKeyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String idPelanggan = rs.getString("id_pelanggan").trim();
+                String nama = rs.getString("nama").trim();
+                String noHp = rs.getString("noHP").trim();
+                String noKtp = rs.getString("noKTP").trim();
+                String alamat = rs.getString("alamat").trim();
+                String gender = rs.getString("gender").trim();
+
+                daftarPelanggan.add(new Pelanggan(idPelanggan, nama, noHp, noKtp, alamat, gender));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return daftarPelanggan;
+    }
 }

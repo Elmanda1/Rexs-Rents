@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 public class GUIPegawai extends JFrame {
     private JPanel mainPanel;
     private JPanel contentPanel;
@@ -400,8 +399,89 @@ public class GUIPegawai extends JFrame {
             }
         });
 
+        // Add search functionality for Mobil table
+        JPanel searchPanelMobil = new JPanel(new BorderLayout());
+        searchPanelMobil.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextField searchFieldMobil = new Utility.PlaceholderTextField("Search Mobil...");
+
+        searchPanelMobil.add(searchFieldMobil, BorderLayout.CENTER);
+
+        tablePanel.add(searchPanelMobil, BorderLayout.NORTH);
+
+        searchFieldMobil.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String keyword = searchFieldMobil.getText().trim();
+                    if (!keyword.isEmpty()) {
+                        tableModelAtas.setRowCount(0); // Clear the table model
+
+                        // Fetch filtered data from the database
+                        List<Mobil> filteredMobil = Mobil.search(keyword);
+
+                        for (Mobil m : filteredMobil) {
+                            tableModelAtas.addRow(new Object[] {
+                                    m.getIdMobil(), m.getModel(), m.getMerk(),
+                                    formatRupiah.format(m.getHargaSewa())
+                            });
+                        }
+                    } else {
+                        tableModelAtas.setRowCount(0); // Reset to show all data
+                        for (Mobil m : Mobil.getMobilTersedia()) {
+                            tableModelAtas.addRow(new Object[] {
+                                    m.getIdMobil(), m.getModel(), m.getMerk(),
+                                    formatRupiah.format(m.getHargaSewa())
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        // Add search functionality for Pelanggan table
+        JPanel searchPanelPelanggan = new JPanel(new BorderLayout());
+        searchPanelPelanggan.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextField searchFieldPelanggan = new Utility.PlaceholderTextField("Search Pelanggan...");
+
+        searchPanelPelanggan.add(searchFieldPelanggan, BorderLayout.CENTER);
+
+        searchFieldPelanggan.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String keyword = searchFieldPelanggan.getText().trim();
+                    if (!keyword.isEmpty()) {
+                        tableModelBawah.setRowCount(0); // Clear the table model
+
+                        // Fetch filtered data from the database
+                        List<Pelanggan> filteredPelanggan = Pelanggan.searchByName(keyword);
+
+                        for (Pelanggan p : filteredPelanggan) {
+                            tableModelBawah.addRow(new Object[] {
+                                    p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                                    p.getNoKtp(), p.getAlamat(), p.getGender()
+                            });
+                        }
+                    } else {
+                        tableModelBawah.setRowCount(0); // Reset to show all data
+                        for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                            tableModelBawah.addRow(new Object[] {
+                                    p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                                    p.getNoKtp(), p.getAlamat(), p.getGender()
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        // Add the searchPanelPelanggan above the pelanggan table
+        JPanel pelangganPanel = new JPanel(new BorderLayout());
+        pelangganPanel.add(searchPanelPelanggan, BorderLayout.NORTH);
+        pelangganPanel.add(scrollPaneBawah, BorderLayout.CENTER);
+
         // Use JSplitPane to divide the table area
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneAtas, scrollPaneBawah);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPaneAtas, pelangganPanel);
         splitPane.setResizeWeight(0.5); // Initial size ratio 50:50
         splitPane.setDividerSize(5); // Divider size
 
@@ -525,9 +605,41 @@ public class GUIPegawai extends JFrame {
         // Generate the next ID Pelanggan
         idPelangganField.setText(Pelanggan.generateNextId());
 
+        // Add search functionality for Data Pelanggan
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JTextField searchField = new Utility.PlaceholderTextField("Search Pelanggan...");
+
+        searchPanel.add(searchField, BorderLayout.CENTER);
+
+        tablePanel.add(searchPanel, BorderLayout.NORTH);
+
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String keyword = searchField.getText().trim();
+                    if (!keyword.isEmpty()) {
+                        pelangganTableModel.setRowCount(0); // Clear the table model
+
+                        // Fetch filtered data from the database
+                        List<Pelanggan> filteredPelanggan = Pelanggan.searchByName(keyword);
+
+                        for (Pelanggan p : filteredPelanggan) {
+                            pelangganTableModel.addRow(new Object[] {
+                                    p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                                    p.getNoKtp(), p.getAlamat(), p.getGender()
+                            });
+                        }
+                    } else {
+                        refreshPelangganTable(pelangganTableModel); // Reset to show all data
+                    }
+                }
+            }
+        });
+
         // Add action listener to the tambah button
         tambahButton.addActionListener(event -> {
-            String id = idPelangganField.getText();
             String nama = namaField.getText();
             String noHP = noHPField.getText();
             String noKTP = noKTPField.getText();
@@ -926,6 +1038,16 @@ public class GUIPegawai extends JFrame {
         for (Mobil mobil : daftarMobil) {
             tableModel.addRow(new Object[] {
                     mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
+            });
+        }
+    }
+
+    private void refreshPelangganTable(DefaultTableModel pelangganTableModel) {
+        pelangganTableModel.setRowCount(0);
+        for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+            pelangganTableModel.addRow(new Object[] {
+                    p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                    p.getNoKtp(), p.getAlamat(), p.getGender()
             });
         }
     }
