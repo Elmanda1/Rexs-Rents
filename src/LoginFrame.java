@@ -74,10 +74,10 @@ public class LoginFrame extends JFrame {
 
         // Logo
         JLabel userIcon = new JLabel();
-        ImageIcon originalIcon = new ImageIcon("logolandingpage.png"); // Path
+        ImageIcon originalIcon = new ImageIcon("assets/logolandingpage.png"); // Path
         Image scaledImage = originalIcon.getImage().getScaledInstance(
-                (int) (originalIcon.getIconWidth() * 1), // 80% of original width
-                (int) (originalIcon.getIconHeight() * 1), // 80% of original height
+                (int) (originalIcon.getIconWidth() * 0.8), // 80% of original width
+                (int) (originalIcon.getIconHeight() * 0.8), // 80% of original height
                 Image.SCALE_SMOOTH);
         userIcon.setIcon(new ImageIcon(scaledImage));
         userIcon.setHorizontalAlignment(SwingConstants.CENTER);
@@ -129,8 +129,8 @@ public class LoginFrame extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 3;
 
-        JLabel roleLabel = new JLabel("Select Role");
-        roleLabel.setFont(poppinsFont.deriveFont(Font.BOLD, 16f));
+        JLabel roleLabel = new JLabel("Role");
+        roleLabel.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
         mainPanel.add(roleLabel, gbc);
 
         JPanel rolePanel = new JPanel();
@@ -138,7 +138,7 @@ public class LoginFrame extends JFrame {
         JRadioButton adminRadio = new JRadioButton("Admin");
         adminRadio.setFont(poppinsFont);
         adminRadio.setBackground(new Color(240, 248, 255));
-        JRadioButton employeeRadio = new JRadioButton("Employee");
+        JRadioButton employeeRadio = new JRadioButton("Pegawai");
         employeeRadio.setFont(poppinsFont);
         employeeRadio.setBackground(new Color(240, 248, 255));
         ButtonGroup roleGroup = new ButtonGroup();
@@ -163,7 +163,7 @@ public class LoginFrame extends JFrame {
 
         // Login button
         gbc.gridx = 1;
-
+        
         JButton loginButton = new JButton("Login");
         loginButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
         loginButton.setBackground(new Color(255, 87, 51)); // Orange button

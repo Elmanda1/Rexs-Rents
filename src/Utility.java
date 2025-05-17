@@ -30,7 +30,7 @@ public class Utility {
 
     public static JButton styleButton(String text, Color backgroundColor) {
         JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(100, 35));
+        button.setPreferredSize(new Dimension(150, 40));
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(backgroundColor);
         button.setForeground(Color.WHITE);
@@ -94,6 +94,18 @@ public class Utility {
             e.printStackTrace();
         }
         return conn; // Ensure the connection is returned without closing it here
+    }
+
+    
+    // Utility method to create a uniformly sized icon (except for logo.png and logolandingpage.png)
+    public static ImageIcon createUniformIcon(String path, int width, int height) {
+        if (path.endsWith("logo.png") || path.endsWith("logolandingpage.png")) {
+            return new ImageIcon(path); // Do not resize logo icons
+        }
+        ImageIcon icon = new ImageIcon(path);
+        Image img = icon.getImage();
+        Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaled);
     }
 
     public static class PlaceholderTextField extends JTextField {

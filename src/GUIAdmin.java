@@ -57,13 +57,17 @@ public class GUIAdmin extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        JLabel userIcon = new JLabel(new ImageIcon("logo.png"));
+        JLabel userIcon = new JLabel(Utility.createUniformIcon("assets/logo.png", 32, 32)); // logo.png not resized
         userIcon.setHorizontalAlignment(SwingConstants.LEFT);
         gbc.gridx = 0;
         gbc.gridy = 0;
         userPanel.add(userIcon, gbc);
 
+        ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 20, 20);
         signOutButton = Utility.styleButton("Logout", Color.WHITE);
+        signOutButton.setIcon(logoutIcon); // Set the icon
+        signOutButton.setIconTextGap(10);
+        
         signOutButton.setForeground(Color.RED);
         signOutButton.setContentAreaFilled(true);
         signOutButton.addActionListener(e -> {
@@ -84,22 +88,34 @@ public class GUIAdmin extends JFrame {
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
+        ImageIcon historyIcon = Utility.createUniformIcon("assets/histori.png", 20, 20);
         historyButton = new JButton("Histori Transaksi");
+        historyButton.setIcon(historyIcon);
+        historyButton.setIconTextGap(10); 
         historyButton.setPreferredSize(new Dimension(200, 40));
         historyButton.setMargin(new Insets(8, 15, 8, 15));
         historyButton.setFocusPainted(false);
 
+        ImageIcon datamobilIcon = Utility.createUniformIcon("assets/datamobil.png", 20, 20);
         dataMobilButton = new JButton("Data Mobil");
+        dataMobilButton.setIcon(datamobilIcon);
+        dataMobilButton.setIconTextGap(10); 
         dataMobilButton.setPreferredSize(new Dimension(150, 40));
         dataMobilButton.setMargin(new Insets(8, 15, 8, 15));
         dataMobilButton.setFocusPainted(false);
 
+        ImageIcon editIcon = Utility.createUniformIcon("assets/edit.png", 20, 20);
         editLoginButton = new JButton("Edit Informasi Login Pegawai");
+        editLoginButton.setIcon(editIcon);
+        editLoginButton.setIconTextGap(10);
         editLoginButton.setPreferredSize(new Dimension(250, 40));
         editLoginButton.setMargin(new Insets(8, 15, 8, 15));
         editLoginButton.setFocusPainted(false);
 
+        ImageIcon keuanganIcon = Utility.createUniformIcon("assets/keuangan.png", 20, 20);
         dataKeuanganButton = new JButton("Data Keuangan");
+        dataKeuanganButton.setIcon(keuanganIcon);
+        dataKeuanganButton.setIconTextGap(10);
         dataKeuanganButton.setPreferredSize(new Dimension(200, 40));
         dataKeuanganButton.setMargin(new Insets(8, 15, 8, 15));
         dataKeuanganButton.setFocusPainted(false);
@@ -190,38 +206,52 @@ public class GUIAdmin extends JFrame {
             });
         }
 
-        // Add search functionality for History Transaksi
+        // Add search functionality for History Transaksi (live search)
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         JTextField searchField = new Utility.PlaceholderTextField("Search Transaksi...");
-
         searchPanel.add(searchField, BorderLayout.CENTER);
-
         panel.add(searchPanel, BorderLayout.NORTH);
-
-        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    String keyword = searchField.getText().trim();
-                    if (!keyword.isEmpty()) {
-                        tableModel.setRowCount(0); // Clear the table model
-
-                        // Fetch filtered data from the database
-                        List<Transaksi> filteredTransaksi = Transaksi.searchByKeyword(keyword);
-
-                        for (Transaksi t : filteredTransaksi) {
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void updateTable() {
+                String keyword = searchField.getText().trim();
+                tableModel.setRowCount(0);
+                if (keyword.isEmpty() || keyword.equals("Search Transaksi...")) {
+                    for (Transaksi t : Transaksi.getAllTransaksi()) {
+                        tableModel.addRow(new Object[] {
+                            t.getIdTransaksi(),
+                            t.getTanggal(),
+                            t.getPelanggan().getNama(),
+                            t.getMobil().getModel(),
+                            t.getMobil().getMerk(),
+                            t.getDurasiSewa(),
+                            formatRupiah.format(t.getTotalHarga()),
+                            formatRupiah.format(t.getDenda())
+                        });
+                    }
+                } else {
+                    for (Transaksi t : Transaksi.getAllTransaksi()) {
+                        if (t.getIdTransaksi().toLowerCase().contains(keyword.toLowerCase()) ||
+                            t.getPelanggan().getNama().toLowerCase().contains(keyword.toLowerCase()) ||
+                            t.getMobil().getModel().toLowerCase().contains(keyword.toLowerCase()) ||
+                            t.getMobil().getMerk().toLowerCase().contains(keyword.toLowerCase())) {
                             tableModel.addRow(new Object[] {
-                                    t.getIdTransaksi(), t.getTanggal(), t.getPelanggan().getNama(),
-                                    t.getMobil().getModel(), t.getMobil().getMerk(), t.getDurasiSewa(),
-                                    formatRupiah.format(t.getTotalHarga()), formatRupiah.format(t.getDenda())
+                                t.getIdTransaksi(),
+                                t.getTanggal(),
+                                t.getPelanggan().getNama(),
+                                t.getMobil().getModel(),
+                                t.getMobil().getMerk(),
+                                t.getDurasiSewa(),
+                                formatRupiah.format(t.getTotalHarga()),
+                                formatRupiah.format(t.getDenda())
                             });
                         }
-                    } else {
-                        refreshHistoryTable(tableModel); // Reset to show all data
                     }
                 }
             }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
         });
 
         return panel;
@@ -289,9 +319,21 @@ public class GUIAdmin extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        JButton tambahButton = Utility.styleButton("Tambah", new Color(0, 153, 76));
-        JButton simpanButton = Utility.styleButton("Simpan", Color.RED);
-        JButton deleteButton = Utility.styleButton("Delete", new Color(255, 102, 0));
+        ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 15, 15);
+        ImageIcon simpanIcon = Utility.createUniformIcon("assets/save.png",  15, 15);
+        ImageIcon deleteIcon = Utility.createUniformIcon("assets/delete.png",  15, 15);
+
+        JButton tambahButton = Utility.styleButton("Tambah", new Color(0, 153, 76)); // Green for "Tambah"
+        tambahButton.setIcon(tambahIcon);
+        tambahButton.setIconTextGap(5); 
+
+        JButton simpanButton = Utility.styleButton("Simpan", Color.RED); // Red for "Simpan"
+        simpanButton.setIcon(simpanIcon);
+        simpanButton.setIconTextGap(5); 
+        
+        JButton deleteButton = Utility.styleButton("Delete", new Color(255, 102, 0)); // Orange for "Delete"
+        deleteButton.setIcon(deleteIcon);
+        deleteButton.setIconTextGap(5); 
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -460,42 +502,37 @@ public class GUIAdmin extends JFrame {
             }
         });
 
-        // Add search functionality for Data Mobil
+        // Add search functionality for Data Mobil (live search)
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         JTextField searchField = new Utility.PlaceholderTextField("Search Mobil...");
-
         searchPanel.add(searchField, BorderLayout.CENTER);
-
         tablePanel.add(searchPanel, BorderLayout.NORTH);
-
-        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    String keyword = searchField.getText().trim();
-                    if (keyword.isEmpty()) {
-                        refreshMobilTable(mobilTableModel); // Reset to show all data
-                        return;
-                    } else {
-                        List<Mobil> filteredMobil = Mobil.search(keyword);
-                        mobilTableModel.setRowCount(0); // Clear the table model
-
-                        if (filteredMobil.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "Data tidak ditemukan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
-                            return;
-                        }
-
-                        for (Mobil m : filteredMobil) {
-                            mobilTableModel.addRow(new Object[] {
-                                    m.getIdMobil(), m.getModel(), m.getMerk(),
-                                    formatRupiah.format(m.getHargaSewa()),
-                                    m.isTersedia() ? "Available" : "Unavailable"
-                            });
-                        }
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void updateTable() {
+                String keyword = searchField.getText().trim();
+                mobilTableModel.setRowCount(0);
+                if (keyword.isEmpty() || keyword.equals("Search Mobil...")) {
+                    for (Mobil m : Mobil.getAllMobil()) {
+                        mobilTableModel.addRow(new Object[] {
+                            m.getIdMobil(), m.getModel(), m.getMerk(),
+                            formatRupiah.format(m.getHargaSewa()),
+                            m.isTersedia() ? "Available" : "Unavailable"
+                        });
+                    }
+                } else {
+                    for (Mobil m : Mobil.search(keyword)) {
+                        mobilTableModel.addRow(new Object[] {
+                            m.getIdMobil(), m.getModel(), m.getMerk(),
+                            formatRupiah.format(m.getHargaSewa()),
+                            m.isTersedia() ? "Available" : "Unavailable"
+                        });
                     }
                 }
             }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
         });
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 7));
@@ -571,7 +608,12 @@ public class GUIAdmin extends JFrame {
         gbc.gridx = 1;
         panel.add(passwordField, gbc);
 
+        ImageIcon simpanicon = Utility.createUniformIcon("assets/save.png", 20, 20);
+
         JButton saveButton = Utility.styleButton("Simpan", new Color(255, 87, 51));
+        saveButton.setIcon(simpanicon);
+        saveButton.setIconTextGap(5);
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
