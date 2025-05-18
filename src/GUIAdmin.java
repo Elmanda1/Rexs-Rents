@@ -92,6 +92,7 @@ public class GUIAdmin extends JFrame {
 
         ImageIcon historyIcon = Utility.createUniformIcon("assets/histori.png", 20, 20);
         historyButton = new JButton("Histori Transaksi");
+        historyButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         historyButton.setIcon(historyIcon);
         historyButton.setIconTextGap(8); 
         historyButton.setPreferredSize(new Dimension(200, 40));
@@ -100,6 +101,7 @@ public class GUIAdmin extends JFrame {
 
         ImageIcon datamobilIcon = Utility.createUniformIcon("assets/datamobil.png", 24, 20);
         dataMobilButton = new JButton("Data Mobil");
+        dataMobilButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         dataMobilButton.setIcon(datamobilIcon);
         dataMobilButton.setIconTextGap(8); 
         dataMobilButton.setPreferredSize(new Dimension(150, 40));
@@ -108,6 +110,7 @@ public class GUIAdmin extends JFrame {
 
         ImageIcon editIcon = Utility.createUniformIcon("assets/edit.png", 24, 20);
         editLoginButton = new JButton("Edit Informasi Login Pegawai");
+        editLoginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         editLoginButton.setIcon(editIcon);
         editLoginButton.setIconTextGap(8);
         editLoginButton.setPreferredSize(new Dimension(250, 40));
@@ -116,6 +119,7 @@ public class GUIAdmin extends JFrame {
 
         ImageIcon keuanganIcon = Utility.createUniformIcon("assets/keuangan.png", 20, 20);
         dataKeuanganButton = new JButton("Data Keuangan");
+        dataKeuanganButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         dataKeuanganButton.setIcon(keuanganIcon);
         dataKeuanganButton.setIconTextGap(8);
         dataKeuanganButton.setPreferredSize(new Dimension(180, 40));

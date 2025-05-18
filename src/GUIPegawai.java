@@ -65,6 +65,7 @@ public class GUIPegawai extends JFrame {
         // SignOut Button
         ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 20, 20);
         signOutButton = Utility.styleButton("Logout", Color.WHITE);
+        signOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         signOutButton.setIcon(logoutIcon); // Set the icon
         signOutButton.setIconTextGap(8);
         signOutButton.setPreferredSize(new Dimension(130, 40));
@@ -98,6 +99,7 @@ public class GUIPegawai extends JFrame {
 
         ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksi.png", 20, 20);
         tambahTransaksiButton = new JButton("Tambah Transaksi");
+        tambahTransaksiButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         tambahTransaksiButton.setIcon(tambahTransaksiIcon);
         tambahTransaksiButton.setIconTextGap(8); 
         tambahTransaksiButton.setPreferredSize(new Dimension(200, 40));
@@ -106,6 +108,7 @@ public class GUIPegawai extends JFrame {
 
         ImageIcon dataPelangganIcon = Utility.createUniformIcon("assets/customer.png", 24, 20);
         dataPelangganButton = new JButton("Data Pelanggan");
+        dataPelangganButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         dataPelangganButton.setIcon(dataPelangganIcon);
         dataPelangganButton.setIconTextGap(8); 
         dataPelangganButton.setPreferredSize(new Dimension(180, 40));
@@ -114,6 +117,7 @@ public class GUIPegawai extends JFrame {
 
         ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png",24 ,20);
         kembalikanMobilButton = new JButton("Kembalikan Mobil");
+        kembalikanMobilButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         kembalikanMobilButton.setIcon(kembalikanMobilIcon);
         kembalikanMobilButton.setIconTextGap(8  ); 
         kembalikanMobilButton.setPreferredSize(new Dimension(180, 40));

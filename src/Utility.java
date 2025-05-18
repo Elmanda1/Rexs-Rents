@@ -30,6 +30,7 @@ public class Utility {
 
     public static JButton styleButton(String text, Color backgroundColor) {
         JButton button = new JButton(text);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(150, 40));
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(backgroundColor);
@@ -173,6 +174,7 @@ public class Utility {
     showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust font
     showPassword.setFocusPainted(false);
     showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
+    showPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     
     // Set a fixed size for the button so it doesn't change the panel size too much
     Dimension buttonSize = showPassword.getPreferredSize();

@@ -3,8 +3,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
+
 import javax.swing.*;
 
 public class LoginFrame extends JFrame {
@@ -136,9 +135,11 @@ public class LoginFrame extends JFrame {
         JPanel rolePanel = new JPanel();
         rolePanel.setBackground(new Color(240, 248, 255)); // Match background color
         JRadioButton adminRadio = new JRadioButton("Admin");
+        adminRadio.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         adminRadio.setFont(poppinsFont);
         adminRadio.setBackground(new Color(240, 248, 255));
         JRadioButton employeeRadio = new JRadioButton("Pegawai");
+        employeeRadio.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         employeeRadio.setFont(poppinsFont);
         employeeRadio.setBackground(new Color(240, 248, 255));
         ButtonGroup roleGroup = new ButtonGroup();
@@ -153,22 +154,35 @@ public class LoginFrame extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 4;
 
-        JButton exitButton = new JButton("Keluar");
+        ImageIcon exitIcon = Utility.createUniformIcon("assets/logouthitam.png", 20, 20);
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.setIcon(exitIcon); // Set the icon
+        exitButton.setIconTextGap(8);
         exitButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
         exitButton.setBackground(new Color(173, 216, 230)); // Light blue button
         exitButton.setForeground(Color.BLACK); // Black text
         exitButton.setFocusPainted(false);
+        exitButton.setPreferredSize(new Dimension(exitButton.getPreferredSize().width, 38));
         exitButton.addActionListener(e -> System.exit(0)); // Close application
+        exitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         mainPanel.add(exitButton, gbc);
 
         // Login button
         gbc.gridx = 1;
         
+        ImageIcon loginIcon = Utility.createUniformIcon("assets/login.png", 20, 20);
+
         JButton loginButton = new JButton("Login");
+        loginButton.setIcon(loginIcon);
+        loginButton.setIconTextGap(8);
         loginButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
         loginButton.setBackground(new Color(255, 87, 51)); // Orange button
         loginButton.setForeground(Color.WHITE); // White text
         loginButton.setFocusPainted(false);
+        loginButton.setFocusPainted(false);
+        loginButton.setPreferredSize(new Dimension(loginButton.getPreferredSize().width, 38)); //tingginy 38
+        loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Hand cursor
         mainPanel.add(loginButton, gbc);
 
         // Add ActionListener to the login button
