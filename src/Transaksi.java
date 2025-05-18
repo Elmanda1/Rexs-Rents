@@ -11,7 +11,8 @@ public class Transaksi {
     private double totalHarga;
     private double denda;
 
-    public Transaksi(String idTransaksi, String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa, double denda) {
+    public Transaksi(String idTransaksi, String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa,
+            double denda) {
         this.idTransaksi = idTransaksi;
         this.tanggal = tanggal;
         this.pelanggan = pelanggan;
@@ -85,11 +86,12 @@ public class Transaksi {
     public static List<Transaksi> getAllTransaksi() {
         List<Transaksi> daftarTransaksi = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga " +
-                           "FROM tb_transaksi t " +
-                           "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
-                           "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
-                           "ORDER BY t.id_transaksi ASC";
+            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga "
+                    +
+                    "FROM tb_transaksi t " +
+                    "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                    "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                    "ORDER BY t.id_transaksi ASC";
             try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String idTransaksi = rs.getString("id_transaksi").trim();
@@ -103,7 +105,7 @@ public class Transaksi {
                     double hargaSewa = rs.getDouble("total_harga") - denda;
 
                     Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
-                    Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
+                    Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false, "");
 
                     Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
                     daftarTransaksi.add(transaksi);
@@ -117,28 +119,28 @@ public class Transaksi {
 
     // Update the denda for a specific Transaksi in the database
     public static String updateDendaInDatabase(double denda) {
-    String result = "";
-    try (Connection con = Utility.connectDB()) {
-        // Query untuk mengupdate denda pada transaksi dengan ID terbesar
-        String query = "UPDATE tb_transaksi SET denda = ?, total_harga = total_harga + ? " +
-                       "WHERE id_transaksi = (SELECT MAX(id_transaksi) FROM tb_transaksi)";
-        PreparedStatement ps = con.prepareStatement(query);
+        String result = "";
+        try (Connection con = Utility.connectDB()) {
+            // Query untuk mengupdate denda pada transaksi dengan ID terbesar
+            String query = "UPDATE tb_transaksi SET denda = ?, total_harga = total_harga + ? " +
+                    "WHERE id_transaksi = (SELECT MAX(id_transaksi) FROM tb_transaksi)";
+            PreparedStatement ps = con.prepareStatement(query);
 
-        ps.setDouble(1, denda);
-        ps.setDouble(2, denda);
+            ps.setDouble(1, denda);
+            ps.setDouble(2, denda);
 
-        int rowsAffected = ps.executeUpdate();
-        if (rowsAffected > 0) {
-            result = "Denda berhasil diperbarui untuk transaksi dengan ID terbesar.";
-        } else {
-            result = "Denda gagal diperbarui. Tidak ada transaksi yang ditemukan.";
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                result = "Denda berhasil diperbarui untuk transaksi dengan ID terbesar.";
+            } else {
+                result = "Denda gagal diperbarui. Tidak ada transaksi yang ditemukan.";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = "Terjadi kesalahan: " + e.getMessage();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        result = "Terjadi kesalahan: " + e.getMessage();
+        return result;
     }
-    return result;
-}
 
     // Generate the next ID for a new Transaksi
     public static String generateNextId() {
@@ -161,12 +163,14 @@ public class Transaksi {
     public static List<Transaksi> searchByKeyword(String keyword) {
         List<Transaksi> daftarTransaksi = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga " +
-                           "FROM tb_transaksi t " +
-                           "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
-                           "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
-                           "WHERE t.id_transaksi LIKE ? OR t.tanggal LIKE ? OR p.nama LIKE ? OR m.model LIKE ? OR m.merk LIKE ?" +
-                           "ORDER BY t.tanggal ASC";
+            String query = "SELECT t.id_transaksi, t.tanggal, p.nama AS nama_pelanggan, m.id_mobil, m.model, m.merk, t.durasi, t.denda, t.total_harga "
+                    +
+                    "FROM tb_transaksi t " +
+                    "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                    "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                    "WHERE t.id_transaksi LIKE ? OR t.tanggal LIKE ? OR p.nama LIKE ? OR m.model LIKE ? OR m.merk LIKE ? "
+                    +
+                    "ORDER BY t.tanggal ASC";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, "%" + keyword + "%");
             ps.setString(2, "%" + keyword + "%");
@@ -187,7 +191,7 @@ public class Transaksi {
                 double hargaSewa = rs.getDouble("total_harga") - denda;
 
                 Pelanggan pelanggan = new Pelanggan(namaPelanggan, "", "", "", "");
-                Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false);
+                Mobil mobil = new Mobil(idMobil, model, merk, hargaSewa, false, "");
 
                 Transaksi transaksi = new Transaksi(idTransaksi, tanggal, pelanggan, mobil, durasi, denda);
                 daftarTransaksi.add(transaksi);

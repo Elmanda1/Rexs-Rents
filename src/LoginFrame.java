@@ -3,7 +3,6 @@ import java.io.File;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.*;
 
 public class LoginFrame extends JFrame {

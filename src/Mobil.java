@@ -10,16 +10,18 @@ public class Mobil {
     private String merk;
     private double hargaSewa;
     private boolean status;
+    private String foto;
 
     Locale indo = new Locale("id", "ID");
     NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(indo);
 
-    public Mobil(String idMobil, String model, String merk, double hargaSewa, boolean status) {
+    public Mobil(String idMobil, String model, String merk, double hargaSewa, boolean status, String foto) {
         this.idMobil = idMobil;
         this.model = model;
         this.merk = merk;
         this.hargaSewa = hargaSewa;
         this.status = status;
+        this.foto = foto;
     }
 
     public String getIdMobil() {
@@ -40,6 +42,10 @@ public class Mobil {
 
     public boolean isTersedia() {
         return status;
+    }
+
+    public String getFoto() {
+        return foto;
     }
 
     public void setModel(String model) {
@@ -67,7 +73,7 @@ public class Mobil {
     public static List<Mobil> getAllMobil() {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil ORDER BY id_mobil ASC";
+            String query = "SELECT id_mobil, model, merk, hargasewa, status, foto FROM tb_mobil ORDER BY id_mobil ASC";
             try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String idMobil = rs.getString("id_mobil").trim();
@@ -75,8 +81,9 @@ public class Mobil {
                     String merk = rs.getString("merk").trim();
                     double hargaSewa = rs.getDouble("hargasewa");
                     boolean status = rs.getBoolean("status");
+                    String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
                 }
             }
         } catch (SQLException e) {
@@ -89,7 +96,7 @@ public class Mobil {
     public static List<Mobil> getMobilTersedia() {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil WHERE status = TRUE ORDER BY id_mobil ASC";
+            String query = "SELECT id_mobil, model, merk, hargasewa, status, foto FROM tb_mobil WHERE status = TRUE ORDER BY id_mobil ASC";
             try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String idMobil = rs.getString("id_mobil").trim();
@@ -97,8 +104,9 @@ public class Mobil {
                     String merk = rs.getString("merk").trim();
                     double hargaSewa = rs.getDouble("hargasewa");
                     boolean status = rs.getBoolean("status");
+                    String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
                 }
             }
         } catch (SQLException e) {
@@ -110,7 +118,7 @@ public class Mobil {
     public static List<Mobil> getMobilTidakTersedia() {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil WHERE status = false ORDER BY id_mobil ASC";
+            String query = "SELECT id_mobil, model, merk, hargasewa, status, foto FROM tb_mobil WHERE status = false ORDER BY id_mobil ASC";
             try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String idMobil = rs.getString("id_mobil").trim();
@@ -118,8 +126,9 @@ public class Mobil {
                     String merk = rs.getString("merk").trim();
                     double hargaSewa = rs.getDouble("hargasewa");
                     boolean status = rs.getBoolean("status");
+                    String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
                 }
             }
         } catch (SQLException e) {
@@ -168,13 +177,13 @@ public class Mobil {
             ps.setString(5, mobil.getIdMobil());
 
             int rowsAffected = ps.executeUpdate();
-        if (rowsAffected > 0) {
-            result = "Data Mobil berhasil diubah.";
-            System.out.println("Update berhasil untuk mobil ID: " + mobil.getIdMobil());
-        } else {
-            result = "Data Mobil gagal diubah.";
-            System.out.println("Update gagal untuk mobil ID: " + mobil.getIdMobil());
-        }
+            if (rowsAffected > 0) {
+                result = "Data Mobil berhasil diubah.";
+                System.out.println("Update berhasil untuk mobil ID: " + mobil.getIdMobil());
+            } else {
+                result = "Data Mobil gagal diubah.";
+                System.out.println("Update gagal untuk mobil ID: " + mobil.getIdMobil());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -214,8 +223,8 @@ public class Mobil {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
             String query = "SELECT id_mobil, model, merk, hargasewa, status FROM tb_mobil " +
-                           "WHERE id_mobil LIKE ? OR model LIKE ? OR merk LIKE ? " +
-                           "ORDER BY model ASC";
+                    "WHERE id_mobil LIKE ? OR model LIKE ? OR merk LIKE ? " +
+                    "ORDER BY model ASC";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, "%" + keyword + "%");
             ps.setString(2, "%" + keyword + "%");
@@ -228,8 +237,9 @@ public class Mobil {
                 String merk = rs.getString("merk").trim();
                 double hargaSewa = rs.getDouble("hargasewa");
                 boolean status = rs.getBoolean("status");
+                String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status));
+                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
             }
         } catch (SQLException e) {
             e.printStackTrace();

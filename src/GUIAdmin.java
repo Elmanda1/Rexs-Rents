@@ -1,13 +1,13 @@
 import java.awt.*;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class GUIAdmin extends JFrame {
     private JPanel mainPanel;
@@ -45,7 +45,7 @@ public class GUIAdmin extends JFrame {
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         clockLabel = Utility.createClockLabel();
-        headerPanel.add(clockLabel, BorderLayout.CENTER); 
+        headerPanel.add(clockLabel, BorderLayout.CENTER);
 
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);
@@ -69,7 +69,7 @@ public class GUIAdmin extends JFrame {
         signOutButton.setIconTextGap(8);
         signOutButton.setHorizontalTextPosition(SwingConstants.RIGHT); // Text to the right of icon
         signOutButton.setVerticalTextPosition(SwingConstants.CENTER);
-        
+
         signOutButton.setForeground(Color.RED);
         signOutButton.setContentAreaFilled(true);
         signOutButton.addActionListener(e -> {
@@ -94,7 +94,7 @@ public class GUIAdmin extends JFrame {
         historyButton = new JButton("Histori Transaksi");
         historyButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         historyButton.setIcon(historyIcon);
-        historyButton.setIconTextGap(8); 
+        historyButton.setIconTextGap(8);
         historyButton.setPreferredSize(new Dimension(200, 40));
         historyButton.setMargin(new Insets(8, 15, 8, 15));
         historyButton.setFocusPainted(false);
@@ -103,7 +103,7 @@ public class GUIAdmin extends JFrame {
         dataMobilButton = new JButton("Data Mobil");
         dataMobilButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         dataMobilButton.setIcon(datamobilIcon);
-        dataMobilButton.setIconTextGap(8); 
+        dataMobilButton.setIconTextGap(8);
         dataMobilButton.setPreferredSize(new Dimension(150, 40));
         dataMobilButton.setMargin(new Insets(8, 15, 8, 15));
         dataMobilButton.setFocusPainted(false);
@@ -220,28 +220,20 @@ public class GUIAdmin extends JFrame {
         panel.add(searchPanel, BorderLayout.NORTH);
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void updateTable() {
-                String keyword = searchField.getText().trim();
+                String keyword = searchField.getText().trim().toLowerCase();
                 tableModel.setRowCount(0);
-                if (keyword.isEmpty() || keyword.equals("Search Transaksi...")) {
-                    for (Transaksi t : Transaksi.getAllTransaksi()) {
+                for (Transaksi t : Transaksi.getAllTransaksi()) {
+                    // Gabungkan semua kolom jadi satu string untuk pencarian
+                    String all = (t.getIdTransaksi() + " " +
+                            t.getTanggal() + " " +
+                            t.getPelanggan().getNama() + " " +
+                            t.getMobil().getModel() + " " +
+                            t.getMobil().getMerk() + " " +
+                            t.getDurasiSewa() + " " +
+                            t.getTotalHarga() + " " +
+                            t.getDenda()).toLowerCase();
+                    if (keyword.isEmpty() || keyword.equals("search transaksi...") || all.contains(keyword)) {
                         tableModel.addRow(new Object[] {
-                            t.getIdTransaksi(),
-                            t.getTanggal(),
-                            t.getPelanggan().getNama(),
-                            t.getMobil().getModel(),
-                            t.getMobil().getMerk(),
-                            t.getDurasiSewa(),
-                            formatRupiah.format(t.getTotalHarga()),
-                            formatRupiah.format(t.getDenda())
-                        });
-                    }
-                } else {
-                    for (Transaksi t : Transaksi.getAllTransaksi()) {
-                        if (t.getIdTransaksi().toLowerCase().contains(keyword.toLowerCase()) ||
-                            t.getPelanggan().getNama().toLowerCase().contains(keyword.toLowerCase()) ||
-                            t.getMobil().getModel().toLowerCase().contains(keyword.toLowerCase()) ||
-                            t.getMobil().getMerk().toLowerCase().contains(keyword.toLowerCase())) {
-                            tableModel.addRow(new Object[] {
                                 t.getIdTransaksi(),
                                 t.getTanggal(),
                                 t.getPelanggan().getNama(),
@@ -250,14 +242,22 @@ public class GUIAdmin extends JFrame {
                                 t.getDurasiSewa(),
                                 formatRupiah.format(t.getTotalHarga()),
                                 formatRupiah.format(t.getDenda())
-                            });
-                        }
+                        });
                     }
                 }
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
         });
 
         return panel;
@@ -326,20 +326,20 @@ public class GUIAdmin extends JFrame {
         gbc.insets = new Insets(20, 5, 10, 15);
 
         ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 15, 15);
-        ImageIcon simpanIcon = Utility.createUniformIcon("assets/save.png",  15, 15);
-        ImageIcon deleteIcon = Utility.createUniformIcon("assets/delete.png",  15, 15);
+        ImageIcon simpanIcon = Utility.createUniformIcon("assets/save.png", 15, 15);
+        ImageIcon deleteIcon = Utility.createUniformIcon("assets/delete.png", 15, 15);
 
         JButton tambahButton = Utility.styleButton("Tambah", new Color(0, 153, 76)); // Green for "Tambah"
         tambahButton.setIcon(tambahIcon);
-        tambahButton.setIconTextGap(5); 
+        tambahButton.setIconTextGap(5);
 
         JButton simpanButton = Utility.styleButton("Simpan", Color.RED); // Red for "Simpan"
         simpanButton.setIcon(simpanIcon);
-        simpanButton.setIconTextGap(5); 
-        
+        simpanButton.setIconTextGap(5);
+
         JButton deleteButton = Utility.styleButton("Delete", new Color(255, 102, 0)); // Orange for "Delete"
         deleteButton.setIcon(deleteIcon);
-        deleteButton.setIconTextGap(5); 
+        deleteButton.setIconTextGap(5);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -387,8 +387,6 @@ public class GUIAdmin extends JFrame {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            
 
             if (!hargaSewa.matches("\\d+(\\.\\d+)?")) {
                 JOptionPane.showMessageDialog(null, "Harga Sewa harus berupa angka!",
@@ -454,7 +452,15 @@ public class GUIAdmin extends JFrame {
             double harga = Double.parseDouble(hargaSewa);
             boolean isAvailable = status.equals("Available");
 
-            Mobil mobil = new Mobil(id, model, merk, harga, isAvailable);
+            // Ambil foto dari data lama (jika ada)
+            Mobil mobilLama = Mobil.getAllMobil().stream()
+                    .filter(m -> m.getIdMobil().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
+            String foto = (mobilLama != null) ? mobilLama.getFoto() : "";
+
+            Mobil mobil = new Mobil(id, model, merk, harga, isAvailable, foto);
             String result = Mobil.updateInDatabase(mobil);
             System.out.println(result);
 
@@ -502,7 +508,7 @@ public class GUIAdmin extends JFrame {
                     modelField.setText(mobilTableModel.getValueAt(selectedRow, 1).toString());
                     merkField.setText(mobilTableModel.getValueAt(selectedRow, 2).toString());
                     hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "")
-                                                    .replace(",", "").replace(".", "").replaceAll("\\d{2}$", ""));
+                            .replace(",", "").replace(".", "").replaceAll("\\d{2}$", ""));
                     statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
                 }
             }
@@ -521,24 +527,33 @@ public class GUIAdmin extends JFrame {
                 if (keyword.isEmpty() || keyword.equals("Search Mobil...")) {
                     for (Mobil m : Mobil.getAllMobil()) {
                         mobilTableModel.addRow(new Object[] {
-                            m.getIdMobil(), m.getModel(), m.getMerk(),
-                            formatRupiah.format(m.getHargaSewa()),
-                            m.isTersedia() ? "Available" : "Unavailable"
+                                m.getIdMobil(), m.getModel(), m.getMerk(),
+                                formatRupiah.format(m.getHargaSewa()),
+                                m.isTersedia() ? "Available" : "Unavailable"
                         });
                     }
                 } else {
                     for (Mobil m : Mobil.search(keyword)) {
                         mobilTableModel.addRow(new Object[] {
-                            m.getIdMobil(), m.getModel(), m.getMerk(),
-                            formatRupiah.format(m.getHargaSewa()),
-                            m.isTersedia() ? "Available" : "Unavailable"
+                                m.getIdMobil(), m.getModel(), m.getMerk(),
+                                formatRupiah.format(m.getHargaSewa()),
+                                m.isTersedia() ? "Available" : "Unavailable"
                         });
                     }
                 }
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
         });
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 7));
@@ -609,7 +624,7 @@ public class GUIAdmin extends JFrame {
         panel.add(passwordLabel, gbc);
 
         JPasswordField passwordField = new JPasswordField(15);
-        
+
         JPanel passwordPanel = Utility.createPasswordTogglePanel(passwordField);
         gbc.gridx = 1;
         panel.add(passwordPanel, gbc);
@@ -627,30 +642,30 @@ public class GUIAdmin extends JFrame {
         panel.add(saveButton, gbc);
 
         saveButton.addActionListener(e -> {
-        String username = usernameField.getText();
-        String password = new String(passwordField.getPassword());
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
 
-        if (username.trim().isEmpty() || password.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+            if (username.trim().isEmpty() || password.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        // Simpan informasi login ke database
-        String result = updateLoginPegawai(username, password);
-        if (result.equals("success")) {
-            JOptionPane.showMessageDialog(null, "Data login pegawai berhasil diubah!",
-                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(null, "Gagal mengubah data login: " + result,
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
+            // Simpan informasi login ke database
+            String result = updateLoginPegawai(username, password);
+            if (result.equals("success")) {
+                JOptionPane.showMessageDialog(null, "Data login pegawai berhasil diubah!",
+                        "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Gagal mengubah data login: " + result,
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
-            return panel;
-        }
+        return panel;
+    }
 
-        private String updateLoginPegawai(String username, String password) {
+    private String updateLoginPegawai(String username, String password) {
         String result = "";
         try (Connection con = Utility.connectDB()) {
             String query = "UPDATE tb_akun SET username = ?, password = ? WHERE role = 'Employee'";
@@ -673,7 +688,7 @@ public class GUIAdmin extends JFrame {
 
     private JPanel dataKeuangan() {
 
-    Font poppinsFont;
+        Font poppinsFont;
         try {
             poppinsFont = Font.createFont(Font.TRUETYPE_FONT, new File("Poppins-Regular.ttf")).deriveFont(16f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -681,80 +696,80 @@ public class GUIAdmin extends JFrame {
         } catch (Exception e) {
             poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
         }
-    
-    JPanel panel = new JPanel(new GridBagLayout());
-    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.insets = new Insets(10, 10, 10, 10);
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.anchor = GridBagConstraints.WEST;
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    // Create labels
-    JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi");
-    lblTotalTransaksi.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-    JLabel lblTotalPendapatan = Utility.styleLabel("Total Pendapatan");
-    lblTotalPendapatan.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-    JLabel lblTotalDenda = Utility.styleLabel("Total Denda");
-    lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-    // Create text fields with values
-    JTextField txtTotalTransaksi = new JTextField(String.valueOf(Transaksi.getAllTransaksi().size()));
-    JTextField txtTotalPendapatan = new JTextField(
-            NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                    .format(Transaksi.getAllTransaksi().stream()
-                            .mapToDouble(Transaksi::getTotalHarga).sum()));
-    JTextField txtTotalDenda = new JTextField(
-            NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                    .format(Transaksi.getAllTransaksi().stream()
-                            .mapToDouble(Transaksi::getDenda).sum()));
+        // Create labels
+        JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi");
+        lblTotalTransaksi.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+        JLabel lblTotalPendapatan = Utility.styleLabel("Total Pendapatan");
+        lblTotalPendapatan.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+        JLabel lblTotalDenda = Utility.styleLabel("Total Denda");
+        lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
 
-    // Style the text fields
-    Color lightBlue = new Color(230, 236, 255);
-    Dimension fieldSize = new Dimension(300, 40);
+        // Create text fields with values
+        JTextField txtTotalTransaksi = new JTextField(String.valueOf(Transaksi.getAllTransaksi().size()));
+        JTextField txtTotalPendapatan = new JTextField(
+                NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+                        .format(Transaksi.getAllTransaksi().stream()
+                                .mapToDouble(Transaksi::getTotalHarga).sum()));
+        JTextField txtTotalDenda = new JTextField(
+                NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+                        .format(Transaksi.getAllTransaksi().stream()
+                                .mapToDouble(Transaksi::getDenda).sum()));
 
-    for (JTextField field : new JTextField[]{txtTotalTransaksi, txtTotalPendapatan, txtTotalDenda}) {
-        field.setEditable(false);
-        field.setBackground(lightBlue);
-        field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        field.setPreferredSize(fieldSize);
-        field.setFont(new Font("Arial", Font.PLAIN, 14));
+        // Style the text fields
+        Color lightBlue = new Color(230, 236, 255);
+        Dimension fieldSize = new Dimension(300, 40);
+
+        for (JTextField field : new JTextField[] { txtTotalTransaksi, txtTotalPendapatan, txtTotalDenda }) {
+            field.setEditable(false);
+            field.setBackground(lightBlue);
+            field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+            field.setPreferredSize(fieldSize);
+            field.setFont(new Font("Arial", Font.PLAIN, 14));
+        }
+
+        // Add components to panel
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.3;
+        panel.add(lblTotalTransaksi, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        panel.add(txtTotalTransaksi, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.3;
+        panel.add(lblTotalPendapatan, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        panel.add(txtTotalPendapatan, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0.3;
+        panel.add(lblTotalDenda, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        panel.add(txtTotalDenda, gbc);
+
+        // Create wrapper panel for centering
+        JPanel wrapperPanel = new JPanel(new GridBagLayout());
+        wrapperPanel.add(panel);
+
+        return wrapperPanel;
     }
-
-    // Add components to panel
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    gbc.weightx = 0.3;
-    panel.add(lblTotalTransaksi, gbc);
-
-    gbc.gridx = 1;
-    gbc.weightx = 0.7;
-    panel.add(txtTotalTransaksi, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 1;
-    gbc.weightx = 0.3;
-    panel.add(lblTotalPendapatan, gbc);
-
-    gbc.gridx = 1;
-    gbc.weightx = 0.7;
-    panel.add(txtTotalPendapatan, gbc);
-
-    gbc.gridx = 0;
-    gbc.gridy = 2;
-    gbc.weightx = 0.3;
-    panel.add(lblTotalDenda, gbc);
-
-    gbc.gridx = 1;
-    gbc.weightx = 0.7;
-    panel.add(txtTotalDenda, gbc);
-
-    // Create wrapper panel for centering
-    JPanel wrapperPanel = new JPanel(new GridBagLayout());
-    wrapperPanel.add(panel);
-
-    return wrapperPanel;
-}
 
     private void switchPanel(String panelName, JButton selectedButton) {
         CardLayout cl = (CardLayout) contentPanel.getLayout();

@@ -1,9 +1,11 @@
 import java.awt.*;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
 public class GUIPegawai extends JFrame {
     private JPanel mainPanel;
     private JPanel contentPanel;
@@ -16,7 +18,6 @@ public class GUIPegawai extends JFrame {
     private JTextField idPelangganField;
     private JTable pelangganTable;
     private JLabel clockLabel;
-
 
     public GUIPegawai() {
         setTitle("Rex's Rents - Employee Dashboard");
@@ -101,7 +102,7 @@ public class GUIPegawai extends JFrame {
         tambahTransaksiButton = new JButton("Tambah Transaksi");
         tambahTransaksiButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         tambahTransaksiButton.setIcon(tambahTransaksiIcon);
-        tambahTransaksiButton.setIconTextGap(8); 
+        tambahTransaksiButton.setIconTextGap(8);
         tambahTransaksiButton.setPreferredSize(new Dimension(200, 40));
         tambahTransaksiButton.setMargin(new Insets(8, 15, 8, 15));
         tambahTransaksiButton.setFocusPainted(false);
@@ -110,16 +111,16 @@ public class GUIPegawai extends JFrame {
         dataPelangganButton = new JButton("Data Pelanggan");
         dataPelangganButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         dataPelangganButton.setIcon(dataPelangganIcon);
-        dataPelangganButton.setIconTextGap(8); 
+        dataPelangganButton.setIconTextGap(8);
         dataPelangganButton.setPreferredSize(new Dimension(180, 40));
         dataPelangganButton.setMargin(new Insets(8, 15, 8, 15));
         dataPelangganButton.setFocusPainted(false);
 
-        ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png",24 ,20);
+        ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png", 24, 20);
         kembalikanMobilButton = new JButton("Kembalikan Mobil");
         kembalikanMobilButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         kembalikanMobilButton.setIcon(kembalikanMobilIcon);
-        kembalikanMobilButton.setIconTextGap(8  ); 
+        kembalikanMobilButton.setIconTextGap(8);
         kembalikanMobilButton.setPreferredSize(new Dimension(180, 40));
         kembalikanMobilButton.setMargin(new Insets(8, 15, 8, 15));
         kembalikanMobilButton.setFocusPainted(false);
@@ -174,11 +175,11 @@ public class GUIPegawai extends JFrame {
 
     private JPanel tambahTransaksi() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -237,7 +238,8 @@ public class GUIPegawai extends JFrame {
         gbc.gridy++;
         // Replace durasiField JTextField with JComboBox for positive integers (1-30)
         Integer[] durasiOptions = new Integer[30];
-        for (int i = 0; i < 30; i++) durasiOptions[i] = i + 1;
+        for (int i = 0; i < 30; i++)
+            durasiOptions[i] = i + 1;
         JComboBox<Integer> durasiComboBox = new JComboBox<>(durasiOptions);
         durasiComboBox.setSelectedIndex(0);
         durasiComboBox.setBackground(new Color(220, 230, 250));
@@ -255,7 +257,7 @@ public class GUIPegawai extends JFrame {
         // Buttons
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(20, 5, 10, 15);
+        gbc.insets = new Insets(12, 5, 5, 15);
 
         ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 15, 15);
 
@@ -279,6 +281,35 @@ public class GUIPegawai extends JFrame {
                 return false;
             }
         };
+
+        // --- FOTO MOBIL PANEL ---
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(4, 0, 0, 0);
+
+        JPanel fotoPanel = new JPanel(new BorderLayout());
+        fotoPanel.setPreferredSize(new Dimension(180, 155));
+        fotoPanel.setBackground(new Color(240, 240, 240));
+        fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
+
+        JLabel fotoLabel = new JLabel();
+        fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
+        fotoLabel.setPreferredSize(new Dimension(60, 150));
+        fotoLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+        JLabel captionLabel = new JLabel("Pilih Mobil", SwingConstants.CENTER);
+        captionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        captionLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 180, 180)));
+
+        fotoPanel.add(fotoLabel, BorderLayout.CENTER);
+        fotoPanel.add(captionLabel, BorderLayout.SOUTH);
+
+        formPanel.add(fotoPanel, gbc);
 
         JTable tableAtas = Utility.styleTable(tableModelAtas);
         JScrollPane scrollPaneAtas = new JScrollPane(tableAtas);
@@ -332,6 +363,43 @@ public class GUIPegawai extends JFrame {
                     modelField.setText(model); // Set Model to field
                     merkField.setText(merk); // Set Merk to field
                     hargaSewaField.setText(formatRupiah.format(Double.parseDouble(hargaSewa))); // Format to Rupiah
+
+                    // --- KODE FOTO & CAPTION MULAI DI SINI ---
+                    Mobil selectedMobil = Mobil.getAllMobil().stream()
+                            .filter(mobil -> mobil.getIdMobil().equals(id))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (selectedMobil != null) {
+                        String fotoFile = selectedMobil.getFoto();
+                        System.out.println("Foto file: " + fotoFile); // Debug
+                        if (fotoFile != null && !fotoFile.isEmpty()) {
+                            String path = "assets/mobil/" + fotoFile;
+                            System.out.println("Path gambar: " + path); // Debug
+                            File imgFile = new File(path);
+                            if (!imgFile.exists()) {
+                                System.out.println("File gambar tidak ditemukan: " + path);
+                            }
+                            ImageIcon icon = new ImageIcon(path);
+                            Image img = icon.getImage();
+                            if (img.getWidth(null) == -1) {
+                                System.out.println("Gambar gagal di-load: " + path);
+                                fotoLabel.setIcon(null);
+                            } else {
+                                int width = 160;
+                                int height = 90;
+                                // Scaling langsung tanpa BufferedImage
+                                Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                                fotoLabel.setIcon(new ImageIcon(scaledImg));
+                            }
+                        } else {
+                            fotoLabel.setIcon(null);
+                        }
+                        captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
+                    } else {
+                        fotoLabel.setIcon(null);
+                        captionLabel.setText("Pilih Mobil");
+                    }
                 }
             }
         });
@@ -426,35 +494,43 @@ public class GUIPegawai extends JFrame {
 
         // Add search functionality for Mobil table (live search)
         JPanel searchPanelMobil = new JPanel(new BorderLayout());
-        searchPanelMobil.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        searchPanelMobil.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         JTextField searchFieldMobil = new Utility.PlaceholderTextField("Search Mobil...");
         searchPanelMobil.add(searchFieldMobil, BorderLayout.CENTER);
         tablePanel.add(searchPanelMobil, BorderLayout.NORTH);
         searchFieldMobil.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void updateTable() {
-                String keyword = searchFieldMobil.getText().trim();
+                String keyword = searchFieldMobil.getText().trim().toLowerCase();
                 tableModelAtas.setRowCount(0);
-                if (keyword.isEmpty() || keyword.equals("Search Mobil...")) {
-                    for (Mobil m : Mobil.getMobilTersedia()) {
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                // Ambil data terbaru dari database setiap kali search
+                for (Mobil m : Mobil.getMobilTersedia()) {
+                    String hargaSewaStr = formatRupiah.format(m.getHargaSewa());
+                    // Untuk pencarian, gabungkan semua kolom dan ubah ke lower case
+                    String all = (m.getIdMobil() + " " +
+                            m.getModel() + " " +
+                            m.getMerk() + " " +
+                            hargaSewaStr).toLowerCase();
+                    if (keyword.isEmpty() || keyword.equals("search mobil...") || all.contains(keyword)) {
+                        // Untuk display, tampilkan hargaSewaStr asli (tanpa .toLowerCase())
                         tableModelAtas.addRow(new Object[] {
-                            m.getIdMobil(), m.getModel(), m.getMerk(),
-                            formatRupiah.format(m.getHargaSewa())
+                                m.getIdMobil(), m.getModel(), m.getMerk(), hargaSewaStr
                         });
-                    }
-                } else {
-                    for (Mobil m : Mobil.search(keyword)) {
-                        if (m.isTersedia()) {
-                            tableModelAtas.addRow(new Object[] {
-                                m.getIdMobil(), m.getModel(), m.getMerk(),
-                                formatRupiah.format(m.getHargaSewa())
-                            });
-                        }
                     }
                 }
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
         });
 
         // Add search functionality for Pelanggan table (live search)
@@ -464,27 +540,35 @@ public class GUIPegawai extends JFrame {
         searchPanelPelanggan.add(searchFieldPelanggan, BorderLayout.CENTER);
         searchFieldPelanggan.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void updateTable() {
-                String keyword = searchFieldPelanggan.getText().trim();
+                String keyword = searchFieldPelanggan.getText().trim().toLowerCase();
                 tableModelBawah.setRowCount(0);
-                if (keyword.isEmpty() || keyword.equals("Search Pelanggan...")) {
-                    for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                    String all = (p.getIdPelanggan() + " " +
+                            p.getNama() + " " +
+                            p.getNoHp() + " " +
+                            p.getNoKtp() + " " +
+                            p.getAlamat() + " " +
+                            p.getGender()).toLowerCase();
+                    if (keyword.isEmpty() || keyword.equals("search pelanggan...") || all.contains(keyword)) {
                         tableModelBawah.addRow(new Object[] {
-                            p.getIdPelanggan(), p.getNama(), p.getNoHp(),
-                            p.getNoKtp(), p.getAlamat(), p.getGender()
-                        });
-                    }
-                } else {
-                    for (Pelanggan p : Pelanggan.searchByName(keyword)) {
-                        tableModelBawah.addRow(new Object[] {
-                            p.getIdPelanggan(), p.getNama(), p.getNoHp(),
-                            p.getNoKtp(), p.getAlamat(), p.getGender()
+                                p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                                p.getNoKtp(), p.getAlamat(), p.getGender()
                         });
                     }
                 }
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
         });
 
         // Add the searchPanelPelanggan above the pelanggan table
@@ -497,7 +581,7 @@ public class GUIPegawai extends JFrame {
         splitPane.setResizeWeight(0.5); // Initial size ratio 50:50
         splitPane.setDividerSize(5); // Divider size
 
-        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 4));
+        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
         wrapperPanel.add(formPanel);
         panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);
@@ -586,15 +670,15 @@ public class GUIPegawai extends JFrame {
 
         JButton tambahButton = Utility.styleButton("Tambah", new Color(0, 153, 76)); // Green for "Tambah"
         tambahButton.setIcon(tambahIcon);
-        tambahButton.setIconTextGap(5); 
+        tambahButton.setIconTextGap(5);
 
         JButton simpanButton = Utility.styleButton("Simpan", Color.RED); // Red for "Simpan"
         simpanButton.setIcon(simpanIcon);
-        simpanButton.setIconTextGap(5); 
-        
+        simpanButton.setIconTextGap(5);
+
         JButton deleteButton = Utility.styleButton("Delete", new Color(255, 102, 0)); // Orange for "Delete"
         deleteButton.setIcon(deleteIcon);
-        deleteButton.setIconTextGap(5); 
+        deleteButton.setIconTextGap(5);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(tambahButton);
@@ -602,7 +686,7 @@ public class GUIPegawai extends JFrame {
         buttonPanel.add(deleteButton);
 
         formPanel.add(buttonPanel, gbc);
-        
+
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
@@ -644,22 +728,31 @@ public class GUIPegawai extends JFrame {
                 if (keyword.isEmpty() || keyword.equals("Search Pelanggan...")) {
                     for (Pelanggan p : Pelanggan.getAllPelanggan()) {
                         pelangganTableModel.addRow(new Object[] {
-                            p.getIdPelanggan(), p.getNama(), p.getNoHp(),
-                            p.getNoKtp(), p.getAlamat(), p.getGender()
+                                p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                                p.getNoKtp(), p.getAlamat(), p.getGender()
                         });
                     }
                 } else {
                     for (Pelanggan p : Pelanggan.searchByName(keyword)) {
                         pelangganTableModel.addRow(new Object[] {
-                            p.getIdPelanggan(), p.getNama(), p.getNoHp(),
-                            p.getNoKtp(), p.getAlamat(), p.getGender()
+                                p.getIdPelanggan(), p.getNama(), p.getNoHp(),
+                                p.getNoKtp(), p.getAlamat(), p.getGender()
                         });
                     }
                 }
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
         });
 
         // Add action listener to the tambah button
@@ -881,7 +974,6 @@ public class GUIPegawai extends JFrame {
         kembalikanButton.setIcon(kembalikanIcon);
         kembalikanButton.setIconTextGap(5); // Add some space between icon and text
 
-        
         formPanel.add(kembalikanButton, gbc);
 
         // Right table panel
@@ -1007,29 +1099,34 @@ public class GUIPegawai extends JFrame {
         tablePanel.add(searchPanelKembalikan, BorderLayout.NORTH);
         searchFieldKembalikan.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void updateTable() {
-                String keyword = searchFieldKembalikan.getText().trim();
+                String keyword = searchFieldKembalikan.getText().trim().toLowerCase();
                 tableModel.setRowCount(0);
-                if (keyword.isEmpty() || keyword.equals("Search Mobil...")) {
-                    for (Mobil mobil : Mobil.getMobilTidakTersedia()) {
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                for (Mobil m : Mobil.getMobilTidakTersedia()) {
+                    String hargaSewaStr = formatRupiah.format(m.getHargaSewa()).toLowerCase();
+                    String all = (m.getIdMobil() + " " +
+                            m.getModel() + " " +
+                            m.getMerk() + " " +
+                            hargaSewaStr).toLowerCase();
+                    if (keyword.isEmpty() || keyword.equals("search mobil...") || all.contains(keyword)) {
                         tableModel.addRow(new Object[] {
-                            mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(),
-                            formatRupiah.format(mobil.getHargaSewa())
+                                m.getIdMobil(), m.getModel(), m.getMerk(), hargaSewaStr
                         });
-                    }
-                } else {
-                    for (Mobil mobil : Mobil.search(keyword)) {
-                        if (!mobil.isTersedia()) {
-                            tableModel.addRow(new Object[] {
-                                mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(),
-                                formatRupiah.format(mobil.getHargaSewa())
-                            });
-                        }
                     }
                 }
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { updateTable(); }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTable();
+            }
         });
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -1087,29 +1184,29 @@ public class GUIPegawai extends JFrame {
     }
 
     private void refreshTambahTransaksiPanel() {
-    // Ambil panel "tambahTransaksi"
-    JPanel tambahTransaksiPanel = (JPanel) contentPanel.getComponent(0); // Panel pertama di contentPanel
+        // Ambil panel "tambahTransaksi"
+        JPanel tambahTransaksiPanel = (JPanel) contentPanel.getComponent(0); // Panel pertama di contentPanel
 
-    // Ambil tablePanel dari tambahTransaksiPanel
-    JPanel tablePanel = (JPanel) tambahTransaksiPanel.getComponent(1); // Komponen kedua di tambahTransaksiPanel
-    // Ambil JSplitPane dari tablePanel
-    JSplitPane splitPane = (JSplitPane) tablePanel.getComponent(1);
-    JScrollPane scrollPane = (JScrollPane) splitPane.getTopComponent();
-    JTable table = (JTable) scrollPane.getViewport().getView();
-    DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+        // Ambil tablePanel dari tambahTransaksiPanel
+        JPanel tablePanel = (JPanel) tambahTransaksiPanel.getComponent(1); // Komponen kedua di tambahTransaksiPanel
+        // Ambil JSplitPane dari tablePanel
+        JSplitPane splitPane = (JSplitPane) tablePanel.getComponent(1);
+        JScrollPane scrollPane = (JScrollPane) splitPane.getTopComponent();
+        JTable table = (JTable) scrollPane.getViewport().getView();
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
-    // Clear the table
-    tableModel.setRowCount(0);
+        // Clear the table
+        tableModel.setRowCount(0);
 
-    // Populate the table with available mobil
-    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-    daftarMobil = Mobil.getMobilTersedia(); // Fetch available mobil from the database
-    for (Mobil mobil : daftarMobil) {
-        tableModel.addRow(new Object[] {
-                mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
-        });
+        // Populate the table with available mobil
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        daftarMobil = Mobil.getMobilTersedia(); // Fetch available mobil from the database
+        for (Mobil mobil : daftarMobil) {
+            tableModel.addRow(new Object[] {
+                    mobil.getIdMobil(), mobil.getModel(), mobil.getMerk(), formatRupiah.format(mobil.getHargaSewa())
+            });
+        }
     }
-}
 
     private void refreshKembalikanMobilPanel() {
         // Locate the table model for the kembalikanMobil panel
