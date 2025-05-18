@@ -63,10 +63,10 @@ public class GUIPegawai extends JFrame {
         userPanel.add(userIcon, gbc);
 
         // SignOut Button
-        ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 24, 24);
+        ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 20, 20);
         signOutButton = Utility.styleButton("Logout", Color.WHITE);
         signOutButton.setIcon(logoutIcon); // Set the icon
-        signOutButton.setIconTextGap(5);
+        signOutButton.setIconTextGap(8);
         signOutButton.setPreferredSize(new Dimension(130, 40));
         signOutButton.setHorizontalTextPosition(SwingConstants.RIGHT); // Text to the right of icon
         signOutButton.setVerticalTextPosition(SwingConstants.CENTER);
@@ -96,26 +96,26 @@ public class GUIPegawai extends JFrame {
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-        ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksi.png", 28, 28);
+        ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksi.png", 20, 20);
         tambahTransaksiButton = new JButton("Tambah Transaksi");
         tambahTransaksiButton.setIcon(tambahTransaksiIcon);
-        tambahTransaksiButton.setIconTextGap(5); 
-        tambahTransaksiButton.setPreferredSize(new Dimension(180, 40));
+        tambahTransaksiButton.setIconTextGap(8); 
+        tambahTransaksiButton.setPreferredSize(new Dimension(200, 40));
         tambahTransaksiButton.setMargin(new Insets(8, 15, 8, 15));
         tambahTransaksiButton.setFocusPainted(false);
 
-        ImageIcon dataPelangganIcon = Utility.createUniformIcon("assets/datapelanggan.png", 28, 28);
+        ImageIcon dataPelangganIcon = Utility.createUniformIcon("assets/customer.png", 24, 20);
         dataPelangganButton = new JButton("Data Pelanggan");
         dataPelangganButton.setIcon(dataPelangganIcon);
-        dataPelangganButton.setIconTextGap(5); 
+        dataPelangganButton.setIconTextGap(8); 
         dataPelangganButton.setPreferredSize(new Dimension(180, 40));
         dataPelangganButton.setMargin(new Insets(8, 15, 8, 15));
         dataPelangganButton.setFocusPainted(false);
 
-        ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png", 28, 28);
+        ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png",24 ,20);
         kembalikanMobilButton = new JButton("Kembalikan Mobil");
         kembalikanMobilButton.setIcon(kembalikanMobilIcon);
-        kembalikanMobilButton.setIconTextGap(5); 
+        kembalikanMobilButton.setIconTextGap(8  ); 
         kembalikanMobilButton.setPreferredSize(new Dimension(180, 40));
         kembalikanMobilButton.setMargin(new Insets(8, 15, 8, 15));
         kembalikanMobilButton.setFocusPainted(false);
@@ -253,7 +253,7 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 20, 20);
+        ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 15, 15);
 
         JButton tambahButton = Utility.styleButton("Tambah", new Color(255, 102, 0)); // Orange for "Tambah"
         tambahButton.setIcon(tambahIcon);
@@ -576,9 +576,9 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 20, 20);
-        ImageIcon simpanIcon = Utility.createUniformIcon("assets/save.png", 20, 20);
-        ImageIcon deleteIcon = Utility.createUniformIcon("assets/delete.png", 20, 20);
+        ImageIcon tambahIcon = Utility.createUniformIcon("assets/add.png", 15, 15);
+        ImageIcon simpanIcon = Utility.createUniformIcon("assets/save.png", 15, 15);
+        ImageIcon deleteIcon = Utility.createUniformIcon("assets/delete.png", 15, 15);
 
         JButton tambahButton = Utility.styleButton("Tambah", new Color(0, 153, 76)); // Green for "Tambah"
         tambahButton.setIcon(tambahIcon);
@@ -871,7 +871,7 @@ public class GUIPegawai extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
-        ImageIcon kembalikanIcon = Utility.createUniformIcon("assets/save.png", 20, 20);
+        ImageIcon kembalikanIcon = Utility.createUniformIcon("assets/save.png", 15, 15);
 
         JButton kembalikanButton = Utility.styleButton("Kembalikan", new Color(0, 153, 76)); // Green
         kembalikanButton.setIcon(kembalikanIcon);

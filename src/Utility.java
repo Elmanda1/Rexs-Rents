@@ -158,33 +158,49 @@ public class Utility {
 
     //untuk password show hide
     public static JPanel createPasswordTogglePanel(JPasswordField passwordField) {
-        // Buat panel dengan BorderLayout untuk menempatkan field dan tombol secara horizontal
-        JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
-        passwordPanel.setBackground(new Color(240, 248, 255)); // Sesuaikan dengan background aplikasi
-        
-        // Tambahkan password field ke panel
-        passwordPanel.add(passwordField, BorderLayout.CENTER);
-        
-        // Buat tombol toggle untuk show/hide password
-        JToggleButton showPassword = new JToggleButton("Show");
-        showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Sesuaikan font
-        showPassword.setFocusPainted(false);
-        showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
-        
-        // Tambahkan action listener untuk mengubah visibility password
-        showPassword.addActionListener(e -> {
-            if (showPassword.isSelected()) {
-                passwordField.setEchoChar((char) 0); // Tampilkan password asli
-                showPassword.setText("Hide");
-            } else {
-                passwordField.setEchoChar('•'); // Sembunyikan password dengan bullet
-                showPassword.setText("Show");
-            }
-        });
-        
-        // Tambahkan tombol ke panel
-        passwordPanel.add(showPassword, BorderLayout.EAST);
-        
-        return passwordPanel;
+    // Create panel with BorderLayout to place field and button horizontally
+    JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
+     passwordPanel.setOpaque(false);
+    
+    // Get the original preferred size of the password field
+    Dimension passwordSize = passwordField.getPreferredSize();
+    
+    // Add password field to panel
+    passwordPanel.add(passwordField, BorderLayout.CENTER);
+    
+    // Create toggle button for show/hide password
+    JToggleButton showPassword = new JToggleButton("Show");
+    showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust font
+    showPassword.setFocusPainted(false);
+    showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
+    
+    // Set a fixed size for the button so it doesn't change the panel size too much
+    Dimension buttonSize = showPassword.getPreferredSize();
+    showPassword.setPreferredSize(buttonSize);
+    
+    // Add action listener to change password visibility
+    showPassword.addActionListener(e -> {
+        if (showPassword.isSelected()) {
+            passwordField.setEchoChar((char) 0); // Show actual password
+            showPassword.setText("Hide");
+        } else {
+            passwordField.setEchoChar('•'); // Hide password with bullet
+            showPassword.setText("Show");
+        }
+    });
+    
+    // Add button to panel
+    passwordPanel.add(showPassword, BorderLayout.EAST);
+    
+    // Set a fixed preferred size for the entire panel (password field width + button width + gap)
+    int panelWidth = passwordSize.width + buttonSize.width + 5; // 5 is the gap
+    int panelHeight = Math.max(passwordSize.height, buttonSize.height);
+    passwordPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+    
+    // Ensure the layout respects these sizes
+    passwordPanel.setMinimumSize(passwordPanel.getPreferredSize());
+    passwordPanel.setMaximumSize(passwordPanel.getPreferredSize());
+    
+    return passwordPanel;
     }
 }

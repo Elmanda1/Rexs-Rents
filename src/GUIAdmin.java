@@ -66,7 +66,9 @@ public class GUIAdmin extends JFrame {
         ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 20, 20);
         signOutButton = Utility.styleButton("Logout", Color.WHITE);
         signOutButton.setIcon(logoutIcon); // Set the icon
-        signOutButton.setIconTextGap(10);
+        signOutButton.setIconTextGap(8);
+        signOutButton.setHorizontalTextPosition(SwingConstants.RIGHT); // Text to the right of icon
+        signOutButton.setVerticalTextPosition(SwingConstants.CENTER);
         
         signOutButton.setForeground(Color.RED);
         signOutButton.setContentAreaFilled(true);
@@ -91,23 +93,23 @@ public class GUIAdmin extends JFrame {
         ImageIcon historyIcon = Utility.createUniformIcon("assets/histori.png", 20, 20);
         historyButton = new JButton("Histori Transaksi");
         historyButton.setIcon(historyIcon);
-        historyButton.setIconTextGap(10); 
+        historyButton.setIconTextGap(8); 
         historyButton.setPreferredSize(new Dimension(200, 40));
         historyButton.setMargin(new Insets(8, 15, 8, 15));
         historyButton.setFocusPainted(false);
 
-        ImageIcon datamobilIcon = Utility.createUniformIcon("assets/datamobil.png", 20, 20);
+        ImageIcon datamobilIcon = Utility.createUniformIcon("assets/datamobil.png", 24, 20);
         dataMobilButton = new JButton("Data Mobil");
         dataMobilButton.setIcon(datamobilIcon);
-        dataMobilButton.setIconTextGap(10); 
+        dataMobilButton.setIconTextGap(8); 
         dataMobilButton.setPreferredSize(new Dimension(150, 40));
         dataMobilButton.setMargin(new Insets(8, 15, 8, 15));
         dataMobilButton.setFocusPainted(false);
 
-        ImageIcon editIcon = Utility.createUniformIcon("assets/edit.png", 20, 20);
+        ImageIcon editIcon = Utility.createUniformIcon("assets/edit.png", 24, 20);
         editLoginButton = new JButton("Edit Informasi Login Pegawai");
         editLoginButton.setIcon(editIcon);
-        editLoginButton.setIconTextGap(10);
+        editLoginButton.setIconTextGap(8);
         editLoginButton.setPreferredSize(new Dimension(250, 40));
         editLoginButton.setMargin(new Insets(8, 15, 8, 15));
         editLoginButton.setFocusPainted(false);
@@ -115,8 +117,8 @@ public class GUIAdmin extends JFrame {
         ImageIcon keuanganIcon = Utility.createUniformIcon("assets/keuangan.png", 20, 20);
         dataKeuanganButton = new JButton("Data Keuangan");
         dataKeuanganButton.setIcon(keuanganIcon);
-        dataKeuanganButton.setIconTextGap(10);
-        dataKeuanganButton.setPreferredSize(new Dimension(200, 40));
+        dataKeuanganButton.setIconTextGap(8);
+        dataKeuanganButton.setPreferredSize(new Dimension(180, 40));
         dataKeuanganButton.setMargin(new Insets(8, 15, 8, 15));
         dataKeuanganButton.setFocusPainted(false);
 
@@ -606,7 +608,7 @@ public class GUIAdmin extends JFrame {
         
         JPanel passwordPanel = Utility.createPasswordTogglePanel(passwordField);
         gbc.gridx = 1;
-        panel.add(passwordField, gbc);
+        panel.add(passwordPanel, gbc);
 
         ImageIcon simpanicon = Utility.createUniformIcon("assets/save.png", 20, 20);
 
