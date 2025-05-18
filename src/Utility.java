@@ -138,7 +138,7 @@ public class Utility {
 
     public static JLabel createClockLabel() {
     JLabel clockLabel = new JLabel();
-    clockLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    clockLabel.setFont(new Font("Arial", Font.BOLD, 30));
     clockLabel.setForeground(new Color(255, 102, 0));
     clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
