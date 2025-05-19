@@ -49,6 +49,7 @@ public class Utility {
     public static JTextField styleTextField(boolean editable) {
         JTextField textField = new RoundedTextField(20);
         textField.setEditable(editable);
+        textField.setFont(new Font("Arial", Font.PLAIN, 13));
         textField.setBackground(new Color(220, 230, 250));
         textField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         return textField;
@@ -63,6 +64,8 @@ public class Utility {
             setContentAreaFilled(false);
             setFocusPainted(false);
             setBorderPainted(false);
+            setBorder(BorderFactory.createEmptyBorder()); // Remove outline
+            setFocusable(false); // Remove focus outline
         }
 
         @Override
@@ -214,24 +217,42 @@ public class Utility {
         }
     }
 
-    public static JLabel createClockLabel() {
+    public static JPanel createClockPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+
         JLabel clockLabel = new JLabel();
         clockLabel.setFont(new Font("Arial", Font.BOLD, 30));
         clockLabel.setForeground(new Color(255, 102, 0));
         clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        clockLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Timer to update the clock every second
+        JLabel dateLabel = new JLabel();
+        dateLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        dateLabel.setForeground(new Color(255, 102, 0));
+        dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        dateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Timer untuk update jam dan tanggal setiap detik
         Timer timer = new Timer(1000, e -> {
             String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+            String currentDate = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy").format(new java.util.Date());
             clockLabel.setText(currentTime);
+            dateLabel.setText(currentDate);
         });
         timer.start();
 
-        // Initialize immediately
+        // Set awal
         String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+        String currentDate = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy").format(new java.util.Date());
         clockLabel.setText(currentTime);
+        dateLabel.setText(currentDate);
 
-        return clockLabel;
+        panel.add(clockLabel);
+        panel.add(dateLabel);
+
+        return panel;
     }
 
     // untuk password show hide
@@ -338,6 +359,14 @@ public class Utility {
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
             super.paintComponent(g);
             g2.dispose();
+        }
+
+        public static <T> JComboBox<T> styleComboBox(JComboBox<T> comboBox) {
+            comboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+            comboBox.setBackground(new Color(220, 230, 250));
+            comboBox.setForeground(Color.BLACK);
+            comboBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            return comboBox;
         }
 
         @Override

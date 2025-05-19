@@ -44,8 +44,8 @@ public class GUIAdmin extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        clockLabel = Utility.createClockLabel();
-        headerPanel.add(clockLabel, BorderLayout.CENTER);
+        JPanel clockPanel = Utility.createClockPanel();
+        headerPanel.add(clockPanel, BorderLayout.CENTER);
 
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);
@@ -267,13 +267,13 @@ public class GUIAdmin extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 10));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 5, 10, 15);
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         JLabel idMobilLabel = Utility.styleLabel("ID Mobil");
         JLabel modelLabel = Utility.styleLabel("Model");
@@ -299,8 +299,8 @@ public class GUIAdmin extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 50;
-        gbc.ipady = 5;
+        gbc.ipadx = 0;
+        gbc.ipady = 10;
 
         JTextField idMobilField = Utility.styleTextField(false);
         formPanel.add(idMobilField, gbc);
@@ -350,6 +350,7 @@ public class GUIAdmin extends JFrame {
 
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
+        tablePanel.setPreferredSize(new Dimension(500, 600)); // Standardized size
 
         String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status" };
         DefaultTableModel mobilTableModel = new DefaultTableModel(columnNames, 0) {
@@ -807,16 +808,35 @@ public class GUIAdmin extends JFrame {
         CardLayout cl = (CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, panelName);
 
+        // Reset all menu buttons to default (non-white) icons and styles
         historyButton.setBackground(Color.WHITE);
         historyButton.setForeground(Color.BLACK);
+        historyButton.setIcon(Utility.createUniformIcon("assets/histori.png", 20, 20));
+
         dataMobilButton.setBackground(Color.WHITE);
         dataMobilButton.setForeground(Color.BLACK);
+        dataMobilButton.setIcon(Utility.createUniformIcon("assets/datamobil.png", 24, 20));
+
         editLoginButton.setBackground(Color.WHITE);
         editLoginButton.setForeground(Color.BLACK);
+        editLoginButton.setIcon(Utility.createUniformIcon("assets/edit.png", 24, 20));
+
         dataKeuanganButton.setBackground(Color.WHITE);
         dataKeuanganButton.setForeground(Color.BLACK);
+        dataKeuanganButton.setIcon(Utility.createUniformIcon("assets/keuangan.png", 20, 20));
 
+        // Set selected button to blue and use the 'w' (white) icon
         selectedButton.setBackground(new Color(25, 83, 215));
         selectedButton.setForeground(Color.WHITE);
+        if (selectedButton == historyButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/historiw.png", 20, 20));
+        } else if (selectedButton == dataMobilButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/datamobilw.png", 24, 20));
+        } else if (selectedButton == editLoginButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/editw.png", 24, 20));
+        } else if (selectedButton == dataKeuanganButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/keuanganw.png", 20, 20)); // No 'w' version,
+                                                                                               // fallback
+        }
     }
 }
