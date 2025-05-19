@@ -44,8 +44,8 @@ public class GUIAdmin extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        clockLabel = Utility.createClockLabel();
-        headerPanel.add(clockLabel, BorderLayout.CENTER);
+        JPanel clockPanel = Utility.createClockPanel();
+        headerPanel.add(clockPanel, BorderLayout.CENTER);
 
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);

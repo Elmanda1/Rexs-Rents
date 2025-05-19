@@ -43,8 +43,8 @@ public class GUIPegawai extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        clockLabel = Utility.createClockLabel();
-        headerPanel.add(clockLabel, BorderLayout.CENTER);
+        JPanel clockPanel = Utility.createClockPanel();
+        headerPanel.add(clockPanel, BorderLayout.CENTER);
 
         JPanel userPanel = new JPanel(new GridBagLayout());
         userPanel.setOpaque(false);
@@ -65,8 +65,7 @@ public class GUIPegawai extends JFrame {
 
         // SignOut Button
         ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 20, 20);
-        signOutButton = new Utility.RoundedButton("Logout");
-        signOutButton.setBackground(Color.WHITE);
+        signOutButton = Utility.styleButton("Logout", Color.WHITE);
         signOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         signOutButton.setIcon(logoutIcon); // Set the icon
         signOutButton.setIconTextGap(8);

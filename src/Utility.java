@@ -214,24 +214,42 @@ public class Utility {
         }
     }
 
-    public static JLabel createClockLabel() {
+    public static JPanel createClockPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+
         JLabel clockLabel = new JLabel();
         clockLabel.setFont(new Font("Arial", Font.BOLD, 30));
         clockLabel.setForeground(new Color(255, 102, 0));
         clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        clockLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Timer to update the clock every second
+        JLabel dateLabel = new JLabel();
+        dateLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        dateLabel.setForeground(new Color(255, 102, 0));
+        dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        dateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Timer untuk update jam dan tanggal setiap detik
         Timer timer = new Timer(1000, e -> {
             String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+            String currentDate = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy").format(new java.util.Date());
             clockLabel.setText(currentTime);
+            dateLabel.setText(currentDate);
         });
         timer.start();
 
-        // Initialize immediately
+        // Set awal
         String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+        String currentDate = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy").format(new java.util.Date());
         clockLabel.setText(currentTime);
+        dateLabel.setText(currentDate);
 
-        return clockLabel;
+        panel.add(clockLabel);
+        panel.add(dateLabel);
+
+        return panel;
     }
 
     // untuk password show hide
