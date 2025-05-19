@@ -95,7 +95,8 @@ public class LoginFrame extends JFrame {
         usernameLabel.setForeground(new Color(54, 69, 79)); // Dark gray text
         mainPanel.add(usernameLabel, gbc);
 
-        JTextField usernameField = new JTextField(20);
+        JTextField usernameField = Utility.styleTextField(true);
+        usernameField.setColumns(20);
         usernameField.setFont(poppinsFont);
         usernameField.setBackground(new Color(220, 240, 255)); // Light blue background
         usernameField.setForeground(Color.BLACK); // Black text
@@ -111,7 +112,7 @@ public class LoginFrame extends JFrame {
         passwordLabel.setForeground(new Color(54, 69, 79)); // Dark gray text
         mainPanel.add(passwordLabel, gbc);
 
-        JPasswordField passwordField = new JPasswordField(20);
+        JPasswordField passwordField = new Utility.RoundedPasswordField(20);
         passwordField.setFont(poppinsFont);
         passwordField.setBackground(new Color(220, 240, 255)); // Light blue background
         passwordField.setForeground(Color.BLACK); // Black text
@@ -155,11 +156,10 @@ public class LoginFrame extends JFrame {
 
         ImageIcon exitIcon = Utility.createUniformIcon("assets/logouthitam.png", 20, 20);
 
-        JButton exitButton = new JButton("Exit");
+        JButton exitButton = Utility.styleButton("Exit", new Color(173, 216, 230));
         exitButton.setIcon(exitIcon); // Set the icon
         exitButton.setIconTextGap(8);
         exitButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
-        exitButton.setBackground(new Color(173, 216, 230)); // Light blue button
         exitButton.setForeground(Color.BLACK); // Black text
         exitButton.setFocusPainted(false);
         exitButton.setPreferredSize(new Dimension(exitButton.getPreferredSize().width, 38));
@@ -172,11 +172,10 @@ public class LoginFrame extends JFrame {
         
         ImageIcon loginIcon = Utility.createUniformIcon("assets/login.png", 20, 20);
 
-        JButton loginButton = new JButton("Login");
+        JButton loginButton = Utility.styleButton("Login", new Color(255, 87, 51));
         loginButton.setIcon(loginIcon);
         loginButton.setIconTextGap(8);
         loginButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
-        loginButton.setBackground(new Color(255, 87, 51)); // Orange button
         loginButton.setForeground(Color.WHITE); // White text
         loginButton.setFocusPainted(false);
         loginButton.setFocusPainted(false);

@@ -640,19 +640,19 @@ public class GUIPegawai extends JFrame {
         formPanel.add(idPelangganField, gbc);
 
         gbc.gridy++;
-        JTextField namaField = new JTextField(20);
+        JTextField namaField = Utility.styleTextField(true);
         formPanel.add(namaField, gbc);
 
         gbc.gridy++;
-        JTextField noHPField = new JTextField(15);
+        JTextField noHPField = Utility.styleTextField(true);
         formPanel.add(noHPField, gbc);
 
         gbc.gridy++;
-        JTextField noKTPField = new JTextField(16);
+        JTextField noKTPField = Utility.styleTextField(true);
         formPanel.add(noKTPField, gbc);
 
         gbc.gridy++;
-        JTextField alamatField = new JTextField(16);
+        JTextField alamatField = Utility.styleTextField(true);
         formPanel.add(alamatField, gbc);
 
         gbc.gridy++;

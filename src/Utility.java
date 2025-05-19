@@ -18,25 +18,76 @@ public class Utility {
         return label;
     }
 
+    // Rounded JTextField
+    public static class RoundedTextField extends JTextField {
+        private int arc = 20;
+        public RoundedTextField(int columns) {
+            super(columns);
+            setOpaque(false);
+            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            super.paintComponent(g);
+            g2.dispose();
+        }
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(180, 180, 180));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
+            g2.dispose();
+        }
+    }
+
     public static JTextField styleTextField(boolean editable) {
-        JTextField textField = new JTextField(20);
+        JTextField textField = new RoundedTextField(20);
         textField.setEditable(editable);
         textField.setBackground(new Color(220, 230, 250));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        textField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         return textField;
     }
 
+    // Rounded JButton
+    public static class RoundedButton extends JButton {
+        private int arc = 20;
+        public RoundedButton(String text) {
+            super(text);
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            super.paintComponent(g);
+            g2.dispose();
+        }
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(180, 180, 180));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
+            g2.dispose();
+        }
+    }
+
     public static JButton styleButton(String text, Color backgroundColor) {
-        JButton button = new JButton(text);
+        JButton button = new RoundedButton(text);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(150, 40));
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(backgroundColor);
         button.setForeground(Color.WHITE);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
         addButtonHoverEffect(button);
         return button;
     }
@@ -170,7 +221,7 @@ public class Utility {
     passwordPanel.add(passwordField, BorderLayout.CENTER);
     
     // Create toggle button for show/hide password
-    JToggleButton showPassword = new JToggleButton("Show");
+    JToggleButton showPassword = new RoundedToggleButton("Show", new Color(173, 216, 230));
     showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust font
     showPassword.setFocusPainted(false);
     showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
@@ -204,5 +255,64 @@ public class Utility {
     passwordPanel.setMaximumSize(passwordPanel.getPreferredSize());
     
     return passwordPanel;
+    }
+
+    // Rounded JPasswordField
+    public static class RoundedPasswordField extends JPasswordField {
+        private int arc = 20;
+        public RoundedPasswordField(int columns) {
+            super(columns);
+            setOpaque(false);
+            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            super.paintComponent(g);
+            g2.dispose();
+        }
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(180, 180, 180));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
+            g2.dispose();
+        }
+    }
+
+    // Rounded JToggleButton
+    public static class RoundedToggleButton extends JToggleButton {
+        private int arc = 20;
+        public RoundedToggleButton(String text) {
+            super(text);
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+        }
+        public RoundedToggleButton(String text, Color bg) {
+            this(text);
+            setBackground(bg);
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            super.paintComponent(g);
+            g2.dispose();
+        }
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(180, 180, 180));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
+            g2.dispose();
+        }
     }
 }

@@ -306,15 +306,15 @@ public class GUIAdmin extends JFrame {
         formPanel.add(idMobilField, gbc);
 
         gbc.gridy++;
-        JTextField modelField = new JTextField(20);
+        JTextField modelField = Utility.styleTextField(true);
         formPanel.add(modelField, gbc);
 
         gbc.gridy++;
-        JTextField merkField = new JTextField(15);
+        JTextField merkField = Utility.styleTextField(true);
         formPanel.add(merkField, gbc);
 
         gbc.gridy++;
-        JTextField hargaSewaField = new JTextField(16);
+        JTextField hargaSewaField = Utility.styleTextField(true);
         formPanel.add(hargaSewaField, gbc);
 
         gbc.gridy++;
@@ -614,7 +614,7 @@ public class GUIAdmin extends JFrame {
         gbc.gridy = 0;
         panel.add(usernameLabel, gbc);
 
-        JTextField usernameField = new JTextField(15);
+        JTextField usernameField = Utility.styleTextField(true);
         gbc.gridx = 1;
         panel.add(usernameField, gbc);
 
@@ -623,7 +623,7 @@ public class GUIAdmin extends JFrame {
         gbc.gridy = 1;
         panel.add(passwordLabel, gbc);
 
-        JPasswordField passwordField = new JPasswordField(15);
+        JPasswordField passwordField = new Utility.RoundedPasswordField(20);
 
         JPanel passwordPanel = Utility.createPasswordTogglePanel(passwordField);
         gbc.gridx = 1;
@@ -714,23 +714,21 @@ public class GUIAdmin extends JFrame {
         lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
 
         // Create text fields with values
-        JTextField txtTotalTransaksi = new JTextField(String.valueOf(Transaksi.getAllTransaksi().size()));
-        JTextField txtTotalPendapatan = new JTextField(
+        JTextField txtTotalTransaksi = Utility.styleTextField(false);
+        txtTotalTransaksi.setText(String.valueOf(Transaksi.getAllTransaksi().size()));
+        JTextField txtTotalPendapatan = Utility.styleTextField(false);
+        txtTotalPendapatan.setText(
                 NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
                         .format(Transaksi.getAllTransaksi().stream()
                                 .mapToDouble(Transaksi::getTotalHarga).sum()));
-        JTextField txtTotalDenda = new JTextField(
-                NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+        JTextField txtTotalDenda = Utility.styleTextField(false);
+        txtTotalDenda.setText(NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
                         .format(Transaksi.getAllTransaksi().stream()
                                 .mapToDouble(Transaksi::getDenda).sum()));
 
-        // Style the text fields
-        Color lightBlue = new Color(230, 236, 255);
         Dimension fieldSize = new Dimension(300, 40);
 
         for (JTextField field : new JTextField[] { txtTotalTransaksi, txtTotalPendapatan, txtTotalDenda }) {
-            field.setEditable(false);
-            field.setBackground(lightBlue);
             field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
             field.setPreferredSize(fieldSize);
             field.setFont(new Font("Arial", Font.PLAIN, 14));
