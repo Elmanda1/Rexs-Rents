@@ -49,6 +49,7 @@ public class Utility {
     public static JTextField styleTextField(boolean editable) {
         JTextField textField = new RoundedTextField(20);
         textField.setEditable(editable);
+        textField.setFont(new Font("Arial", Font.PLAIN, 13));
         textField.setBackground(new Color(220, 230, 250));
         textField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         return textField;
@@ -63,6 +64,8 @@ public class Utility {
             setContentAreaFilled(false);
             setFocusPainted(false);
             setBorderPainted(false);
+            setBorder(BorderFactory.createEmptyBorder()); // Remove outline
+            setFocusable(false); // Remove focus outline
         }
 
         @Override
@@ -77,11 +80,7 @@ public class Utility {
 
         @Override
         protected void paintBorder(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(180, 180, 180));
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
-            g2.dispose();
+            // Do nothing: removes all button outlines
         }
     }
 
@@ -348,5 +347,11 @@ public class Utility {
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
             g2.dispose();
         }
+    }
+
+    // Style JComboBox consistently
+    public static <T> JComboBox<T> styleComboBox(JComboBox<T> comboBox) {
+        comboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        return comboBox;
     }
 }

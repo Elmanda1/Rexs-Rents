@@ -97,7 +97,7 @@ public class GUIPegawai extends JFrame {
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-        ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksi.png", 20, 20);
+        ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksiw.png", 20, 20);
         tambahTransaksiButton = new JButton("Tambah Transaksi");
         tambahTransaksiButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         tambahTransaksiButton.setIcon(tambahTransaksiIcon);
@@ -172,27 +172,64 @@ public class GUIPegawai extends JFrame {
         getContentPane().add(mainPanel);
     }
 
+    private void switchPanel(String panelName, JButton selectedButton) {
+        CardLayout cl = (CardLayout) contentPanel.getLayout();
+        cl.show(contentPanel, panelName);
+
+        // Reset all menu buttons to default (non-white) icons and styles
+        tambahTransaksiButton.setBackground(Color.WHITE);
+        tambahTransaksiButton.setForeground(Color.BLACK);
+        tambahTransaksiButton.setIcon(Utility.createUniformIcon("assets/tambahtransaksi.png", 20, 20));
+
+        dataPelangganButton.setBackground(Color.WHITE);
+        dataPelangganButton.setForeground(Color.BLACK);
+        dataPelangganButton.setIcon(Utility.createUniformIcon("assets/customer.png", 20, 20));
+
+        kembalikanMobilButton.setBackground(Color.WHITE);
+        kembalikanMobilButton.setForeground(Color.BLACK);
+        kembalikanMobilButton.setIcon(Utility.createUniformIcon("assets/return.png", 20, 20));
+
+        // Set selected button to blue and use the 'w' (white) icon
+        selectedButton.setBackground(new Color(25, 83, 215));
+        selectedButton.setForeground(Color.WHITE);
+        if (selectedButton == tambahTransaksiButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/tambahtransaksiw.png", 20, 20));
+        } else if (selectedButton == dataPelangganButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/customerw.png", 20, 20)); // No 'w' version, fallback
+        } else if (selectedButton == kembalikanMobilButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/returnw.png", 20, 20)); // No 'w' version, fallback
+        }
+
+        // Jika panel Customer Data dibuka, load data dan generate next ID pelanggan
+        if (panelName.equals("dataPelanggan")) {
+            if (pelangganTable != null) {
+                String nextIdPelanggan = generateNextIdPelanggan();
+                idPelangganField.setText(nextIdPelanggan);
+            }
+        }
+    }
+
     private JPanel tambahTransaksi() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 5, 10, 15);
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         // Form fields
-        JLabel pelangganLabel = new JLabel("Nama Pelanggan");
-        JLabel idMobilLabel = new JLabel("ID Mobil");
-        JLabel modelLabel = new JLabel("Model");
-        JLabel merkLabel = new JLabel("Merk");
-        JLabel durasiLabel = new JLabel("Durasi Sewa");
-        JLabel hargaSewaLabel = new JLabel("Harga Sewa");
+        JLabel pelangganLabel = Utility.styleLabel("Nama Pelanggan");
+        JLabel idMobilLabel = Utility.styleLabel("ID Mobil");
+        JLabel modelLabel = Utility.styleLabel("Model");
+        JLabel merkLabel = Utility.styleLabel("Merk");
+        JLabel durasiLabel = Utility.styleLabel("Durasi Sewa");
+        JLabel hargaSewaLabel = Utility.styleLabel("Harga Sewa");
 
         formPanel.add(pelangganLabel, gbc);
 
@@ -216,8 +253,8 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 50;
-        gbc.ipady = 5;
+        gbc.ipadx = 227;
+        gbc.ipady = 10;
 
         JTextField pelangganField = Utility.styleTextField(false);
         formPanel.add(pelangganField, gbc);
@@ -235,18 +272,13 @@ public class GUIPegawai extends JFrame {
         formPanel.add(merkField, gbc);
 
         gbc.gridy++;
-        // Replace durasiField JTextField with JComboBox for positive integers (1-30)
+        // Style the ComboBox using Utility for consistency
         Integer[] durasiOptions = new Integer[30];
         for (int i = 0; i < 30; i++)
             durasiOptions[i] = i + 1;
         JComboBox<Integer> durasiComboBox = new JComboBox<>(durasiOptions);
         durasiComboBox.setSelectedIndex(0);
-        durasiComboBox.setBackground(new Color(220, 230, 250));
-        durasiComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-        durasiComboBox.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        durasiComboBox.setPreferredSize(new Dimension(200, 30));
+        Utility.styleComboBox(durasiComboBox);
         formPanel.add(durasiComboBox, gbc);
 
         gbc.gridy++;
@@ -594,13 +626,14 @@ public class GUIPegawai extends JFrame {
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(16, 20, 10, 10)); // Reduced padding
+        // Removed setPreferredSize to allow auto-sizing
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 5, 10, 15);
+        gbc.insets = new Insets(10, 10, 10, 10); // Smaller insets
 
         // Form fields
         JLabel idPelangganLabel = Utility.styleLabel("ID Pelanggan");
@@ -632,8 +665,8 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 50;
-        gbc.ipady = 5;
+        gbc.ipadx = 0; // Smaller padding
+        gbc.ipady = 10;
 
         JTextField idPelangganField = Utility.styleTextField(false);
         formPanel.add(idPelangganField, gbc);
@@ -656,6 +689,7 @@ public class GUIPegawai extends JFrame {
 
         gbc.gridy++;
         JComboBox<String> genderComboBox = new JComboBox<>(new String[] { "L", "P" });
+        Utility.styleComboBox(genderComboBox);
         formPanel.add(genderComboBox, gbc);
 
         // Buttons
@@ -917,13 +951,14 @@ public class GUIPegawai extends JFrame {
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 10)); // Reduced padding
+        // Removed setPreferredSize to allow auto-sizing
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 5, 10, 15);
+        gbc.insets = new Insets(10, 10, 10, 10); // Smaller insets
 
         // Form fields
         formPanel.add(Utility.styleLabel("ID Mobil"), gbc);
@@ -941,6 +976,8 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
+        gbc.ipadx = 259; // Smaller padding
+        gbc.ipady = 10;
 
         JTextField idMobilField = Utility.styleTextField(false);
         formPanel.add(idMobilField, gbc);
@@ -961,14 +998,15 @@ public class GUIPegawai extends JFrame {
         JTextField telatHariField = Utility.styleTextField(true);
         formPanel.add(telatHariField, gbc);
 
-        // Buttons
         gbc.gridy++;
+        gbc.ipady = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
 
         ImageIcon kembalikanIcon = Utility.createUniformIcon("assets/save.png", 15, 15);
 
         JButton kembalikanButton = Utility.styleButton("Kembalikan", new Color(0, 153, 76)); // Green
+        kembalikanButton.setSize(150, 40);
         kembalikanButton.setIcon(kembalikanIcon);
         kembalikanButton.setIconTextGap(5); // Add some space between icon and text
 
@@ -1135,52 +1173,6 @@ public class GUIPegawai extends JFrame {
         return panel;
     }
 
-    private void switchPanel(String panelName, JButton selectedButton) {
-        CardLayout cl = (CardLayout) contentPanel.getLayout();
-        cl.show(contentPanel, panelName);
-
-        // Reset button styles
-        tambahTransaksiButton.setBackground(Color.WHITE);
-        tambahTransaksiButton.setForeground(Color.BLACK);
-        dataPelangganButton.setBackground(Color.WHITE);
-        dataPelangganButton.setForeground(Color.BLACK);
-        kembalikanMobilButton.setBackground(Color.WHITE);
-        kembalikanMobilButton.setForeground(Color.BLACK);
-
-        // Highlight selected button
-        selectedButton.setBackground(new Color(25, 83, 215));
-        selectedButton.setForeground(Color.WHITE);
-
-        // Jika panel Customer Data dibuka, load data dan generate next ID pelanggan
-        if (panelName.equals("dataPelanggan")) {
-            if (pelangganTable != null) {
-                String nextIdPelanggan = generateNextIdPelanggan();
-                idPelangganField.setText(nextIdPelanggan);
-            }
-        }
-    }
-
-    private String generateNextIdPelanggan() {
-        int maxId = 0;
-
-        // Iterate through the list of Pelanggan to find the highest ID
-        for (Pelanggan pelanggan : Pelanggan.getAllPelanggan()) {
-            String id = pelanggan.getIdPelanggan();
-            if (id.startsWith("P")) {
-                try {
-                    // Extract the numeric part of the ID after "P"
-                    int numericPart = Integer.parseInt(id.substring(1));
-                    maxId = Math.max(maxId, numericPart);
-                } catch (NumberFormatException ignored) {
-                    // Ignore invalid IDs
-                }
-            }
-        }
-
-        // Generate the next ID in the format "P" followed by a 3-digit number
-        return String.format("P%03d", maxId + 1);
-    }
-
     private void refreshTambahTransaksiPanel() {
         // Ambil panel "tambahTransaksi"
         JPanel tambahTransaksiPanel = (JPanel) contentPanel.getComponent(0); // Panel pertama di contentPanel
@@ -1234,5 +1226,26 @@ public class GUIPegawai extends JFrame {
                     p.getNoKtp(), p.getAlamat(), p.getGender()
             });
         }
+    }
+
+    private String generateNextIdPelanggan() {
+        int maxId = 0;
+
+        // Iterate through the list of Pelanggan to find the highest ID
+        for (Pelanggan pelanggan : Pelanggan.getAllPelanggan()) {
+            String id = pelanggan.getIdPelanggan();
+            if (id.startsWith("P")) {
+                try {
+                    // Extract the numeric part of the ID after "P"
+                    int numericPart = Integer.parseInt(id.substring(1));
+                    maxId = Math.max(maxId, numericPart);
+                } catch (NumberFormatException ignored) {
+                    // Ignore invalid IDs
+                }
+            }
+        }
+
+        // Generate the next ID in the format "P" followed by a 3-digit number
+        return String.format("P%03d", maxId + 1);
     }
 }
