@@ -115,7 +115,7 @@ public class GUIPegawai extends JFrame {
         dataPelangganButton.setMargin(new Insets(8, 15, 8, 15));
         dataPelangganButton.setFocusPainted(false);
 
-        ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png", 24, 20);
+        ImageIcon kembalikanMobilIcon = Utility.createUniformIcon("assets/return.png", 15, 20);
         kembalikanMobilButton = new JButton("Kembalikan Mobil");
         kembalikanMobilButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         kembalikanMobilButton.setIcon(kembalikanMobilIcon);
