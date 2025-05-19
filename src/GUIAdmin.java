@@ -688,16 +688,49 @@ public class GUIAdmin extends JFrame {
     }
 
     private JPanel dataKeuangan() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        Font poppinsFont;
-        try {
-            poppinsFont = Font.createFont(Font.TRUETYPE_FONT, new File("Poppins-Regular.ttf")).deriveFont(16f);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(poppinsFont);
-        } catch (Exception e) {
-            poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
-        }
+        // Create top panel (blue)
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        topPanel.setBackground(Color.BLUE);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        // Create and configure innerTopPanel with your size
+        JPanel innerTopPanel = new JPanel();
+        innerTopPanel.setBackground(Color.CYAN);
+        innerTopPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        innerTopPanel.setPreferredSize(new Dimension(1000, 300)); // Your original size
+
+        // Center the innerTopPanel within topPanel
+        GridBagConstraints innerGbc = new GridBagConstraints();
+        innerGbc.gridx = 0;
+        innerGbc.gridy = 0;
+        innerGbc.weightx = 1.0;
+        innerGbc.weighty = 1.0;
+        innerGbc.anchor = GridBagConstraints.CENTER;
+        innerGbc.fill = GridBagConstraints.NONE; // Prevent stretching
+        topPanel.add(innerTopPanel, innerGbc);
+
+        // Create bottom panel (yellow)
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(Color.YELLOW);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Add panels to main panel with 50-50 split
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel.add(topPanel, gbc);
+
+        gbc.gridy = 1;
+        panel.add(bottomPanel, gbc);
+
+        return panel;
+
+  /*
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -767,7 +800,7 @@ public class GUIAdmin extends JFrame {
         JPanel wrapperPanel = new JPanel(new GridBagLayout());
         wrapperPanel.add(panel);
 
-        return wrapperPanel;
+        return wrapperPanel;*/
     }
 
     private void switchPanel(String panelName, JButton selectedButton) {
