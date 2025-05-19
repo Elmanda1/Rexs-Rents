@@ -49,6 +49,7 @@ public class Utility {
     public static JTextField styleTextField(boolean editable) {
         JTextField textField = new RoundedTextField(20);
         textField.setEditable(editable);
+        textField.setFont(new Font("Arial", Font.PLAIN, 13));
         textField.setBackground(new Color(220, 230, 250));
         textField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         return textField;
@@ -63,6 +64,8 @@ public class Utility {
             setContentAreaFilled(false);
             setFocusPainted(false);
             setBorderPainted(false);
+            setBorder(BorderFactory.createEmptyBorder()); // Remove outline
+            setFocusable(false); // Remove focus outline
         }
 
         @Override
@@ -356,6 +359,14 @@ public class Utility {
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
             super.paintComponent(g);
             g2.dispose();
+        }
+
+        public static <T> JComboBox<T> styleComboBox(JComboBox<T> comboBox) {
+            comboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+            comboBox.setBackground(new Color(220, 230, 250));
+            comboBox.setForeground(Color.BLACK);
+            comboBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            return comboBox;
         }
 
         @Override
