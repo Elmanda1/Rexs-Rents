@@ -723,17 +723,16 @@ public class GUIPegawai extends JFrame {
         tablePanel.add(searchPanel, BorderLayout.NORTH);
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void updateTable() {
-                String keyword = searchField.getText().trim();
+                String keyword = searchField.getText().trim().toLowerCase();
                 pelangganTableModel.setRowCount(0);
-                if (keyword.isEmpty() || keyword.equals("Search Pelanggan...")) {
-                    for (Pelanggan p : Pelanggan.getAllPelanggan()) {
-                        pelangganTableModel.addRow(new Object[] {
-                                p.getIdPelanggan(), p.getNama(), p.getNoHp(),
-                                p.getNoKtp(), p.getAlamat(), p.getGender()
-                        });
-                    }
-                } else {
-                    for (Pelanggan p : Pelanggan.searchByName(keyword)) {
+                for (Pelanggan p : Pelanggan.getAllPelanggan()) {
+                    String all = (p.getIdPelanggan() + " " +
+                            p.getNama() + " " +
+                            p.getNoHp() + " " +
+                            p.getNoKtp() + " " +
+                            p.getAlamat() + " " +
+                            p.getGender()).toLowerCase();
+                    if (keyword.isEmpty() || keyword.equals("search pelanggan...") || all.contains(keyword)) {
                         pelangganTableModel.addRow(new Object[] {
                                 p.getIdPelanggan(), p.getNama(), p.getNoHp(),
                                 p.getNoKtp(), p.getAlamat(), p.getGender()
