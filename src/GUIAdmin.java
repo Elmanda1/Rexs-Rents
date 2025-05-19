@@ -689,6 +689,16 @@ public class GUIAdmin extends JFrame {
     }
 
     private JPanel dataKeuangan() {
+
+        Font poppinsFont;
+        try {
+            poppinsFont = Font.createFont(Font.TRUETYPE_FONT, new File("Poppins-Regular.ttf")).deriveFont(16f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(poppinsFont);
+        } catch (Exception e) {
+            poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
+        }
+        
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -698,35 +708,138 @@ public class GUIAdmin extends JFrame {
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Create and configure innerTopPanel with your size
-        JPanel innerTopPanel = new JPanel();
+        JPanel innerTopPanel = new JPanel(new GridBagLayout());
         innerTopPanel.setBackground(Color.CYAN);
         innerTopPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        innerTopPanel.setPreferredSize(new Dimension(1000, 300)); // Your original size
+        innerTopPanel.setPreferredSize(new Dimension(1350, 300)); // Your original size
+
+        JPanel jumlahPelanggan = new JPanel(new GridBagLayout());
+        jumlahPelanggan.setBackground(Color.RED);
+        JPanel totalTransaksi = new JPanel(new GridBagLayout());
+        totalTransaksi.setBackground(Color.GREEN);
+        JPanel labaKotor = new JPanel(new GridBagLayout());
+        labaKotor.setBackground(Color.GREEN);
+        JPanel labaBersih = new JPanel(new GridBagLayout());
+        labaBersih.setBackground(Color.ORANGE);
+
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 0); // Add gap between panels
+
+        // Add left panel
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        innerTopPanel.add(jumlahPelanggan, gbc);
+
+        // Add middle panel
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        innerTopPanel.add(labaKotor, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        innerTopPanel.add(totalTransaksi, gbc);
+
+        // Add right panel - remove right inset for last panel
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        innerTopPanel.add(labaBersih, gbc);
 
         // Center the innerTopPanel within topPanel
         GridBagConstraints innerGbc = new GridBagConstraints();
         innerGbc.gridx = 0;
         innerGbc.gridy = 0;
-        innerGbc.weightx = 1.0;
-        innerGbc.weighty = 1.0;
         innerGbc.anchor = GridBagConstraints.CENTER;
-        innerGbc.fill = GridBagConstraints.NONE; // Prevent stretching
         topPanel.add(innerTopPanel, innerGbc);
 
         // Create bottom panel (yellow)
-        JPanel bottomPanel = new JPanel();
+            // Create bottom panel with GridBagLayout
+        JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBackground(Color.YELLOW);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 92, 30, 92));
+        
+        // Create three panels
+        JPanel leftPanel = new JPanel(new GridBagLayout());
+        leftPanel.setBackground(Color.RED);
+
+        GridBagConstraints dalemgbc = new GridBagConstraints();
+        dalemgbc.fill = GridBagConstraints.BOTH;
+        dalemgbc.weightx = 1;
+        
+
+        JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
+        dalemgbc.insets = new Insets(0, 20, 100, 0); // Add gap between panels
+        leftPanel.add(mobilPopuler, dalemgbc);
+
+        JPanel mobilPanel = new JPanel();
+        mobilPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
+        dalemgbc.gridy = 1;
+        dalemgbc.weighty = 0;
+        mobilPanel.setBackground(Color.YELLOW);
+        dalemgbc.insets = new Insets(0, 20, 0, 20); 
+        leftPanel.add(mobilPanel, dalemgbc);
+
+        JPanel middlePanel = new JPanel(new GridBagLayout());
+        middlePanel.setBackground(Color.GREEN);
+
+        JLabel totalBenda = Utility.styleLabel("Total Denda");
+        dalemgbc.gridy = 0;
+        dalemgbc.insets = new Insets(0, 20, 100, 0); // Add gap between panels
+        middlePanel.add(totalBenda, dalemgbc);
+
+        JLabel denda = Utility.styleLabel("Total Maintenance");
+        dalemgbc.gridy = 1;
+        dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        middlePanel.add(denda, dalemgbc);
+
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setBackground(Color.ORANGE);
+
+        JLabel totalMaintenance = Utility.styleLabel("Total Maintenance");
+        dalemgbc.gridy = 0;
+        dalemgbc.insets = new Insets(0, 20, 100, 0); // Add gap between panels
+        rightPanel.add(totalMaintenance, dalemgbc);
+
+        JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
+        dalemgbc.gridy = 1;
+        dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        rightPanel.add(maintenance, dalemgbc);
+
+        // Create constraints for the three panels
+        GridBagConstraints panelGbc = new GridBagConstraints();
+        panelGbc.fill = GridBagConstraints.BOTH;
+        panelGbc.weighty = 1.0;
+        panelGbc.insets = new Insets(0, 0, 0, 20); // Add gap between panels
+
+        // Add left panel
+        panelGbc.gridx = 0;
+        panelGbc.weightx = 1.0;
+        bottomPanel.add(leftPanel, panelGbc);
+
+        // Add middle panel
+        panelGbc.gridx = 1;
+        panelGbc.weightx = 1.0;
+        bottomPanel.add(middlePanel, panelGbc);
+
+        // Add right panel - remove right inset for last panel
+        panelGbc.gridx = 2;
+        panelGbc.weightx = 1.0;
+        panelGbc.insets = new Insets(0, 0, 0, 0); // Remove right gap for last panel
+        bottomPanel.add(rightPanel, panelGbc);
 
         // Add panels to main panel with 50-50 split
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.5;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel.add(topPanel, gbc);
 
         gbc.gridy = 1;
+        gbc.weighty = 1;
         panel.add(bottomPanel, gbc);
 
         return panel;
