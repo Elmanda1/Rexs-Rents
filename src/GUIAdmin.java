@@ -624,6 +624,7 @@ public class GUIAdmin extends JFrame {
         panel.add(passwordLabel, gbc);
 
         JPasswordField passwordField = new Utility.RoundedPasswordField(20);
+        passwordField.setBackground(new Color(220, 240, 255));
 
         JPanel passwordPanel = Utility.createPasswordTogglePanel(passwordField);
         gbc.gridx = 1;
@@ -723,8 +724,8 @@ public class GUIAdmin extends JFrame {
                                 .mapToDouble(Transaksi::getTotalHarga).sum()));
         JTextField txtTotalDenda = Utility.styleTextField(false);
         txtTotalDenda.setText(NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                        .format(Transaksi.getAllTransaksi().stream()
-                                .mapToDouble(Transaksi::getDenda).sum()));
+                .format(Transaksi.getAllTransaksi().stream()
+                        .mapToDouble(Transaksi::getDenda).sum()));
 
         Dimension fieldSize = new Dimension(300, 40);
 
