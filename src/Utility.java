@@ -1,15 +1,13 @@
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Utility {
     public static JLabel styleLabel(String text) {
@@ -21,11 +19,13 @@ public class Utility {
     // Rounded JTextField
     public static class RoundedTextField extends JTextField {
         private int arc = 20;
+
         public RoundedTextField(int columns) {
             super(columns);
             setOpaque(false);
             setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         }
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -35,6 +35,7 @@ public class Utility {
             super.paintComponent(g);
             g2.dispose();
         }
+
         @Override
         protected void paintBorder(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -56,12 +57,14 @@ public class Utility {
     // Rounded JButton
     public static class RoundedButton extends JButton {
         private int arc = 20;
+
         public RoundedButton(String text) {
             super(text);
             setContentAreaFilled(false);
             setFocusPainted(false);
             setBorderPainted(false);
         }
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -71,6 +74,7 @@ public class Utility {
             super.paintComponent(g);
             g2.dispose();
         }
+
         @Override
         protected void paintBorder(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -148,8 +152,8 @@ public class Utility {
         return conn; // Ensure the connection is returned without closing it here
     }
 
-    
-    // Utility method to create a uniformly sized icon (except for logo.png and logolandingpage.png)
+    // Utility method to create a uniformly sized icon (except for logo.png and
+    // logolandingpage.png)
     public static ImageIcon createUniformIcon(String path, int width, int height) {
         if (path.endsWith("logo.png") || path.endsWith("logolandingpage.png")) {
             return new ImageIcon(path); // Do not resize logo icons
@@ -162,11 +166,14 @@ public class Utility {
 
     public static class PlaceholderTextField extends JTextField {
         private final String placeholder;
+        private final int arc = 20;
 
         public PlaceholderTextField(String placeholder) {
             this.placeholder = placeholder;
             setText(placeholder);
             setForeground(Color.GRAY);
+            setOpaque(false);
+            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
             addFocusListener(new FocusAdapter() {
                 @Override
@@ -186,85 +193,7 @@ public class Utility {
                 }
             });
         }
-    }
 
-    public static JLabel createClockLabel() {
-    JLabel clockLabel = new JLabel();
-    clockLabel.setFont(new Font("Arial", Font.BOLD, 30));
-    clockLabel.setForeground(new Color(255, 102, 0));
-    clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-    // Timer to update the clock every second
-    Timer timer = new Timer(1000, e -> {
-        String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
-        clockLabel.setText(currentTime);
-    });
-    timer.start();
-
-    // Initialize immediately
-    String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
-    clockLabel.setText(currentTime);
-
-    return clockLabel;
-    }
-
-    //untuk password show hide
-    public static JPanel createPasswordTogglePanel(JPasswordField passwordField) {
-    // Create panel with BorderLayout to place field and button horizontally
-    JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
-     passwordPanel.setOpaque(false);
-    
-    // Get the original preferred size of the password field
-    Dimension passwordSize = passwordField.getPreferredSize();
-    
-    // Add password field to panel
-    passwordPanel.add(passwordField, BorderLayout.CENTER);
-    
-    // Create toggle button for show/hide password
-    JToggleButton showPassword = new RoundedToggleButton("Show", new Color(173, 216, 230));
-    showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust font
-    showPassword.setFocusPainted(false);
-    showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
-    showPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    
-    // Set a fixed size for the button so it doesn't change the panel size too much
-    Dimension buttonSize = showPassword.getPreferredSize();
-    showPassword.setPreferredSize(buttonSize);
-    
-    // Add action listener to change password visibility
-    showPassword.addActionListener(e -> {
-        if (showPassword.isSelected()) {
-            passwordField.setEchoChar((char) 0); // Show actual password
-            showPassword.setText("Hide");
-        } else {
-            passwordField.setEchoChar('•'); // Hide password with bullet
-            showPassword.setText("Show");
-        }
-    });
-    
-    // Add button to panel
-    passwordPanel.add(showPassword, BorderLayout.EAST);
-    
-    // Set a fixed preferred size for the entire panel (password field width + button width + gap)
-    int panelWidth = passwordSize.width + buttonSize.width + 5; // 5 is the gap
-    int panelHeight = Math.max(passwordSize.height, buttonSize.height);
-    passwordPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
-    
-    // Ensure the layout respects these sizes
-    passwordPanel.setMinimumSize(passwordPanel.getPreferredSize());
-    passwordPanel.setMaximumSize(passwordPanel.getPreferredSize());
-    
-    return passwordPanel;
-    }
-
-    // Rounded JPasswordField
-    public static class RoundedPasswordField extends JPasswordField {
-        private int arc = 20;
-        public RoundedPasswordField(int columns) {
-            super(columns);
-            setOpaque(false);
-            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        }
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -274,6 +203,107 @@ public class Utility {
             super.paintComponent(g);
             g2.dispose();
         }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(180, 180, 180));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
+            g2.dispose();
+        }
+    }
+
+    public static JLabel createClockLabel() {
+        JLabel clockLabel = new JLabel();
+        clockLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        clockLabel.setForeground(new Color(255, 102, 0));
+        clockLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Timer to update the clock every second
+        Timer timer = new Timer(1000, e -> {
+            String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+            clockLabel.setText(currentTime);
+        });
+        timer.start();
+
+        // Initialize immediately
+        String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+        clockLabel.setText(currentTime);
+
+        return clockLabel;
+    }
+
+    // untuk password show hide
+    public static JPanel createPasswordTogglePanel(JPasswordField passwordField) {
+        // Create panel with BorderLayout to place field and button horizontally
+        JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
+        passwordPanel.setOpaque(false);
+
+        // Get the original preferred size of the password field
+        Dimension passwordSize = passwordField.getPreferredSize();
+
+        // Add password field to panel
+        passwordPanel.add(passwordField, BorderLayout.CENTER);
+
+        // Create toggle button for show/hide password
+        JToggleButton showPassword = new RoundedToggleButton("Show", new Color(173, 216, 230));
+        showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust font
+        showPassword.setFocusPainted(false);
+        showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
+        showPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Set a fixed size for the button so it doesn't change the panel size too much
+        Dimension buttonSize = showPassword.getPreferredSize();
+        showPassword.setPreferredSize(buttonSize);
+
+        // Add action listener to change password visibility
+        showPassword.addActionListener(e -> {
+            if (showPassword.isSelected()) {
+                passwordField.setEchoChar((char) 0); // Show actual password
+                showPassword.setText("Hide");
+            } else {
+                passwordField.setEchoChar('•'); // Hide password with bullet
+                showPassword.setText("Show");
+            }
+        });
+
+        // Add button to panel
+        passwordPanel.add(showPassword, BorderLayout.EAST);
+
+        // Set a fixed preferred size for the entire panel (password field width +
+        // button width + gap)
+        int panelWidth = passwordSize.width + buttonSize.width + 5; // 5 is the gap
+        int panelHeight = Math.max(passwordSize.height, buttonSize.height);
+        passwordPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+
+        // Ensure the layout respects these sizes
+        passwordPanel.setMinimumSize(passwordPanel.getPreferredSize());
+        passwordPanel.setMaximumSize(passwordPanel.getPreferredSize());
+
+        return passwordPanel;
+    }
+
+    // Rounded JPasswordField
+    public static class RoundedPasswordField extends JPasswordField {
+        private int arc = 20;
+
+        public RoundedPasswordField(int columns) {
+            super(columns);
+            setOpaque(false);
+            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            super.paintComponent(g);
+            g2.dispose();
+        }
+
         @Override
         protected void paintBorder(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -287,16 +317,19 @@ public class Utility {
     // Rounded JToggleButton
     public static class RoundedToggleButton extends JToggleButton {
         private int arc = 20;
+
         public RoundedToggleButton(String text) {
             super(text);
             setContentAreaFilled(false);
             setFocusPainted(false);
             setBorderPainted(false);
         }
+
         public RoundedToggleButton(String text, Color bg) {
             this(text);
             setBackground(bg);
         }
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
@@ -306,6 +339,7 @@ public class Utility {
             super.paintComponent(g);
             g2.dispose();
         }
+
         @Override
         protected void paintBorder(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();

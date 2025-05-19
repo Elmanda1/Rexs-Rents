@@ -65,7 +65,8 @@ public class GUIPegawai extends JFrame {
 
         // SignOut Button
         ImageIcon logoutIcon = Utility.createUniformIcon("assets/logout.png", 20, 20);
-        signOutButton = Utility.styleButton("Logout", Color.WHITE);
+        signOutButton = new Utility.RoundedButton("Logout");
+        signOutButton.setBackground(Color.WHITE);
         signOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         signOutButton.setIcon(logoutIcon); // Set the icon
         signOutButton.setIconTextGap(8);
@@ -75,9 +76,7 @@ public class GUIPegawai extends JFrame {
 
         signOutButton.setForeground(Color.RED);
         signOutButton.setContentAreaFilled(true);
-        signOutButton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.WHITE, 1),
-                BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        signOutButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         signOutButton.setFocusPainted(false);
         // Saat logout di GUIPegawai
         signOutButton.addActionListener(e -> {
