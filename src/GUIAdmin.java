@@ -91,7 +91,7 @@ public class GUIAdmin extends JFrame {
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-        ImageIcon historyIcon = Utility.createUniformIcon("assets/histori.png", 20, 20);
+        ImageIcon historyIcon = Utility.createUniformIcon("assets/historiw.png", 20, 20);
         historyButton = new JButton("Histori Transaksi");
         historyButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         historyButton.setIcon(historyIcon);
@@ -563,6 +563,40 @@ public class GUIAdmin extends JFrame {
                     hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "")
                             .replace(",", "").replace(".", "").replaceAll("\\d{2}$", ""));
                     statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
+
+                    // --- FOTO & CAPTION ---
+                    String id = mobilTableModel.getValueAt(selectedRow, 0).toString();
+                    Mobil selectedMobil = Mobil.getAllMobil().stream()
+                            .filter(m -> m.getIdMobil().equals(id))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (selectedMobil != null) {
+                        String fotoFile = selectedMobil.getFoto(); // kolom foto di database
+                        if (fotoFile != null && !fotoFile.isEmpty()) {
+                            String path = "assets/mobil/" + fotoFile;
+                            File imgFile = new File(path);
+                            ImageIcon icon = new ImageIcon(path);
+                            Image img = icon.getImage();
+                            if (img.getWidth(null) != -1) {
+                                int width = 510;
+                                int height = 200;
+                                Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                                fotoLabel.setIcon(new ImageIcon(scaledImg));
+                            } else {
+                                fotoLabel.setIcon(null);
+                            }
+                        } else {
+                            fotoLabel.setIcon(null);
+                        }
+                        captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
+                    } else {
+                        fotoLabel.setIcon(null);
+                        captionLabel.setText("Pilih Mobil");
+                    }
+                } else {
+                    fotoLabel.setIcon(null);
+                    captionLabel.setText("Pilih Mobil");
                 }
             }
         });
@@ -754,10 +788,7 @@ public class GUIAdmin extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel profitLabel = new JLabel("Pelanggan & Profit All Time");
-        profitLabel.setFont(new Font("poppinsFont", Font.BOLD, 30));
-
-        profitLabel.setForeground(new Color(35, 47, 89));
+        JLabel profitLabel = Utility.styleLabel("Pelanggan & Profit All Time");
 
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
@@ -791,9 +822,8 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(55, 0, 55, 80); // Add gap between panels
         jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
 
-        JLabel angkaPelangganLabel = Utility.styleLabel("1291");
-        angkaPelangganLabel.setFont(new Font("poppinsFont", Font.BOLD, 50));
-        angkaPelangganLabel.setForeground(new Color(51, 100, 255));
+        JLabel angkaPelangganLabel = Utility.styleLabel(Pelanggan.countPelanggan() + "");
+        angkaPelangganLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(55, 80, 55, 0); // Add gap between panels
         jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
@@ -805,9 +835,8 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(0, 0, 0, 80); // Add gap between panels
         totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
 
-        JLabel angkaTransaksiLabel = Utility.styleLabel("1291");
-        angkaTransaksiLabel.setFont(new Font("poppinsFont", Font.BOLD, 50));
-        angkaTransaksiLabel.setForeground(new Color(51, 100, 255));
+        JLabel angkaTransaksiLabel = Utility.styleLabel(Transaksi.countTransaksi() + "");
+        angkaTransaksiLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(0, 80, 0, 0); // Add gap between panels
         totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
@@ -819,9 +848,9 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
         labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
 
-        JLabel angkaKotorLabel = Utility.styleLabel("1111");
-        angkaKotorLabel.setFont(new Font("poppinsFont", Font.BOLD, 30));
-        angkaKotorLabel.setForeground(new Color(51, 100, 255));        gbcBanyakBangetAnjing.gridy = 1;
+        JLabel angkaKotorLabel = Utility.styleLabel(Transaksi.calculateBruto());
+        angkaKotorLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
         labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
 
@@ -832,9 +861,9 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
         labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
 
-        JLabel angkaBersihLabel = Utility.styleLabel("1291");
-        angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 30));
-        angkaBersihLabel.setForeground(new Color(51, 100, 255));        gbcBanyakBangetAnjing.gridy = 1;
+        JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateBruto());
+        angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
         labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
 
@@ -888,8 +917,7 @@ public class GUIAdmin extends JFrame {
         dalemgbc.fill = GridBagConstraints.BOTH;
         dalemgbc.weightx = 1;
 
-        JLabel mobilPopuler = Utility.styleLabel("Mobil dengan pendapatan tertinggi");
-        mobilPopuler.setForeground(new Color(35, 47, 89));
+        JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         leftPanel.add(mobilPopuler, dalemgbc);
 
@@ -897,7 +925,7 @@ public class GUIAdmin extends JFrame {
         mobilPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
-        mobilPanel.setBackground(new Color(220, 230, 250));
+        mobilPanel.setBackground(Color.YELLOW);
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         leftPanel.add(mobilPanel, dalemgbc);
 
@@ -936,9 +964,15 @@ public class GUIAdmin extends JFrame {
         dendaPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         middlePanel.add(dendaPanel, dalemgbc);
-        
-        JLabel dendaLabel = Utility.styleLabel("MILYAR MILYAR");
-        dendaPanel.add(dendaLabel);
+
+        JLabel totalDendaAngka = Utility.styleLabel(Transaksi.calculateDenda());
+        dalemgbc.gridy = 0;
+        dalemgbc.insets = new Insets(20, 20, 20, 0); // Add gap between panels
+        dendaPanel.add(totalDendaAngka, dalemgbc);
+        // JLabel denda = Utility.styleLabel("Total Maintenance");
+        // dalemgbc.gridy = 1;
+        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        // middlePanel.add(denda, dalemgbc);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
 
@@ -955,9 +989,10 @@ public class GUIAdmin extends JFrame {
         maintenancePanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         rightPanel.add(maintenancePanel, dalemgbc);
-     
-        JLabel maintenanceLabel = Utility.styleLabel("MILYAR MILYAR");
-        maintenancePanel.add(maintenanceLabel);
+        // JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
+        // dalemgbc.gridy = 1;
+        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        // rightPanel.add(maintenance, dalemgbc);
 
         // Create constraints for the three panels
         GridBagConstraints panelGbc = new GridBagConstraints();

@@ -1,6 +1,8 @@
 import java.sql.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Transaksi {
     private String idTransaksi;
@@ -200,5 +202,63 @@ public class Transaksi {
             e.printStackTrace();
         }
         return daftarTransaksi;
+    }
+
+    public static int countTransaksi() {
+        int count = 0;
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT COUNT(*) AS total FROM tb_transaksi";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public static String calculateBruto() {
+        double bruto = 0;
+        try (Connection con = Utility.connectDB()) {
+            String harga = "SELECT SUM(total_harga) AS total FROM tb_transaksi";
+            String denda = "SELECT SUM(denda) AS total FROM tb_transaksi";
+            PreparedStatement ps = con.prepareStatement(harga);
+            PreparedStatement ps2 = con.prepareStatement(denda);
+            ResultSet rs = ps.executeQuery();
+            ResultSet rs2 = ps2.executeQuery();
+
+            if (rs.next()) {
+                bruto = rs.getDouble("total");
+            }
+
+            if (rs2.next()) {
+                bruto += rs2.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        return formatRupiah.format(bruto);
+    }
+
+    public static String calculateDenda() {
+        double denda = 0;
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT SUM(denda) AS total FROM tb_transaksi";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                denda = rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        return formatRupiah.format(denda);
     }
 }
