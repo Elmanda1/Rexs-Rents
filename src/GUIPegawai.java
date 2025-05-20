@@ -275,7 +275,7 @@ public class GUIPegawai extends JFrame {
         Integer[] durasiOptions = new Integer[30];
         for (int i = 0; i < 30; i++)
             durasiOptions[i] = i + 1;
-        JComboBox<Integer> durasiComboBox = new JComboBox<>(durasiOptions);
+        JComboBox<Integer> durasiComboBox = Utility.styleComboBox(durasiOptions);
         formPanel.add(durasiComboBox, gbc);
 
         gbc.gridy++;
@@ -684,7 +684,7 @@ public class GUIPegawai extends JFrame {
         formPanel.add(alamatField, gbc);
 
         gbc.gridy++;
-        JComboBox<String> genderComboBox = new JComboBox<>(new String[] { "L", "P" });
+        JComboBox<String> genderComboBox = Utility.styleComboBox(new String[] { "L", "P" });
         formPanel.add(genderComboBox, gbc);
 
         // Buttons
