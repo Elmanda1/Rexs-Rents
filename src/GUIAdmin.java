@@ -321,6 +321,39 @@ public class GUIAdmin extends JFrame {
         JComboBox<String> statusComboBox = Utility.styleComboBox(new String[] { "Available", "Unavailable" });
         formPanel.add(statusComboBox, gbc);
 
+        // ====== TAMBAHKAN PANEL FOTO DI SINI ======
+        gbc.gridy++;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.8;
+
+        JPanel fotoPanel = new JPanel(new BorderLayout());
+        fotoPanel.setPreferredSize(new Dimension(0, 173));
+        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
+        fotoPanel.setMinimumSize(new Dimension(0, 173));
+        fotoPanel.setBackground(new Color(240, 240, 240));
+        fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
+
+        JLabel fotoLabel = new JLabel();
+        fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
+        fotoLabel.setPreferredSize(new Dimension(0, 150));
+        fotoLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+        JLabel captionLabel = new JLabel("Pilih Mobil", SwingConstants.CENTER);
+        captionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        captionLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 180, 180)));
+
+        fotoPanel.add(fotoLabel, BorderLayout.CENTER);
+        fotoPanel.add(captionLabel, BorderLayout.SOUTH);
+
+        formPanel.add(fotoPanel, gbc);
+
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(20, 5, 10, 15);
