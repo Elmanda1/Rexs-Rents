@@ -223,4 +223,20 @@ public class Pelanggan {
         }
         return daftarPelanggan;
     }
+
+    public static int countPelanggan() {
+        int count = 0;
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT COUNT(*) AS total FROM tb_pelanggan";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }
