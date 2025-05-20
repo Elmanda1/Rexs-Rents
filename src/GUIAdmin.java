@@ -273,7 +273,7 @@ public class GUIAdmin extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(6, 10, 6, 10);
 
         JLabel idMobilLabel = Utility.styleLabel("ID Mobil");
         JLabel modelLabel = Utility.styleLabel("Model");
@@ -607,7 +607,7 @@ public class GUIAdmin extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(6, 10, 6, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel usernameLabel = Utility.styleLabel("Username Pegawai:");
@@ -698,12 +698,12 @@ public class GUIAdmin extends JFrame {
         } catch (Exception e) {
             poppinsFont = new Font("Arial", Font.PLAIN, 16); // Fallback font
         }
-        
+
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         JLabel profitLabel = Utility.styleLabel("Pelanggan & Profit All Time");
-        
+
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -728,7 +728,7 @@ public class GUIAdmin extends JFrame {
         JLabel jumlahPelangganLabel = Utility.styleLabel("Jumlah Pelanggan");
         gbcBanyakBangetAnjing.gridx = 0;
         gbcBanyakBangetAnjing.insets = new Insets(55, 0, 55, 80); // Add gap between panels
-        jumlahPelanggan.add(jumlahPelangganLabel,gbcBanyakBangetAnjing);
+        jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaPelangganLabel = Utility.styleLabel(Pelanggan.countPelanggan() + "");
         gbcBanyakBangetAnjing.gridx = 1;
@@ -738,7 +738,7 @@ public class GUIAdmin extends JFrame {
         JLabel jumlahTransaksiLabel = Utility.styleLabel("Jumlah Transaksi");
         gbcBanyakBangetAnjing.gridx = 0;
         gbcBanyakBangetAnjing.insets = new Insets(0, 0, 0, 80); // Add gap between panels
-        totalTransaksi.add(jumlahTransaksiLabel,gbcBanyakBangetAnjing);
+        totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaTransaksiLabel = Utility.styleLabel(Transaksi.countTransaksi() + "");
         gbcBanyakBangetAnjing.gridx = 1;
@@ -748,7 +748,7 @@ public class GUIAdmin extends JFrame {
         JLabel labaKotorLabel = Utility.styleLabel("Laba Kotor");
         gbcBanyakBangetAnjing.gridy = 0;
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
-        labaKotor.add(labaKotorLabel,gbcBanyakBangetAnjing);
+        labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaKotorLabel = Utility.styleLabel(Transaksi.calculateBruto());
         gbcBanyakBangetAnjing.gridy = 1;
@@ -758,7 +758,7 @@ public class GUIAdmin extends JFrame {
         JLabel labaBersihLabel = Utility.styleLabel("Laba Bersih");
         gbcBanyakBangetAnjing.gridy = 0;
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
-        labaBersih.add(labaBersihLabel,gbcBanyakBangetAnjing);
+        labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateBruto());
         gbcBanyakBangetAnjing.gridy = 1;
@@ -767,7 +767,7 @@ public class GUIAdmin extends JFrame {
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 0, 0, 0); 
+        gbc.insets = new Insets(0, 0, 0, 0);
 
         // Add left panel
         gbc.gridx = 0;
@@ -790,9 +790,6 @@ public class GUIAdmin extends JFrame {
         gbc.weightx = 1.0;
         innerTopPanel.add(labaBersih, gbc);
 
-        
-
-
         // Center the innerTopPanel within topPanel
         GridBagConstraints innerGbc = new GridBagConstraints();
         innerGbc.gridx = 0;
@@ -806,18 +803,17 @@ public class GUIAdmin extends JFrame {
         innerGbc.anchor = GridBagConstraints.CENTER;
         topPanel.add(innerTopPanel, innerGbc);
 
-        // Create bottom panel 
-            // Create bottom panel with GridBagLayout
+        // Create bottom panel
+        // Create bottom panel with GridBagLayout
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 92, 30, 92));
-        
+
         // Create three panels
         JPanel leftPanel = new JPanel(new GridBagLayout());
 
         GridBagConstraints dalemgbc = new GridBagConstraints();
         dalemgbc.fill = GridBagConstraints.BOTH;
         dalemgbc.weightx = 1;
-        
 
         JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
@@ -827,8 +823,8 @@ public class GUIAdmin extends JFrame {
         mobilPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
-        mobilPanel.setBackground(new Color(220, 230, 250));
-        dalemgbc.insets = new Insets(0, 20, 0, 20); 
+        mobilPanel.setBackground(Color.YELLOW);
+        dalemgbc.insets = new Insets(0, 20, 0, 20);
         leftPanel.add(mobilPanel, dalemgbc);
 
         JPanel middlePanel = new JPanel(new GridBagLayout());
@@ -843,17 +839,17 @@ public class GUIAdmin extends JFrame {
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
         dendaPanel.setBackground(new Color(220, 230, 250));
-        dalemgbc.insets = new Insets(0, 20, 0, 20); 
+        dalemgbc.insets = new Insets(0, 20, 0, 20);
         middlePanel.add(dendaPanel, dalemgbc);
 
         JLabel totalDendaAngka = Utility.styleLabel(Transaksi.calculateDenda());
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(20, 20, 20, 0); // Add gap between panels
         dendaPanel.add(totalDendaAngka, dalemgbc);
-        //JLabel denda = Utility.styleLabel("Total Maintenance");
-        //dalemgbc.gridy = 1;
-        //dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        //middlePanel.add(denda, dalemgbc);
+        // JLabel denda = Utility.styleLabel("Total Maintenance");
+        // dalemgbc.gridy = 1;
+        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        // middlePanel.add(denda, dalemgbc);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
 
@@ -867,12 +863,12 @@ public class GUIAdmin extends JFrame {
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
         maintenancePanel.setBackground(new Color(220, 230, 250));
-        dalemgbc.insets = new Insets(0, 20, 0, 20); 
+        dalemgbc.insets = new Insets(0, 20, 0, 20);
         rightPanel.add(maintenancePanel, dalemgbc);
-        //JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
-        //dalemgbc.gridy = 1;
-        //dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        //rightPanel.add(maintenance, dalemgbc);
+        // JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
+        // dalemgbc.gridy = 1;
+        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        // rightPanel.add(maintenance, dalemgbc);
 
         // Create constraints for the three panels
         GridBagConstraints panelGbc = new GridBagConstraints();
@@ -910,77 +906,81 @@ public class GUIAdmin extends JFrame {
 
         return panel;
 
-  /*
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
-
-        // Create labels
-        JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi");
-        lblTotalTransaksi.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-        JLabel lblTotalPendapatan = Utility.styleLabel("Total Pendapatan");
-        lblTotalPendapatan.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-        JLabel lblTotalDenda = Utility.styleLabel("Total Denda");
-        lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-
-        // Create text fields with values
-        JTextField txtTotalTransaksi = Utility.styleTextField(false);
-        txtTotalTransaksi.setText(String.valueOf(Transaksi.getAllTransaksi().size()));
-        JTextField txtTotalPendapatan = Utility.styleTextField(false);
-        txtTotalPendapatan.setText(
-                NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                        .format(Transaksi.getAllTransaksi().stream()
-                                .mapToDouble(Transaksi::getTotalHarga).sum()));
-        JTextField txtTotalDenda = Utility.styleTextField(false);
-        txtTotalDenda.setText(NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-                .format(Transaksi.getAllTransaksi().stream()
-                        .mapToDouble(Transaksi::getDenda).sum()));
-
-        Dimension fieldSize = new Dimension(300, 40);
-
-        for (JTextField field : new JTextField[] { txtTotalTransaksi, txtTotalPendapatan, txtTotalDenda }) {
-            field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-            field.setPreferredSize(fieldSize);
-            field.setFont(new Font("Arial", Font.PLAIN, 14));
-        }
-
-        // Add components to panel
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.3;
-        panel.add(lblTotalTransaksi, gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 0.7;
-        panel.add(txtTotalTransaksi, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 0.3;
-        panel.add(lblTotalPendapatan, gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 0.7;
-        panel.add(txtTotalPendapatan, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.weightx = 0.3;
-        panel.add(lblTotalDenda, gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 0.7;
-        panel.add(txtTotalDenda, gbc);
-
-        // Create wrapper panel for centering
-        JPanel wrapperPanel = new JPanel(new GridBagLayout());
-        wrapperPanel.add(panel);
-
-        return wrapperPanel;*/
+        /*
+         * JPanel panel = new JPanel(new GridBagLayout());
+         * panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+         * 
+         * GridBagConstraints gbc = new GridBagConstraints();
+         * gbc.insets = new Insets(10, 10, 10, 10);
+         * gbc.fill = GridBagConstraints.HORIZONTAL;
+         * gbc.anchor = GridBagConstraints.WEST;
+         * 
+         * // Create labels
+         * JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi");
+         * lblTotalTransaksi.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+         * JLabel lblTotalPendapatan = Utility.styleLabel("Total Pendapatan");
+         * lblTotalPendapatan.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+         * JLabel lblTotalDenda = Utility.styleLabel("Total Denda");
+         * lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
+         * 
+         * // Create text fields with values
+         * JTextField txtTotalTransaksi = Utility.styleTextField(false);
+         * txtTotalTransaksi.setText(String.valueOf(Transaksi.getAllTransaksi().size()))
+         * ;
+         * JTextField txtTotalPendapatan = Utility.styleTextField(false);
+         * txtTotalPendapatan.setText(
+         * NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
+         * .format(Transaksi.getAllTransaksi().stream()
+         * .mapToDouble(Transaksi::getTotalHarga).sum()));
+         * JTextField txtTotalDenda = Utility.styleTextField(false);
+         * txtTotalDenda.setText(NumberFormat.getCurrencyInstance(new Locale("id",
+         * "ID"))
+         * .format(Transaksi.getAllTransaksi().stream()
+         * .mapToDouble(Transaksi::getDenda).sum()));
+         * 
+         * Dimension fieldSize = new Dimension(300, 40);
+         * 
+         * for (JTextField field : new JTextField[] { txtTotalTransaksi,
+         * txtTotalPendapatan, txtTotalDenda }) {
+         * field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+         * field.setPreferredSize(fieldSize);
+         * field.setFont(new Font("Arial", Font.PLAIN, 14));
+         * }
+         * 
+         * // Add components to panel
+         * gbc.gridx = 0;
+         * gbc.gridy = 0;
+         * gbc.weightx = 0.3;
+         * panel.add(lblTotalTransaksi, gbc);
+         * 
+         * gbc.gridx = 1;
+         * gbc.weightx = 0.7;
+         * panel.add(txtTotalTransaksi, gbc);
+         * 
+         * gbc.gridx = 0;
+         * gbc.gridy = 1;
+         * gbc.weightx = 0.3;
+         * panel.add(lblTotalPendapatan, gbc);
+         * 
+         * gbc.gridx = 1;
+         * gbc.weightx = 0.7;
+         * panel.add(txtTotalPendapatan, gbc);
+         * 
+         * gbc.gridx = 0;
+         * gbc.gridy = 2;
+         * gbc.weightx = 0.3;
+         * panel.add(lblTotalDenda, gbc);
+         * 
+         * gbc.gridx = 1;
+         * gbc.weightx = 0.7;
+         * panel.add(txtTotalDenda, gbc);
+         * 
+         * // Create wrapper panel for centering
+         * JPanel wrapperPanel = new JPanel(new GridBagLayout());
+         * wrapperPanel.add(panel);
+         * 
+         * return wrapperPanel;
+         */
     }
 
     private void switchPanel(String panelName, JButton selectedButton) {

@@ -220,7 +220,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(6, 10, 6, 10);
 
         // Form fields
         JLabel pelangganLabel = Utility.styleLabel("Nama Pelanggan");
@@ -252,7 +252,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 247;
+        gbc.ipadx = 227;
         gbc.ipady = 10;
 
         JTextField pelangganField = Utility.styleTextField(false);
@@ -312,20 +312,25 @@ public class GUIPegawai extends JFrame {
 
         // --- FOTO MOBIL PANEL ---
         gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
+        gbc.gridx = 1; // <-- hanya di kolom kanan, segaris dengan textfield
+        gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(4, 0, 0, 0);
+        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.8;
 
         JPanel fotoPanel = new JPanel(new BorderLayout());
-        fotoPanel.setPreferredSize(new Dimension(180, 165));
+        // Atur hanya tinggi, lebar biarkan mengikuti parent
+        fotoPanel.setPreferredSize(new Dimension(0, 173));
+        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
+        fotoPanel.setMinimumSize(new Dimension(0, 173));
         fotoPanel.setBackground(new Color(240, 240, 240));
         fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
 
         JLabel fotoLabel = new JLabel();
         fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
-        fotoLabel.setPreferredSize(new Dimension(100, 150));
+        fotoLabel.setPreferredSize(new Dimension(0, 150));
         fotoLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
@@ -414,7 +419,7 @@ public class GUIPegawai extends JFrame {
                                 System.out.println("Gambar gagal di-load: " + path);
                                 fotoLabel.setIcon(null);
                             } else {
-                                int width = 160;
+                                int width = 100;
                                 int height = 90;
                                 // Scaling langsung tanpa BufferedImage
                                 Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
@@ -629,7 +634,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(6, 10, 6, 10);
 
         // Form fields
         JLabel idPelangganLabel = Utility.styleLabel("ID Pelanggan");
@@ -952,7 +957,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(6, 10, 6, 7);
 
         // Form fields
         formPanel.add(Utility.styleLabel("ID Mobil"), gbc);
@@ -970,7 +975,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 279; // Smaller padding
+        gbc.ipadx = 259; // Smaller padding
         gbc.ipady = 10;
 
         JTextField idMobilField = Utility.styleTextField(false);
@@ -994,17 +999,20 @@ public class GUIPegawai extends JFrame {
 
         // Buttons
         gbc.gridy++;
+        gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(20, 5, 10, 15);
+        gbc.insets = new Insets(12, 5, 75, 15);
 
         ImageIcon kembalikanIcon = Utility.createUniformIcon("assets/save.png", 15, 15);
 
         JButton kembalikanButton = Utility.styleButton("Kembalikan", new Color(0, 153, 76)); // Green
-        kembalikanButton.setSize(150, 40);
         kembalikanButton.setIcon(kembalikanIcon);
         kembalikanButton.setIconTextGap(5); // Add some space between icon and text
 
-        formPanel.add(kembalikanButton, gbc);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.add(kembalikanButton);
+
+        formPanel.add(buttonPanel, gbc);
 
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -1017,6 +1025,40 @@ public class GUIPegawai extends JFrame {
                 return false;
             }
         };
+
+        // --- FOTO MOBIL PANEL ---
+        gbc.gridy++;
+        gbc.gridx = 1; // <-- hanya di kolom kanan, segaris dengan textfield
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.8;
+
+        JPanel fotoPanel = new JPanel(new BorderLayout());
+        // Atur hanya tinggi, lebar biarkan mengikuti parent
+        fotoPanel.setPreferredSize(new Dimension(0, 173));
+        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
+        fotoPanel.setMinimumSize(new Dimension(0, 173));
+        fotoPanel.setBackground(new Color(240, 240, 240));
+        fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
+
+        JLabel fotoLabel = new JLabel();
+        fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
+        fotoLabel.setPreferredSize(new Dimension(0, 150));
+        fotoLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+        JLabel captionLabel = new JLabel("Pilih Mobil", SwingConstants.CENTER);
+        captionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        captionLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 180, 180)));
+
+        fotoPanel.add(fotoLabel, BorderLayout.CENTER);
+        fotoPanel.add(captionLabel, BorderLayout.SOUTH);
+
+        formPanel.add(fotoPanel, gbc);
 
         JTable table = Utility.styleTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -1037,10 +1079,55 @@ public class GUIPegawai extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    idMobilField.setText(tableModel.getValueAt(selectedRow, 0).toString());
-                    modelField.setText(tableModel.getValueAt(selectedRow, 1).toString());
-                    merkField.setText(tableModel.getValueAt(selectedRow, 2).toString());
-                    hargaSewaField.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                    String id = tableModel.getValueAt(selectedRow, 0).toString(); // ID Mobil
+                    String model = tableModel.getValueAt(selectedRow, 1).toString(); // Model
+                    String merk = tableModel.getValueAt(selectedRow, 2).toString(); // Merk
+                    String hargaSewa = tableModel.getValueAt(selectedRow, 3).toString(); // Harga Sewa
+
+                    // Remove "Rp" and thousand separators before parsing
+                    hargaSewa = hargaSewa.replace("Rp", "").replace(".", "").replace(",", ".").trim();
+
+                    idMobilField.setText(id); // Set ID Mobil to field
+                    modelField.setText(model); // Set Model to field
+                    merkField.setText(merk); // Set Merk to field
+                    hargaSewaField.setText(formatRupiah.format(Double.parseDouble(hargaSewa))); // Format to Rupiah
+
+                    // --- KODE FOTO & CAPTION MULAI DI SINI ---
+                    Mobil selectedMobil = Mobil.getAllMobil().stream()
+                            .filter(mobil -> mobil.getIdMobil().equals(id))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (selectedMobil != null) {
+                        String fotoFile = selectedMobil.getFoto();
+                        System.out.println("Foto file: " + fotoFile); // Debug
+                        if (fotoFile != null && !fotoFile.isEmpty()) {
+                            String path = "assets/mobil/" + fotoFile;
+                            System.out.println("Path gambar: " + path); // Debug
+                            File imgFile = new File(path);
+                            if (!imgFile.exists()) {
+                                System.out.println("File gambar tidak ditemukan: " + path);
+                            }
+                            ImageIcon icon = new ImageIcon(path);
+                            Image img = icon.getImage();
+                            if (img.getWidth(null) == -1) {
+                                System.out.println("Gambar gagal di-load: " + path);
+                                fotoLabel.setIcon(null);
+                            } else {
+                                int width = 100;
+                                int height = 90;
+                                // Scaling langsung tanpa BufferedImage
+                                Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                                fotoLabel.setIcon(new ImageIcon(scaledImg));
+                            }
+                        } else {
+                            fotoLabel.setIcon(null);
+                        }
+                        captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
+                    } else {
+                        fotoLabel.setIcon(null);
+                        captionLabel.setText("Pilih Mobil");
+                    }
                 }
             }
         });
