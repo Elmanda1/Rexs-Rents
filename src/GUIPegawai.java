@@ -252,7 +252,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 227;
+        gbc.ipadx = 247;
         gbc.ipady = 10;
 
         JTextField pelangganField = Utility.styleTextField(false);
@@ -970,7 +970,7 @@ public class GUIPegawai extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 259; // Smaller padding
+        gbc.ipadx = 279; // Smaller padding
         gbc.ipady = 10;
 
         JTextField idMobilField = Utility.styleTextField(false);
