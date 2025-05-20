@@ -419,8 +419,8 @@ public class GUIPegawai extends JFrame {
                                 System.out.println("Gambar gagal di-load: " + path);
                                 fotoLabel.setIcon(null);
                             } else {
-                                int width = 100;
-                                int height = 90;
+                                int width = 500;
+                                int height = 200;
                                 // Scaling langsung tanpa BufferedImage
                                 Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                                 fotoLabel.setIcon(new ImageIcon(scaledImg));
@@ -1114,8 +1114,8 @@ public class GUIPegawai extends JFrame {
                                 System.out.println("Gambar gagal di-load: " + path);
                                 fotoLabel.setIcon(null);
                             } else {
-                                int width = 100;
-                                int height = 90;
+                                int width = 550;
+                                int height = 200;
                                 // Scaling langsung tanpa BufferedImage
                                 Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                                 fotoLabel.setIcon(new ImageIcon(scaledImg));

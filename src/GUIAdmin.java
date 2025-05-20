@@ -348,6 +348,39 @@ public class GUIAdmin extends JFrame {
 
         formPanel.add(buttonPanel, gbc);
 
+        // --- FOTO MOBIL PANEL (SAMA DENGAN GUIPegawai) ---
+        gbc.gridy++;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.8;
+
+        JPanel fotoPanel = new JPanel(new BorderLayout());
+        fotoPanel.setPreferredSize(new Dimension(0, 173));
+        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
+        fotoPanel.setMinimumSize(new Dimension(0, 173));
+        fotoPanel.setBackground(new Color(240, 240, 240));
+        fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
+
+        JLabel fotoLabel = new JLabel();
+        fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
+        fotoLabel.setPreferredSize(new Dimension(0, 150));
+        fotoLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+        JLabel captionLabel = new JLabel("Pilih Mobil", SwingConstants.CENTER);
+        captionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        captionLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 180, 180)));
+
+        fotoPanel.add(fotoLabel, BorderLayout.CENTER);
+        fotoPanel.add(captionLabel, BorderLayout.SOUTH);
+
+        formPanel.add(fotoPanel, gbc);
+
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
         tablePanel.setPreferredSize(new Dimension(500, 600)); // Standardized size
@@ -511,6 +544,40 @@ public class GUIAdmin extends JFrame {
                     hargaSewaField.setText(mobilTableModel.getValueAt(selectedRow, 3).toString().replace("Rp", "")
                             .replace(",", "").replace(".", "").replaceAll("\\d{2}$", ""));
                     statusComboBox.setSelectedItem(mobilTableModel.getValueAt(selectedRow, 4).toString());
+
+                    // --- FOTO & CAPTION ---
+                    String id = mobilTableModel.getValueAt(selectedRow, 0).toString();
+                    Mobil selectedMobil = Mobil.getAllMobil().stream()
+                            .filter(m -> m.getIdMobil().equals(id))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (selectedMobil != null) {
+                        String fotoFile = selectedMobil.getFoto(); // kolom foto di database
+                        if (fotoFile != null && !fotoFile.isEmpty()) {
+                            String path = "assets/mobil/" + fotoFile;
+                            File imgFile = new File(path);
+                            ImageIcon icon = new ImageIcon(path);
+                            Image img = icon.getImage();
+                            if (img.getWidth(null) != -1) {
+                                int width = 510;
+                                int height = 200;
+                                Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                                fotoLabel.setIcon(new ImageIcon(scaledImg));
+                            } else {
+                                fotoLabel.setIcon(null);
+                            }
+                        } else {
+                            fotoLabel.setIcon(null);
+                        }
+                        captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
+                    } else {
+                        fotoLabel.setIcon(null);
+                        captionLabel.setText("Pilih Mobil");
+                    }
+                } else {
+                    fotoLabel.setIcon(null);
+                    captionLabel.setText("Pilih Mobil");
                 }
             }
         });

@@ -227,16 +227,20 @@ public class Transaksi {
             String denda = "SELECT SUM(denda) AS total FROM tb_transaksi";
             PreparedStatement ps = con.prepareStatement(harga);
             PreparedStatement ps2 = con.prepareStatement(denda);
-            ResultSet rs2 = ps2.executeQuery();
             ResultSet rs = ps.executeQuery();
+            ResultSet rs2 = ps2.executeQuery();
 
             if (rs.next()) {
                 bruto = rs.getDouble("total");
+            }
+
+            if (rs2.next()) {
                 bruto += rs2.getDouble("total");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         return formatRupiah.format(bruto);
     }
