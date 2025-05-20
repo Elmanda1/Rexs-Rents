@@ -17,6 +17,7 @@ public class GUIAdmin extends JFrame {
     private JButton dataMobilButton;
     private JButton editLoginButton;
     private JButton dataKeuanganButton;
+    private JButton statistikButton;
     private JButton signOutButton;
     private JLabel clockLabel;
 
@@ -126,6 +127,15 @@ public class GUIAdmin extends JFrame {
         dataKeuanganButton.setMargin(new Insets(8, 15, 8, 15));
         dataKeuanganButton.setFocusPainted(false);
 
+        ImageIcon statistikIcon = Utility.createUniformIcon("assets/datamobil.png", 24, 20);
+        statistikButton = new JButton("Statistik");
+        statistikButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        statistikButton.setIcon(statistikIcon);
+        statistikButton.setIconTextGap(8);
+        statistikButton.setPreferredSize(new Dimension(150, 40));
+        statistikButton.setMargin(new Insets(8, 15, 8, 15));
+        statistikButton.setFocusPainted(false);
+
         historyButton.setBackground(new Color(25, 83, 215));
         historyButton.setForeground(Color.WHITE);
         historyButton.setBorderPainted(false);
@@ -139,10 +149,14 @@ public class GUIAdmin extends JFrame {
         dataKeuanganButton.setBackground(Color.WHITE);
         dataKeuanganButton.setBorderPainted(false);
 
+        statistikButton.setBackground(Color.WHITE);
+        statistikButton.setBorderPainted(false);
+
         menuPanel.add(historyButton);
         menuPanel.add(dataMobilButton);
         menuPanel.add(editLoginButton);
         menuPanel.add(dataKeuanganButton);
+        menuPanel.add(statistikButton);
 
         // Content Panel
         contentPanel = new JPanel(new CardLayout());
@@ -151,11 +165,13 @@ public class GUIAdmin extends JFrame {
         JPanel dataMobilPanel = dataMobil();
         JPanel editLoginPanel = editLoginPegawai();
         JPanel dataKeuanganPanel = dataKeuangan();
+        JPanel statistikPanel = statistik(); // Placeholder for Statistik panel
 
         contentPanel.add(historyPanel, "history");
         contentPanel.add(dataMobilPanel, "dataMobil");
         contentPanel.add(editLoginPanel, "editLogin");
         contentPanel.add(dataKeuanganPanel, "dataKeuangan");
+        contentPanel.add(statistikPanel, "statistik");
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
@@ -168,11 +184,14 @@ public class GUIAdmin extends JFrame {
         Utility.addButtonHoverEffect(historyButton);
         Utility.addButtonHoverEffect(dataMobilButton);
         Utility.addButtonHoverEffect(editLoginButton);
+        Utility.addButtonHoverEffect(dataKeuanganButton);
+        Utility.addButtonHoverEffect(statistikButton);
 
         historyButton.addActionListener(e -> switchPanel("history", historyButton));
         dataMobilButton.addActionListener(e -> switchPanel("dataMobil", dataMobilButton));
         editLoginButton.addActionListener(e -> switchPanel("editLogin", editLoginButton));
         dataKeuanganButton.addActionListener(e -> switchPanel("dataKeuangan", dataKeuanganButton));
+        statistikButton.addActionListener(e -> switchPanel("statistik", statistikButton));
 
         getContentPane().add(mainPanel);
     }
@@ -735,7 +754,10 @@ public class GUIAdmin extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel profitLabel = Utility.styleLabel("Pelanggan & Profit All Time");
+        JLabel profitLabel = new JLabel("Pelanggan & Profit All Time");
+        profitLabel.setFont(new Font("poppinsFont", Font.BOLD, 30));
+
+        profitLabel.setForeground(new Color(35, 47, 89));
 
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
@@ -748,53 +770,71 @@ public class GUIAdmin extends JFrame {
         innerTopPanel.setPreferredSize(new Dimension(1350, 300)); // Your original size
 
         JPanel jumlahPelanggan = new JPanel(new GridBagLayout());
-        jumlahPelanggan.setBackground(Color.RED);
+        jumlahPelanggan.setBorder(BorderFactory.createMatteBorder(0,0,1,1, new Color(35, 47, 89)));
+        jumlahPelanggan.setBackground(new Color(220, 230, 250));
         JPanel totalTransaksi = new JPanel(new GridBagLayout());
-        totalTransaksi.setBackground(Color.GREEN);
+        totalTransaksi.setBorder(BorderFactory.createMatteBorder(0,1,1,0, new Color(35, 47, 89)));
+        totalTransaksi.setBackground(new Color(220, 230, 250));
         JPanel labaKotor = new JPanel(new GridBagLayout());
-        labaKotor.setBackground(Color.GREEN);
+        labaKotor.setBorder(BorderFactory.createMatteBorder(1,0,0,1, new Color(35, 47, 89)));
+        labaKotor.setBackground(new Color(220, 230, 250));
         JPanel labaBersih = new JPanel(new GridBagLayout());
-        labaBersih.setBackground(Color.ORANGE);
+        labaBersih.setBorder(BorderFactory.createMatteBorder(1,1,0,0, new Color(35, 47, 89)));
+        labaBersih.setBackground(new Color(220, 230, 250));
 
         GridBagConstraints gbcBanyakBangetAnjing = new GridBagConstraints();
 
         JLabel jumlahPelangganLabel = Utility.styleLabel("Jumlah Pelanggan");
+        jumlahPelangganLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        jumlahPelangganLabel.setForeground(new Color(35, 47, 89));
         gbcBanyakBangetAnjing.gridx = 0;
         gbcBanyakBangetAnjing.insets = new Insets(55, 0, 55, 80); // Add gap between panels
         jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaPelangganLabel = Utility.styleLabel("1291");
+        angkaPelangganLabel.setFont(new Font("poppinsFont", Font.BOLD, 50));
+        angkaPelangganLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(55, 80, 55, 0); // Add gap between panels
         jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
 
         JLabel jumlahTransaksiLabel = Utility.styleLabel("Jumlah Transaksi");
+        jumlahTransaksiLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        jumlahTransaksiLabel.setForeground(new Color(35, 47, 89));
         gbcBanyakBangetAnjing.gridx = 0;
         gbcBanyakBangetAnjing.insets = new Insets(0, 0, 0, 80); // Add gap between panels
         totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaTransaksiLabel = Utility.styleLabel("1291");
+        angkaTransaksiLabel.setFont(new Font("poppinsFont", Font.BOLD, 50));
+        angkaTransaksiLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(0, 80, 0, 0); // Add gap between panels
         totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
 
         JLabel labaKotorLabel = Utility.styleLabel("Laba Kotor");
+        labaKotorLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        labaKotorLabel.setForeground(new Color(35, 47, 89));
         gbcBanyakBangetAnjing.gridy = 0;
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
         labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaKotorLabel = Utility.styleLabel("1111");
-        gbcBanyakBangetAnjing.gridy = 1;
+        angkaKotorLabel.setFont(new Font("poppinsFont", Font.BOLD, 30));
+        angkaKotorLabel.setForeground(new Color(51, 100, 255));        gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
         labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
 
         JLabel labaBersihLabel = Utility.styleLabel("Laba Bersih");
+        labaKotor.setForeground(new Color(35, 47, 89));
+        labaBersihLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         gbcBanyakBangetAnjing.gridy = 0;
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
         labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaBersihLabel = Utility.styleLabel("1291");
-        gbcBanyakBangetAnjing.gridy = 1;
+        angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 30));
+        angkaBersihLabel.setForeground(new Color(51, 100, 255));        gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
         labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
 
@@ -848,8 +888,8 @@ public class GUIAdmin extends JFrame {
         dalemgbc.fill = GridBagConstraints.BOTH;
         dalemgbc.weightx = 1;
 
-        JLabel mobilPopuler = Utility.styleLabel("Mobil dengan pendapatan tertinggi " + //
-                        " ");
+        JLabel mobilPopuler = Utility.styleLabel("Mobil dengan pendapatan tertinggi");
+        mobilPopuler.setForeground(new Color(35, 47, 89));
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         leftPanel.add(mobilPopuler, dalemgbc);
 
@@ -883,6 +923,7 @@ public class GUIAdmin extends JFrame {
         JPanel middlePanel = new JPanel(new GridBagLayout());
 
         JLabel totalDendaLabel = Utility.styleLabel("Total Denda");
+        totalDendaLabel.setForeground(new Color(35, 47, 89));
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         middlePanel.add(totalDendaLabel, dalemgbc);
@@ -902,6 +943,7 @@ public class GUIAdmin extends JFrame {
         JPanel rightPanel = new JPanel(new GridBagLayout());
 
         JLabel totalMaintenance = Utility.styleLabel("Total Maintenance");
+        totalMaintenance.setForeground(new Color(35, 47, 89));
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         rightPanel.add(totalMaintenance, dalemgbc);
@@ -1030,6 +1072,15 @@ public class GUIAdmin extends JFrame {
          */
     }
 
+    private JPanel statistik(){
+        JPanel panel = new JPanel(new BorderLayout());
+       
+
+        // Add your chart or graph here
+        // For example, you can use JFreeChart or any other charting library
+
+        return panel;
+    }
     private void switchPanel(String panelName, JButton selectedButton) {
         CardLayout cl = (CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, panelName);
