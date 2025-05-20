@@ -95,7 +95,7 @@ public class GUIPegawai extends JFrame {
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-        ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksi.png", 20, 20);
+        ImageIcon tambahTransaksiIcon = Utility.createUniformIcon("assets/tambahtransaksiw.png", 20, 20);
         tambahTransaksiButton = new JButton("Tambah Transaksi");
         tambahTransaksiButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         tambahTransaksiButton.setIcon(tambahTransaksiIcon);

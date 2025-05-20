@@ -90,7 +90,7 @@ public class GUIAdmin extends JFrame {
         menuPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-        ImageIcon historyIcon = Utility.createUniformIcon("assets/histori.png", 20, 20);
+        ImageIcon historyIcon = Utility.createUniformIcon("assets/historiw.png", 20, 20);
         historyButton = new JButton("Histori Transaksi");
         historyButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         historyButton.setIcon(historyIcon);
