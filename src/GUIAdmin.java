@@ -819,7 +819,8 @@ public class GUIAdmin extends JFrame {
         dalemgbc.weightx = 1;
         
 
-        JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
+        JLabel mobilPopuler = Utility.styleLabel("Mobil dengan pendapatan tertinggi " + //
+                        " ");
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         leftPanel.add(mobilPopuler, dalemgbc);
 
@@ -831,12 +832,32 @@ public class GUIAdmin extends JFrame {
         dalemgbc.insets = new Insets(0, 20, 0, 20); 
         leftPanel.add(mobilPanel, dalemgbc);
 
+        GridBagConstraints gbclagi = new GridBagConstraints();
+        gbclagi.fill = GridBagConstraints.BOTH;
+        gbclagi.weightx = 1.0;
+        gbclagi.weighty = 1.0;
+        gbclagi.anchor = GridBagConstraints.CENTER;
+        gbclagi.gridy = 0;
+
+        JPanel fotoMobilPanel = new JPanel();
+        gbclagi.gridx = 0;
+        mobilPanel.add(fotoMobilPanel, gbclagi);
+
+        JLabel fotoMobilLabel = Utility.styleLabel("Foto Mobil");
+        gbclagi.gridx = 1;
+        mobilPanel.add(fotoMobilLabel, gbclagi);
+
+        JPanel sewPanel = new JPanel();
+        gbclagi.gridx = 2;
+        mobilPanel.add(sewPanel, gbclagi);
+
         JPanel middlePanel = new JPanel(new GridBagLayout());
 
-        JLabel totalDenda = Utility.styleLabel("Total Denda");
+        JLabel totalDendaLabel = Utility.styleLabel("Total Denda");
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
-        middlePanel.add(totalDenda, dalemgbc);
+        middlePanel.add(totalDendaLabel, dalemgbc);
+
 
         JPanel dendaPanel = new JPanel();
         dendaPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
@@ -845,10 +866,9 @@ public class GUIAdmin extends JFrame {
         dendaPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20); 
         middlePanel.add(dendaPanel, dalemgbc);
-        //JLabel denda = Utility.styleLabel("Total Maintenance");
-        //dalemgbc.gridy = 1;
-        //dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        //middlePanel.add(denda, dalemgbc);
+        
+        JLabel dendaLabel = Utility.styleLabel("MILYAR MILYAR");
+        dendaPanel.add(dendaLabel);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
 
@@ -864,10 +884,9 @@ public class GUIAdmin extends JFrame {
         maintenancePanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20); 
         rightPanel.add(maintenancePanel, dalemgbc);
-        //JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
-        //dalemgbc.gridy = 1;
-        //dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        //rightPanel.add(maintenance, dalemgbc);
+     
+        JLabel maintenanceLabel = Utility.styleLabel("MILYAR MILYAR");
+        maintenancePanel.add(maintenanceLabel);
 
         // Create constraints for the three panels
         GridBagConstraints panelGbc = new GridBagConstraints();
