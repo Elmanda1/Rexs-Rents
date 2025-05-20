@@ -77,15 +77,6 @@ public class Utility {
             super.paintComponent(g);
             g2.dispose();
         }
-
-        @Override
-        protected void paintBorder(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(180, 180, 180));
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
-            g2.dispose();
-        }
     }
 
     public static JButton styleButton(String text, Color backgroundColor) {
@@ -95,6 +86,10 @@ public class Utility {
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(backgroundColor);
         button.setForeground(Color.WHITE);
+        button.setBorder(BorderFactory.createEmptyBorder()); // Remove outline
+        button.setFocusable(false); // Remove focus outline
+        button.setFocusPainted(false); // Remove focus painted outline
+        button.setBorderPainted(false); // Remove border painting
         addButtonHoverEffect(button);
         return button;
     }
@@ -360,13 +355,19 @@ public class Utility {
             super.paintComponent(g);
             g2.dispose();
         }
+    }
 
-        public static <T> JComboBox<T> styleComboBox(JComboBox<T> comboBox) {
-            comboBox.setFont(new Font("Arial", Font.PLAIN, 14));
-            comboBox.setBackground(new Color(220, 230, 250));
-            comboBox.setForeground(Color.BLACK);
-            comboBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            return comboBox;
+    // Rounded JComboBox
+    public static class RoundedComboBox<T> extends JComboBox<T> {
+        private int arc = 20; // Match RoundedTextField arc
+
+        public RoundedComboBox(T[] items) {
+            super(items);
+            setOpaque(false);
+            setBackground(new Color(220, 230, 250));
+            setForeground(Color.BLACK);
+            setFont(new Font("Arial", Font.PLAIN, 14));
+            setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         }
 
         @Override
@@ -377,5 +378,23 @@ public class Utility {
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
             g2.dispose();
         }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            // Draw a rounded background for the combobox itself
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
+    public static <T> JComboBox<T> styleComboBox(T[] items) {
+        JComboBox<T> comboBox = new RoundedComboBox<>(items);
+        comboBox.setBorder(BorderFactory.createEmptyBorder()); // Remove outline
+        comboBox.setFocusable(false); // Remove focus outline
+        return comboBox;
     }
 }

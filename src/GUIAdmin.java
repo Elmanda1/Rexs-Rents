@@ -318,7 +318,7 @@ public class GUIAdmin extends JFrame {
         formPanel.add(hargaSewaField, gbc);
 
         gbc.gridy++;
-        JComboBox<String> statusComboBox = new JComboBox<>(new String[] { "Available", "Unavailable" });
+        JComboBox<String> statusComboBox = Utility.styleComboBox(new String[] { "Available", "Unavailable" });
         formPanel.add(statusComboBox, gbc);
 
         gbc.gridy++;
