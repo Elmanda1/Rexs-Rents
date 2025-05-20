@@ -284,7 +284,7 @@ public class Utility {
                 passwordField.setEchoChar((char) 0); // Show actual password
                 showPassword.setText("Hide");
             } else {
-                passwordField.setEchoChar('•'); // Hide password with bullet
+                passwordField.setEchoChar('\u2022'); // Hide password with bullet
                 showPassword.setText("Show");
             }
         });
