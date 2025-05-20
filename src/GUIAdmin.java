@@ -1185,14 +1185,45 @@ public class GUIAdmin extends JFrame {
          */
     }
 
-    private JPanel statistik(){
-        JPanel panel = new JPanel(new BorderLayout());
-       
+    private JPanel statistik() {
+        // Main panel with BorderLayout
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Left panel (Yellow)
+        JPanel leftPanel = new JPanel();
+        leftPanel.setBackground(new Color(255, 204, 0)); // Yellow color
+        leftPanel.setPreferredSize(new Dimension(682, 800));
+        
+        // Top right panel (Orange)
+        JPanel topRightPanel = new JPanel();
+        topRightPanel.setBackground(new Color(255, 140, 0)); // Orange color
+        topRightPanel.setPreferredSize(new Dimension(682, 400));
+        
+        // Bottom right panel (Light Blue)
+        JPanel bottomRightPanel = new JPanel();
+        bottomRightPanel.setBackground(new Color(51, 181, 229)); // Light blue color
+        bottomRightPanel.setPreferredSize(new Dimension(682, 400));
+        
+        // Add panels to main panel
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0.5;
+        gbc.weighty = 1.0;
+        mainPanel.add(leftPanel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridheight = 1;
+        gbc.weighty = 0.5;
+        mainPanel.add(topRightPanel, gbc);
+        
+        gbc.gridy = 1;
+        mainPanel.add(bottomRightPanel, gbc);
 
-        // Add your chart or graph here
-        // For example, you can use JFreeChart or any other charting library
-
-        return panel;
+        return mainPanel;
     }
     private void switchPanel(String panelName, JButton selectedButton) {
         CardLayout cl = (CardLayout) contentPanel.getLayout();
