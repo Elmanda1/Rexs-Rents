@@ -11,6 +11,13 @@ public class LoginFrame extends JFrame {
 
     public LoginFrame() {
         loadCredentialsFromDB(); // Load login data from the database
+
+        // Tambahkan kode ini untuk mengganti icon window & taskbar
+        try {
+            setIconImage(new ImageIcon("assets/icon.png").getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadCredentialsFromDB() {
@@ -117,7 +124,7 @@ public class LoginFrame extends JFrame {
         passwordField.setBackground(new Color(220, 240, 255)); // Light blue background
         passwordField.setForeground(Color.BLACK); // Black text
 
-        //panggil fungsi createPasswordTogglePanel  
+        // panggil fungsi createPasswordTogglePanel
         JPanel passwordPanel = Utility.createPasswordTogglePanel(passwordField);
 
         // Tambahkan passwordPanel ke mainPanel (bukan passwordField langsung)
@@ -169,7 +176,7 @@ public class LoginFrame extends JFrame {
 
         // Login button
         gbc.gridx = 1;
-        
+
         ImageIcon loginIcon = Utility.createUniformIcon("assets/login.png", 20, 20);
 
         JButton loginButton = Utility.styleButton("Login", new Color(255, 87, 51));
@@ -179,7 +186,7 @@ public class LoginFrame extends JFrame {
         loginButton.setForeground(Color.WHITE); // White text
         loginButton.setFocusPainted(false);
         loginButton.setFocusPainted(false);
-        loginButton.setPreferredSize(new Dimension(loginButton.getPreferredSize().width, 38)); //tingginy 38
+        loginButton.setPreferredSize(new Dimension(loginButton.getPreferredSize().width, 38)); // tingginy 38
         loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Hand cursor
         mainPanel.add(loginButton, gbc);
 

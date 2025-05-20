@@ -24,6 +24,13 @@ public class GUIPegawai extends JFrame {
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
+        // Tambahkan kode ini untuk mengganti icon window & taskbar
+        try {
+            setIconImage(new ImageIcon("assets/icon.png").getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             SwingUtilities.updateComponentTreeUI(this);

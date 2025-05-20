@@ -27,6 +27,13 @@ public class GUIAdmin extends JFrame {
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
+        // Tambahkan kode ini untuk mengganti icon window & taskbar
+        try {
+            setIconImage(new ImageIcon("assets/icon.png").getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             SwingUtilities.updateComponentTreeUI(this);
@@ -399,6 +406,20 @@ public class GUIAdmin extends JFrame {
         buttonPanel.add(deleteButton);
 
         formPanel.add(buttonPanel, gbc);
+
+        // --- FOTO MOBIL PANEL (SAMA DENGAN GUIPegawai) ---
+        gbc.gridy++;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.8;
+
+        fotoPanel.add(fotoLabel, BorderLayout.CENTER);
+        fotoPanel.add(captionLabel, BorderLayout.SOUTH);
+
+        formPanel.add(fotoPanel, gbc);
 
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
@@ -789,82 +810,87 @@ public class GUIAdmin extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
 
         JLabel profitLabel = Utility.styleLabel("Pelanggan & Profit All Time");
+        profitLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
 
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Create and configure innerTopPanel with your size
-        JPanel innerTopPanel = new JPanel(new GridBagLayout());
+        JPanel innerTopPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         innerTopPanel.setBackground(new Color(220, 230, 250));
         innerTopPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        innerTopPanel.setPreferredSize(new Dimension(1350, 300)); // Your original size
+        innerTopPanel.setPreferredSize(new Dimension(1300, 300)); // Your original size
 
         JPanel jumlahPelanggan = new JPanel(new GridBagLayout());
-        jumlahPelanggan.setBorder(BorderFactory.createMatteBorder(0,0,1,1, new Color(35, 47, 89)));
+        jumlahPelanggan.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.LIGHT_GRAY));
         jumlahPelanggan.setBackground(new Color(220, 230, 250));
         JPanel totalTransaksi = new JPanel(new GridBagLayout());
-        totalTransaksi.setBorder(BorderFactory.createMatteBorder(0,1,1,0, new Color(35, 47, 89)));
+        totalTransaksi.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.LIGHT_GRAY));
         totalTransaksi.setBackground(new Color(220, 230, 250));
         JPanel labaKotor = new JPanel(new GridBagLayout());
-        labaKotor.setBorder(BorderFactory.createMatteBorder(1,0,0,1, new Color(35, 47, 89)));
+        labaKotor.setBorder(BorderFactory.createMatteBorder(1,0,0,1, Color.LIGHT_GRAY));
         labaKotor.setBackground(new Color(220, 230, 250));
         JPanel labaBersih = new JPanel(new GridBagLayout());
-        labaBersih.setBorder(BorderFactory.createMatteBorder(1,1,0,0, new Color(35, 47, 89)));
+        labaBersih.setBorder(BorderFactory.createMatteBorder(1,1,0,0, Color.LIGHT_GRAY));
         labaBersih.setBackground(new Color(220, 230, 250));
 
         GridBagConstraints gbcBanyakBangetAnjing = new GridBagConstraints();
 
-        JLabel jumlahPelangganLabel = Utility.styleLabel("Jumlah Pelanggan");
+        JLabel jumlahPelangganLabel = Utility.styleLabel("Total Pelanggan");
         jumlahPelangganLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         jumlahPelangganLabel.setForeground(new Color(35, 47, 89));
         gbcBanyakBangetAnjing.gridx = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(55, 0, 55, 80); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(55, 0, 65, 70); // Add gap between panels
         jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaPelangganLabel = Utility.styleLabel(Pelanggan.countPelanggan() + "");
         angkaPelangganLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        angkaPelangganLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridx = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(55, 80, 55, 0); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(55, 60, 65, 0); // Add gap between panels
         jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
 
-        JLabel jumlahTransaksiLabel = Utility.styleLabel("Jumlah Transaksi");
+        JLabel jumlahTransaksiLabel = Utility.styleLabel("Total Transaksi");
         jumlahTransaksiLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         jumlahTransaksiLabel.setForeground(new Color(35, 47, 89));
         gbcBanyakBangetAnjing.gridx = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(0, 0, 0, 80); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(55, 0, 65, 70); // Add gap between panels
         totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaTransaksiLabel = Utility.styleLabel(Transaksi.countTransaksi() + "");
         angkaTransaksiLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        angkaTransaksiLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridx = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(0, 80, 0, 0); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(55, 60, 65, 0); // Add gap between panels
         totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
 
         JLabel labaKotorLabel = Utility.styleLabel("Laba Kotor");
         labaKotorLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         labaKotorLabel.setForeground(new Color(35, 47, 89));
         gbcBanyakBangetAnjing.gridy = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
         labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaKotorLabel = Utility.styleLabel(Transaksi.calculateBruto());
         angkaKotorLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        angkaKotorLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridy = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 40, 0); // Add gap between panels
         labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
 
         JLabel labaBersihLabel = Utility.styleLabel("Laba Bersih");
-        labaKotor.setForeground(new Color(35, 47, 89));
+        labaBersihLabel.setForeground(new Color(35, 47, 89));
         labaBersihLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         gbcBanyakBangetAnjing.gridy = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
         labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
 
         JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateBruto());
         angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        angkaBersihLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridy = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
+        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 40, 0); // Add gap between panels
         labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
 
         gbc.fill = GridBagConstraints.BOTH;
@@ -918,46 +944,89 @@ public class GUIAdmin extends JFrame {
         dalemgbc.weightx = 1;
 
         JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
+        mobilPopuler.setFont(new Font("poppinsFont", Font.BOLD, 24));
+        mobilPopuler.setForeground(new Color(35, 47, 89));
+
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         leftPanel.add(mobilPopuler, dalemgbc);
 
-        JPanel mobilPanel = new JPanel();
+        JPanel mobilPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         mobilPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
-        mobilPanel.setBackground(Color.YELLOW);
+        mobilPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         leftPanel.add(mobilPanel, dalemgbc);
 
         GridBagConstraints gbclagi = new GridBagConstraints();
-        gbclagi.fill = GridBagConstraints.BOTH;
+
+        JPanel fotoMobilPanel = Utility.createRoundedPanel(new GridBagLayout(), Color.GRAY);
+        fotoMobilPanel.setPreferredSize(new Dimension(90, 90));
+        gbclagi.gridy = 0;
+        gbclagi.gridx = 0;
+        gbclagi.weightx = 1.0;
+        gbclagi.weighty = 1.0;
+        gbclagi.insets = new Insets(0, 10, 0, 0);
+        gbclagi.anchor = GridBagConstraints.WEST;
+        mobilPanel.add(fotoMobilPanel, gbclagi);
+
+        JLabel fotoMobilLabel = Utility.styleLabel("Nama");
+        fotoMobilLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        fotoMobilLabel.setForeground(new Color(51, 100, 255));
+        gbclagi.gridy = 0;
+        gbclagi.gridx = 1;
         gbclagi.weightx = 1.0;
         gbclagi.weighty = 1.0;
         gbclagi.anchor = GridBagConstraints.CENTER;
-        gbclagi.gridy = 0;
-
-        JPanel fotoMobilPanel = new JPanel();
-        gbclagi.gridx = 0;
-        mobilPanel.add(fotoMobilPanel, gbclagi);
-
-        JLabel fotoMobilLabel = Utility.styleLabel("Foto Mobil");
-        gbclagi.gridx = 1;
         mobilPanel.add(fotoMobilLabel, gbclagi);
-
-        JPanel sewPanel = new JPanel();
+//panell ini jing
+        JPanel sewPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
+        sewPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
+        sewPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
+        sewPanel.setBackground(new Color(220, 230, 250));
+        gbclagi.gridy = 0;
         gbclagi.gridx = 2;
+        gbclagi.weightx = 1.0;
+        gbclagi.weighty = 1.0;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        gbclagi.anchor = GridBagConstraints.EAST;
         mobilPanel.add(sewPanel, gbclagi);
+
+        GridBagConstraints gbctrus = new GridBagConstraints();
+
+        JLabel penyewaanLabel = Utility.styleLabel("Penyewaan");
+        penyewaanLabel.setFont(new Font("poppinsFont", Font.PLAIN, 16));
+        penyewaanLabel.setForeground(new Color(35, 47, 89));
+        gbctrus.gridy = 0;
+        gbctrus.gridx = 0;
+        gbctrus.weightx = 1.0;
+        gbctrus.weighty = 1.0;
+        gbctrus.insets = new Insets(0, 0, 0, 0);
+        gbctrus.anchor = GridBagConstraints.CENTER;
+        sewPanel.add(penyewaanLabel, gbctrus);
+
+        JLabel totalsewaLabel = Utility.styleLabel("banyak");
+        totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 16));
+        totalsewaLabel.setForeground(new Color(51, 100, 255));
+        gbctrus.gridy = 1;
+        gbctrus.gridx = 0;
+        gbctrus.weightx = 1.0;
+        gbctrus.weighty = 1.0;
+        gbctrus.insets = new Insets(10, 0, 0, 0);
+        gbctrus.anchor = GridBagConstraints.NORTH;
+        sewPanel.add(totalsewaLabel, gbctrus);
 
         JPanel middlePanel = new JPanel(new GridBagLayout());
 
         JLabel totalDendaLabel = Utility.styleLabel("Total Denda");
+        totalDendaLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
         totalDendaLabel.setForeground(new Color(35, 47, 89));
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         middlePanel.add(totalDendaLabel, dalemgbc);
 
 
-        JPanel dendaPanel = new JPanel();
+        JPanel dendaPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         dendaPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
@@ -966,33 +1035,42 @@ public class GUIAdmin extends JFrame {
         middlePanel.add(dendaPanel, dalemgbc);
 
         JLabel totalDendaAngka = Utility.styleLabel(Transaksi.calculateDenda());
-        dalemgbc.gridy = 0;
-        dalemgbc.insets = new Insets(20, 20, 20, 0); // Add gap between panels
-        dendaPanel.add(totalDendaAngka, dalemgbc);
-        // JLabel denda = Utility.styleLabel("Total Maintenance");
-        // dalemgbc.gridy = 1;
-        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        // middlePanel.add(denda, dalemgbc);
+        totalDendaAngka.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        totalDendaAngka.setForeground(new Color(51, 100, 255));
+        GridBagConstraints dendaGbc = new GridBagConstraints();
+        dendaGbc.gridy = 0;
+        dendaGbc.gridx = 0;
+        dendaGbc.weightx = 1.0;
+        dendaGbc.weighty = 1.0;
+        dendaGbc.anchor = GridBagConstraints.CENTER;
+        dendaPanel.add(totalDendaAngka, dendaGbc);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
 
         JLabel totalMaintenance = Utility.styleLabel("Total Maintenance");
+        totalMaintenance.setFont(new Font("poppinsFont", Font.BOLD, 24));
         totalMaintenance.setForeground(new Color(35, 47, 89));
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         rightPanel.add(totalMaintenance, dalemgbc);
 
-        JPanel maintenancePanel = new JPanel();
+        JPanel maintenancePanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         maintenancePanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
         maintenancePanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         rightPanel.add(maintenancePanel, dalemgbc);
-        // JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
-        // dalemgbc.gridy = 1;
-        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        // rightPanel.add(maintenance, dalemgbc);
+        
+        JLabel maintenanceangkaLabel = Utility.styleLabel("MILYARMILYAR");
+        maintenanceangkaLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
+        maintenanceangkaLabel.setForeground(new Color(51, 100, 255));
+        dendaGbc.gridy = 0;
+        dendaGbc.gridx = 0;
+        dendaGbc.weightx = 1.0;
+        dendaGbc.weighty = 1.0;
+        dendaGbc.anchor = GridBagConstraints.CENTER;
+        maintenancePanel.add(maintenanceangkaLabel, dendaGbc);
 
         // Create constraints for the three panels
         GridBagConstraints panelGbc = new GridBagConstraints();
