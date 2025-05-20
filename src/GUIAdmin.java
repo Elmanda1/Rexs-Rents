@@ -26,6 +26,13 @@ public class GUIAdmin extends JFrame {
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
+        // Tambahkan kode ini untuk mengganti icon window & taskbar
+        try {
+            setIconImage(new ImageIcon("assets/icon.png").getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             SwingUtilities.updateComponentTreeUI(this);
@@ -389,25 +396,6 @@ public class GUIAdmin extends JFrame {
         gbc.insets = new Insets(8, 0, 0, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 0.8;
-
-        JPanel fotoPanel = new JPanel(new BorderLayout());
-        fotoPanel.setPreferredSize(new Dimension(0, 173));
-        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
-        fotoPanel.setMinimumSize(new Dimension(0, 173));
-        fotoPanel.setBackground(new Color(240, 240, 240));
-        fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
-
-        JLabel fotoLabel = new JLabel();
-        fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
-        fotoLabel.setPreferredSize(new Dimension(0, 150));
-        fotoLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-
-        JLabel captionLabel = new JLabel("Pilih Mobil", SwingConstants.CENTER);
-        captionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        captionLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 180, 180)));
 
         fotoPanel.add(fotoLabel, BorderLayout.CENTER);
         fotoPanel.add(captionLabel, BorderLayout.SOUTH);
