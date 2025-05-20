@@ -730,7 +730,7 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(55, 0, 55, 80); // Add gap between panels
         jumlahPelanggan.add(jumlahPelangganLabel,gbcBanyakBangetAnjing);
 
-        JLabel angkaPelangganLabel = Utility.styleLabel("1291");
+        JLabel angkaPelangganLabel = Utility.styleLabel(Pelanggan.countPelanggan() + "");
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(55, 80, 55, 0); // Add gap between panels
         jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
@@ -740,7 +740,7 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(0, 0, 0, 80); // Add gap between panels
         totalTransaksi.add(jumlahTransaksiLabel,gbcBanyakBangetAnjing);
 
-        JLabel angkaTransaksiLabel = Utility.styleLabel("1291");
+        JLabel angkaTransaksiLabel = Utility.styleLabel(Transaksi.countTransaksi() + "");
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(0, 80, 0, 0); // Add gap between panels
         totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
@@ -750,7 +750,7 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
         labaKotor.add(labaKotorLabel,gbcBanyakBangetAnjing);
 
-        JLabel angkaKotorLabel = Utility.styleLabel("1111");
+        JLabel angkaKotorLabel = Utility.styleLabel(Transaksi.calculateBruto());
         gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
         labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
@@ -760,7 +760,7 @@ public class GUIAdmin extends JFrame {
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
         labaBersih.add(labaBersihLabel,gbcBanyakBangetAnjing);
 
-        JLabel angkaBersihLabel = Utility.styleLabel("1291");
+        JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateBruto());
         gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
         labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
@@ -845,6 +845,11 @@ public class GUIAdmin extends JFrame {
         dendaPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20); 
         middlePanel.add(dendaPanel, dalemgbc);
+
+        JLabel totalDendaAngka = Utility.styleLabel(Transaksi.calculateDenda());
+        dalemgbc.gridy = 0;
+        dalemgbc.insets = new Insets(20, 20, 20, 0); // Add gap between panels
+        dendaPanel.add(totalDendaAngka, dalemgbc);
         //JLabel denda = Utility.styleLabel("Total Maintenance");
         //dalemgbc.gridy = 1;
         //dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
