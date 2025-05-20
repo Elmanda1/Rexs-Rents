@@ -318,7 +318,7 @@ public class GUIAdmin extends JFrame {
         formPanel.add(hargaSewaField, gbc);
 
         gbc.gridy++;
-        JComboBox<String> statusComboBox = new JComboBox<>(new String[] { "Available", "Unavailable" });
+        JComboBox<String> statusComboBox = Utility.styleComboBox(new String[] { "Available", "Unavailable" });
         formPanel.add(statusComboBox, gbc);
 
         gbc.gridy++;
@@ -702,14 +702,15 @@ public class GUIAdmin extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
+        JLabel profitLabel = Utility.styleLabel("Pelanggan & Profit All Time");
+
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
-        topPanel.setBackground(Color.BLUE);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Create and configure innerTopPanel with your size
         JPanel innerTopPanel = new JPanel(new GridBagLayout());
-        innerTopPanel.setBackground(Color.CYAN);
+        innerTopPanel.setBackground(new Color(220, 230, 250));
         innerTopPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         innerTopPanel.setPreferredSize(new Dimension(1350, 300)); // Your original size
 
@@ -722,9 +723,51 @@ public class GUIAdmin extends JFrame {
         JPanel labaBersih = new JPanel(new GridBagLayout());
         labaBersih.setBackground(Color.ORANGE);
 
+        GridBagConstraints gbcBanyakBangetAnjing = new GridBagConstraints();
+
+        JLabel jumlahPelangganLabel = Utility.styleLabel("Jumlah Pelanggan");
+        gbcBanyakBangetAnjing.gridx = 0;
+        gbcBanyakBangetAnjing.insets = new Insets(55, 0, 55, 80); // Add gap between panels
+        jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
+
+        JLabel angkaPelangganLabel = Utility.styleLabel("1291");
+        gbcBanyakBangetAnjing.gridx = 1;
+        gbcBanyakBangetAnjing.insets = new Insets(55, 80, 55, 0); // Add gap between panels
+        jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
+
+        JLabel jumlahTransaksiLabel = Utility.styleLabel("Jumlah Transaksi");
+        gbcBanyakBangetAnjing.gridx = 0;
+        gbcBanyakBangetAnjing.insets = new Insets(0, 0, 0, 80); // Add gap between panels
+        totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
+
+        JLabel angkaTransaksiLabel = Utility.styleLabel("1291");
+        gbcBanyakBangetAnjing.gridx = 1;
+        gbcBanyakBangetAnjing.insets = new Insets(0, 80, 0, 0); // Add gap between panels
+        totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
+
+        JLabel labaKotorLabel = Utility.styleLabel("Laba Kotor");
+        gbcBanyakBangetAnjing.gridy = 0;
+        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
+        labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
+
+        JLabel angkaKotorLabel = Utility.styleLabel("1111");
+        gbcBanyakBangetAnjing.gridy = 1;
+        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
+        labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
+
+        JLabel labaBersihLabel = Utility.styleLabel("Laba Bersih");
+        gbcBanyakBangetAnjing.gridy = 0;
+        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 0, 0); // Add gap between panels
+        labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
+
+        JLabel angkaBersihLabel = Utility.styleLabel("1291");
+        gbcBanyakBangetAnjing.gridy = 1;
+        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 40, 0); // Add gap between panels
+        labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
+
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        gbc.insets = new Insets(0, 0, 0, 0); // Add gap between panels
+        gbc.insets = new Insets(0, 0, 0, 0);
 
         // Add left panel
         gbc.gridx = 0;
@@ -742,7 +785,6 @@ public class GUIAdmin extends JFrame {
         gbc.weightx = 1.0;
         innerTopPanel.add(totalTransaksi, gbc);
 
-        // Add right panel - remove right inset for last panel
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
@@ -752,60 +794,76 @@ public class GUIAdmin extends JFrame {
         GridBagConstraints innerGbc = new GridBagConstraints();
         innerGbc.gridx = 0;
         innerGbc.gridy = 0;
+        innerGbc.insets = new Insets(0, 10, 20, 0); // Add gap between panels
+        innerGbc.anchor = GridBagConstraints.WEST;
+        topPanel.add(profitLabel, innerGbc);
+        innerGbc.gridx = 0;
+        innerGbc.gridy = 1;
+        innerGbc.insets = new Insets(0, 0, 0, 0); // Add gap between panels
         innerGbc.anchor = GridBagConstraints.CENTER;
         topPanel.add(innerTopPanel, innerGbc);
 
-        // Create bottom panel (yellow)
+        // Create bottom panel
         // Create bottom panel with GridBagLayout
         JPanel bottomPanel = new JPanel(new GridBagLayout());
-        bottomPanel.setBackground(Color.YELLOW);
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 92, 30, 92));
 
         // Create three panels
         JPanel leftPanel = new JPanel(new GridBagLayout());
-        leftPanel.setBackground(Color.RED);
 
         GridBagConstraints dalemgbc = new GridBagConstraints();
         dalemgbc.fill = GridBagConstraints.BOTH;
         dalemgbc.weightx = 1;
 
         JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
-        dalemgbc.insets = new Insets(0, 20, 100, 0); // Add gap between panels
+        dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         leftPanel.add(mobilPopuler, dalemgbc);
 
         JPanel mobilPanel = new JPanel();
         mobilPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
         dalemgbc.weighty = 0;
-        mobilPanel.setBackground(Color.YELLOW);
+        mobilPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         leftPanel.add(mobilPanel, dalemgbc);
 
         JPanel middlePanel = new JPanel(new GridBagLayout());
-        middlePanel.setBackground(Color.GREEN);
 
-        JLabel totalBenda = Utility.styleLabel("Total Denda");
+        JLabel totalDenda = Utility.styleLabel("Total Denda");
         dalemgbc.gridy = 0;
-        dalemgbc.insets = new Insets(0, 20, 100, 0); // Add gap between panels
-        middlePanel.add(totalBenda, dalemgbc);
+        dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
+        middlePanel.add(totalDenda, dalemgbc);
 
-        JLabel denda = Utility.styleLabel("Total Maintenance");
+        JPanel dendaPanel = new JPanel();
+        dendaPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
-        dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        middlePanel.add(denda, dalemgbc);
+        dalemgbc.weighty = 0;
+        dendaPanel.setBackground(new Color(220, 230, 250));
+        dalemgbc.insets = new Insets(0, 20, 0, 20);
+        middlePanel.add(dendaPanel, dalemgbc);
+        // JLabel denda = Utility.styleLabel("Total Maintenance");
+        // dalemgbc.gridy = 1;
+        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        // middlePanel.add(denda, dalemgbc);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
-        rightPanel.setBackground(Color.ORANGE);
 
         JLabel totalMaintenance = Utility.styleLabel("Total Maintenance");
         dalemgbc.gridy = 0;
-        dalemgbc.insets = new Insets(0, 20, 100, 0); // Add gap between panels
+        dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         rightPanel.add(totalMaintenance, dalemgbc);
 
-        JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
+        JPanel maintenancePanel = new JPanel();
+        maintenancePanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
-        dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
-        rightPanel.add(maintenance, dalemgbc);
+        dalemgbc.weighty = 0;
+        maintenancePanel.setBackground(new Color(220, 230, 250));
+        dalemgbc.insets = new Insets(0, 20, 0, 20);
+        rightPanel.add(maintenancePanel, dalemgbc);
+        // JLabel maintenance = Utility.styleLabel("Mobil Terlaris");
+        // dalemgbc.gridy = 1;
+        // dalemgbc.insets = new Insets(0, 20, 0, 0); // Remove right gap for last panel
+        // rightPanel.add(maintenance, dalemgbc);
 
         // Create constraints for the three panels
         GridBagConstraints panelGbc = new GridBagConstraints();
@@ -831,13 +889,13 @@ public class GUIAdmin extends JFrame {
 
         // Add panels to main panel with 50-50 split
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.weightx = 0.5;
         gbc.weighty = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel.add(topPanel, gbc);
 
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.weighty = 1;
         panel.add(bottomPanel, gbc);
 
