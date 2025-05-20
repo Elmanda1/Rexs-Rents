@@ -370,6 +370,7 @@ public class Utility {
 
     public static <T> JComboBox<T> styleComboBox(T[] items) {
         JComboBox<T> comboBox = new RoundedComboBox<>(items);
+        comboBox.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         // Do not change background, foreground, font, or opaque
         comboBox.setBorder(BorderFactory.createEmptyBorder()); // Remove default outline
         comboBox.setFocusable(false); // Remove focus outline
