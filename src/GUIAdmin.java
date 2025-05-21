@@ -960,33 +960,46 @@ public class GUIAdmin extends JFrame {
 
         GridBagConstraints gbclagi = new GridBagConstraints();
 
-        JPanel fotoMobilPanel = Utility.createRoundedPanel(new GridBagLayout(), Color.GRAY);
-        fotoMobilPanel.setPreferredSize(new Dimension(90, 90));
+        JPanel namaMobilPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
+        namaMobilPanel.setPreferredSize(new Dimension(180, 120)); // Your original size
+        namaMobilPanel.setBackground(new Color(220, 230, 250));
+        namaMobilPanel.setBackground(Color.YELLOW);
         gbclagi.gridy = 0;
         gbclagi.gridx = 0;
-        gbclagi.weightx = 1.0;
-        gbclagi.weighty = 1.0;
-        gbclagi.insets = new Insets(0, 10, 0, 0);
-        gbclagi.anchor = GridBagConstraints.WEST;
-        mobilPanel.add(fotoMobilPanel, gbclagi);
+        gbclagi.weightx = 0;
+        gbclagi.weighty = 0;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        gbclagi.anchor = GridBagConstraints.EAST;
+        mobilPanel.add(namaMobilPanel, gbclagi);
 
-        JLabel fotoMobilLabel = Utility.styleLabel("Nama");
-        fotoMobilLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
-        fotoMobilLabel.setForeground(new Color(51, 100, 255));
+        JLabel merkMobilLabel = Utility.styleLabel("Merk");
+        merkMobilLabel.setFont(new Font("poppinsFont", Font.PLAIN, 28));
+        merkMobilLabel.setForeground(new Color(51, 100, 255));
         gbclagi.gridy = 0;
-        gbclagi.gridx = 1;
-        gbclagi.weightx = 1.0;
-        gbclagi.weighty = 1.0;
+        gbclagi.gridx = 0;
+        gbclagi.weightx = 0;
+        gbclagi.weighty = 0;
         gbclagi.anchor = GridBagConstraints.CENTER;
-        mobilPanel.add(fotoMobilLabel, gbclagi);
+        namaMobilPanel.add(merkMobilLabel, gbclagi);
+
+        JLabel modelMobiLabel = Utility.styleLabel(Transaksi.mobilTerlaris());
+        modelMobiLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        modelMobiLabel.setForeground(new Color(51, 100, 255));
+        gbclagi.gridy = 1;
+        gbclagi.gridx = 0;
+        gbclagi.weightx = 0;
+        gbclagi.weighty = 0;
+        gbclagi.anchor = GridBagConstraints.CENTER;
+        namaMobilPanel.add(modelMobiLabel, gbclagi);
 //panell ini jing
         JPanel sewPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
-        sewPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
+        sewPanel.setPreferredSize(new Dimension(180, 120)); // Your original size
         sewPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
         sewPanel.setBackground(new Color(220, 230, 250));
+        sewPanel.setBackground(Color.RED);
         gbclagi.gridy = 0;
-        gbclagi.gridx = 2;
-        gbclagi.weightx = 1.0;
+        gbclagi.gridx = 1;
+        gbclagi.weightx = 0;
         gbclagi.weighty = 1.0;
         gbclagi.insets = new Insets(0, 0, 0, 0);
         gbclagi.anchor = GridBagConstraints.EAST;
@@ -1000,20 +1013,20 @@ public class GUIAdmin extends JFrame {
         gbctrus.gridy = 0;
         gbctrus.gridx = 0;
         gbctrus.weightx = 1.0;
-        gbctrus.weighty = 1.0;
+        gbctrus.weighty = 0;
         gbctrus.insets = new Insets(0, 0, 0, 0);
-        gbctrus.anchor = GridBagConstraints.CENTER;
+        gbctrus.anchor = GridBagConstraints.EAST;
         sewPanel.add(penyewaanLabel, gbctrus);
 
-        JLabel totalsewaLabel = Utility.styleLabel("banyak");
+        JLabel totalsewaLabel = Utility.styleLabel("Rp...");
         totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 16));
         totalsewaLabel.setForeground(new Color(51, 100, 255));
         gbctrus.gridy = 1;
         gbctrus.gridx = 0;
         gbctrus.weightx = 1.0;
-        gbctrus.weighty = 1.0;
+        gbctrus.weighty = 0;
         gbctrus.insets = new Insets(10, 0, 0, 0);
-        gbctrus.anchor = GridBagConstraints.NORTH;
+        gbctrus.anchor = GridBagConstraints.EAST;
         sewPanel.add(totalsewaLabel, gbctrus);
 
         JPanel middlePanel = new JPanel(new GridBagLayout());

@@ -261,4 +261,24 @@ public class Transaksi {
         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         return formatRupiah.format(denda);
     }
+
+    public static String mobilTerlaris () {
+        String mobilTerlaris = "";
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT m.model, m.merk, SUM(t.total_harga) AS total_harga_acc " +
+                    "FROM tb_transaksi t " +
+                    "JOIN tb_mobil m ON t.id_mobil = m.id_mobil " +
+                    "GROUP BY m.model, m.merk " +
+                    "ORDER BY total_harga_acc DESC LIMIT 1";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                mobilTerlaris = rs.getString("model") + " (" + rs.getString("merk") + ")";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mobilTerlaris;
+    }
 }
