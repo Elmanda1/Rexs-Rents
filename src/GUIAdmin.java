@@ -9,6 +9,8 @@ import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.mysql.cj.util.Util;
+
 public class GUIAdmin extends JFrame {
     private JPanel mainPanel;
     private JPanel contentPanel;
@@ -959,48 +961,46 @@ public class GUIAdmin extends JFrame {
         leftPanel.add(mobilPanel, dalemgbc);
 
         GridBagConstraints gbclagi = new GridBagConstraints();
+        gbclagi.fill = GridBagConstraints.BOTH;
 
         JPanel namaMobilPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
-        namaMobilPanel.setPreferredSize(new Dimension(180, 120)); // Your original size
-        namaMobilPanel.setBackground(new Color(220, 230, 250));
-        namaMobilPanel.setBackground(Color.YELLOW);
+        namaMobilPanel.setPreferredSize(new Dimension(160, 120)); // Your original size
         gbclagi.gridy = 0;
         gbclagi.gridx = 0;
         gbclagi.weightx = 0;
         gbclagi.weighty = 0;
         gbclagi.insets = new Insets(0, 0, 0, 0);
-        gbclagi.anchor = GridBagConstraints.EAST;
         mobilPanel.add(namaMobilPanel, gbclagi);
 
-        JLabel merkMobilLabel = Utility.styleLabel("Merk");
-        merkMobilLabel.setFont(new Font("poppinsFont", Font.PLAIN, 28));
-        merkMobilLabel.setForeground(new Color(51, 100, 255));
+        JLabel merkMobilLabel = Utility.styleLabel("Lamborghini");
+        merkMobilLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
+        merkMobilLabel.setForeground(new Color(51, 40, 255));
         gbclagi.gridy = 0;
         gbclagi.gridx = 0;
         gbclagi.weightx = 0;
         gbclagi.weighty = 0;
-        gbclagi.anchor = GridBagConstraints.CENTER;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        gbclagi.anchor = GridBagConstraints.WEST;
         namaMobilPanel.add(merkMobilLabel, gbclagi);
 
-        JLabel modelMobiLabel = Utility.styleLabel(Transaksi.mobilTerlaris());
-        modelMobiLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
-        modelMobiLabel.setForeground(new Color(51, 100, 255));
+        JLabel modelMobiLabel = Utility.styleLabel("stargazer");
+        modelMobiLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
+        modelMobiLabel.setForeground(new Color(51, 40, 255));
         gbclagi.gridy = 1;
         gbclagi.gridx = 0;
         gbclagi.weightx = 0;
         gbclagi.weighty = 0;
-        gbclagi.anchor = GridBagConstraints.CENTER;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        gbclagi.anchor = GridBagConstraints.WEST;
         namaMobilPanel.add(modelMobiLabel, gbclagi);
 //panell ini jing
         JPanel sewPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
-        sewPanel.setPreferredSize(new Dimension(180, 120)); // Your original size
+        sewPanel.setPreferredSize(new Dimension(130, 120)); // slightly bigger width
         sewPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
-        sewPanel.setBackground(new Color(220, 230, 250));
-        sewPanel.setBackground(Color.RED);
         gbclagi.gridy = 0;
         gbclagi.gridx = 1;
-        gbclagi.weightx = 0;
-        gbclagi.weighty = 1.0;
+        gbclagi.weightx = 1;
+        gbclagi.weighty = 0;
         gbclagi.insets = new Insets(0, 0, 0, 0);
         gbclagi.anchor = GridBagConstraints.EAST;
         mobilPanel.add(sewPanel, gbclagi);
@@ -1008,25 +1008,25 @@ public class GUIAdmin extends JFrame {
         GridBagConstraints gbctrus = new GridBagConstraints();
 
         JLabel penyewaanLabel = Utility.styleLabel("Penyewaan");
-        penyewaanLabel.setFont(new Font("poppinsFont", Font.PLAIN, 16));
+        penyewaanLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         penyewaanLabel.setForeground(new Color(35, 47, 89));
         gbctrus.gridy = 0;
         gbctrus.gridx = 0;
         gbctrus.weightx = 1.0;
         gbctrus.weighty = 0;
-        gbctrus.insets = new Insets(0, 0, 0, 0);
-        gbctrus.anchor = GridBagConstraints.EAST;
+        gbctrus.insets = new Insets(10, 0, 0, 0);
+        gbctrus.anchor = GridBagConstraints.CENTER;
         sewPanel.add(penyewaanLabel, gbctrus);
 
-        JLabel totalsewaLabel = Utility.styleLabel("Rp...");
-        totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 16));
+        JLabel totalsewaLabel = Utility.styleLabel("Rp.10000000000");
+        totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         totalsewaLabel.setForeground(new Color(51, 100, 255));
         gbctrus.gridy = 1;
         gbctrus.gridx = 0;
         gbctrus.weightx = 1.0;
-        gbctrus.weighty = 0;
-        gbctrus.insets = new Insets(10, 0, 0, 0);
-        gbctrus.anchor = GridBagConstraints.EAST;
+        gbctrus.weighty = 0.5;
+        gbctrus.insets = new Insets(0, 0, 0, 0);
+        gbctrus.anchor = GridBagConstraints.CENTER;
         sewPanel.add(totalsewaLabel, gbctrus);
 
         JPanel middlePanel = new JPanel(new GridBagLayout());
@@ -1198,6 +1198,94 @@ public class GUIAdmin extends JFrame {
          */
     }
 
+    // Helper method to create consistent panel layouts
+    private JPanel createStatistikItemPanel(String nomor, String merkModel, String penyewaanValue) {
+        // Main panel with fixed size
+
+        GridBagConstraints dalemgbc = new GridBagConstraints();
+        dalemgbc.fill = GridBagConstraints.BOTH;
+        dalemgbc.weightx = 1;
+
+        JPanel panel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
+        panel.setPreferredSize(new Dimension(120, 120)); // Your original size
+        dalemgbc.gridy = 1;
+        dalemgbc.weighty = 0;
+        panel.setBackground(Color.BLUE);
+        
+        GridBagConstraints gbclagi = new GridBagConstraints();
+        gbclagi.fill = GridBagConstraints.BOTH;
+
+        JPanel namaMobilPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
+        namaMobilPanel.setPreferredSize(new Dimension(200, 120)); // Your original size
+        gbclagi.gridy = 0;
+        gbclagi.gridx = 0;
+        gbclagi.weightx = 1;
+        gbclagi.weighty = 1;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        panel.add(namaMobilPanel, gbclagi);
+
+        JLabel nomorLabel = Utility.styleLabel(nomor + ".");
+        nomorLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
+        nomorLabel.setForeground(new Color(51, 40, 255));
+        gbclagi.gridy = 0;
+        gbclagi.gridx = 0;
+        gbclagi.weightx = 0.5;
+        gbclagi.weighty = 0;
+        gbclagi.insets = new Insets(0, 40, 0, 0);
+        gbclagi.anchor = GridBagConstraints.CENTER;
+        namaMobilPanel.add(nomorLabel, gbclagi);
+
+        JLabel merkMobilLabel = Utility.styleLabel(merkModel);
+        merkMobilLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
+        merkMobilLabel.setForeground(new Color(51, 40, 255));
+        gbclagi.gridy = 0;
+        gbclagi.gridx = 1;
+        gbclagi.weightx = 1;
+        gbclagi.weighty = 0;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        gbclagi.anchor = GridBagConstraints.EAST;
+        namaMobilPanel.add(merkMobilLabel, gbclagi);
+
+
+        JPanel panelkanan = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
+        panelkanan.setPreferredSize(new Dimension(100, 120)); // slightly bigger width
+        panelkanan.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
+        gbclagi.gridy = 0;
+        gbclagi.gridx = 1;
+        gbclagi.weightx = 1;
+        gbclagi.weighty = 1;
+        gbclagi.insets = new Insets(0, 0, 0, 0);
+        gbclagi.anchor = GridBagConstraints.EAST;
+        panel.add(panelkanan, gbclagi);
+
+        GridBagConstraints gbctrus = new GridBagConstraints();
+
+        JLabel penyewaanLabel = Utility.styleLabel("Penyewaan");
+        penyewaanLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        penyewaanLabel.setForeground(new Color(35, 47, 89));
+        gbctrus.gridy = 0;
+        gbctrus.gridx = 0;
+        gbctrus.weightx = 1.0;
+        gbctrus.weighty = 0;
+        gbctrus.insets = new Insets(10, 0, 0, 0);
+        gbctrus.anchor = GridBagConstraints.CENTER;
+        panelkanan.add(penyewaanLabel, gbctrus);
+
+        JLabel totalsewaLabel = Utility.styleLabel(penyewaanValue);
+        totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        totalsewaLabel.setForeground(new Color(51, 100, 255));
+        gbctrus.gridy = 1;
+        gbctrus.gridx = 0;
+        gbctrus.weightx = 1.0;
+        gbctrus.weighty = 0.5;
+        gbctrus.insets = new Insets(0, 0, 0, 0);
+        gbctrus.anchor = GridBagConstraints.CENTER;
+        panelkanan.add(totalsewaLabel, gbctrus);
+       
+
+        return panel;
+    }
+
     private JPanel statistik() {
         // Main panel with BorderLayout
         JPanel mainPanel = new JPanel(new GridBagLayout());
@@ -1209,15 +1297,89 @@ public class GUIAdmin extends JFrame {
         leftPanel.setPreferredSize(new Dimension(682, 800));
         
         // Top right panel (Orange)
-        JPanel topRightPanel = new JPanel();
+        JPanel topRightPanel = new JPanel(new GridBagLayout());
         topRightPanel.setBackground(new Color(255, 140, 0)); // Orange color
         topRightPanel.setPreferredSize(new Dimension(682, 400));
         
+        GridBagConstraints gbcsatu = new GridBagConstraints();
+        gbcsatu.fill = GridBagConstraints.BOTH;
+        gbcsatu.weightx = 1.0;
+        gbcsatu.weighty = 1.0;
+        gbcsatu.insets = new Insets(10, 10, 10, 10);
+
+        // Create mobilTerlaris panels using the helper method
+        JPanel mobilTerlaris0JPanel = createStatistikItemPanel("1","Lamborghini stargazer", "Rp.10000000000");
+        gbcsatu.gridx = 0;
+        gbcsatu.gridy = 0;
+        topRightPanel.add(mobilTerlaris0JPanel, gbcsatu);
+
+        JPanel mobilTerlaris1JPanel = createStatistikItemPanel("2","BMW X3", "Rp.8000000000");
+        gbcsatu.gridx = 0;
+        gbcsatu.gridy = 1;
+        topRightPanel.add(mobilTerlaris1JPanel, gbcsatu);
+
+        JPanel mobilTerlaris2JPanel = createStatistikItemPanel("3","Honda Civic", "Rp.7000000000");
+        gbcsatu.gridx = 0;
+        gbcsatu.gridy = 2;
+        topRightPanel.add(mobilTerlaris2JPanel, gbcsatu);
+
+        JPanel mobilTerlaris3JPanel = createStatistikItemPanel("4","Toyota Fortuner", "Rp.6000000000");
+        gbcsatu.gridx = 1;
+        gbcsatu.gridy = 0;
+        topRightPanel.add(mobilTerlaris3JPanel, gbcsatu);
+
+        JPanel mobilTerlaris4JPanel = createStatistikItemPanel("5","Hyundai IONIQ", "Rp.5000000000");
+        gbcsatu.gridx = 1;
+        gbcsatu.gridy = 1;
+        topRightPanel.add(mobilTerlaris4JPanel, gbcsatu);
+
+        JPanel mobilTerlaris5JPanel = createStatistikItemPanel("6","Toyota Alphard", "Rp.4000000000");
+        gbcsatu.gridx = 1;
+        gbcsatu.gridy = 2;
+        topRightPanel.add(mobilTerlaris5JPanel, gbcsatu);
+
         // Bottom right panel (Light Blue)
-        JPanel bottomRightPanel = new JPanel();
+        JPanel bottomRightPanel = new JPanel(new GridBagLayout());
         bottomRightPanel.setBackground(new Color(51, 181, 229)); // Light blue color
         bottomRightPanel.setPreferredSize(new Dimension(682, 400));
-        
+
+        GridBagConstraints gbcdua = new GridBagConstraints();
+        gbcdua.fill = GridBagConstraints.BOTH;
+        gbcdua.weightx = 1.0;
+        gbcdua.weighty = 1.0;
+        gbcdua.insets = new Insets(10, 10, 10, 10);
+
+        // Create pelanggan panels using the same helper method
+        JPanel pelanggan0JPanel = createStatistikItemPanel("1","John Doe", "30 Hari");
+        gbcdua.gridx = 0;
+        gbcdua.gridy = 0;
+        bottomRightPanel.add(pelanggan0JPanel, gbcdua);
+
+        JPanel pelanggan1JPanel = createStatistikItemPanel("2","Jane Smith", "25 Hari");
+        gbcdua.gridx = 0;
+        gbcdua.gridy = 1;
+        bottomRightPanel.add(pelanggan1JPanel, gbcdua);
+
+        JPanel pelanggan2JPanel = createStatistikItemPanel("3","Bob Wilson", "20 Hari");
+        gbcdua.gridx = 0;
+        gbcdua.gridy = 2;
+        bottomRightPanel.add(pelanggan2JPanel, gbcdua);
+
+        JPanel pelanggan3JPanel = createStatistikItemPanel("4","Alice Brown", "18 Hari");
+        gbcdua.gridx = 1;
+        gbcdua.gridy = 0;
+        bottomRightPanel.add(pelanggan3JPanel, gbcdua);
+
+        JPanel pelanggan4JPanel = createStatistikItemPanel("5","Charlie Davis", "15 Hari");
+        gbcdua.gridx = 1;
+        gbcdua.gridy = 1;
+        bottomRightPanel.add(pelanggan4JPanel, gbcdua);
+
+        JPanel pelanggan5JPanel = createStatistikItemPanel("6","Eve Johnson", "12 Hari");
+        gbcdua.gridx = 1;
+        gbcdua.gridy = 2;
+        bottomRightPanel.add(pelanggan5JPanel, gbcdua);
+
         // Add panels to main panel
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -1238,6 +1400,7 @@ public class GUIAdmin extends JFrame {
 
         return mainPanel;
     }
+
     private void switchPanel(String panelName, JButton selectedButton) {
         CardLayout cl = (CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, panelName);
