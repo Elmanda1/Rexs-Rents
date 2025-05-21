@@ -1259,6 +1259,10 @@ public class GUIAdmin extends JFrame {
         dataKeuanganButton.setForeground(Color.BLACK);
         dataKeuanganButton.setIcon(Utility.createUniformIcon("assets/keuangan.png", 20, 20));
 
+        statistikButton.setBackground(Color.WHITE);
+        statistikButton.setForeground(Color.BLACK);
+        statistikButton.setIcon(Utility.createUniformIcon("assets/statistik.png", 20, 20));
+
         // Set selected button to blue and use the 'w' (white) icon
         selectedButton.setBackground(new Color(25, 83, 215));
         selectedButton.setForeground(Color.WHITE);
@@ -1269,8 +1273,9 @@ public class GUIAdmin extends JFrame {
         } else if (selectedButton == editLoginButton) {
             selectedButton.setIcon(Utility.createUniformIcon("assets/editw.png", 24, 20));
         } else if (selectedButton == dataKeuanganButton) {
-            selectedButton.setIcon(Utility.createUniformIcon("assets/keuanganw.png", 20, 20)); // No 'w' version,
-                                                                                               // fallback
+            selectedButton.setIcon(Utility.createUniformIcon("assets/keuanganw.png", 20, 20)); 
+        } else if (selectedButton == statistikButton) {
+            selectedButton.setIcon(Utility.createUniformIcon("assets/statistikw.png", 20, 20));
         }
     }
 }
