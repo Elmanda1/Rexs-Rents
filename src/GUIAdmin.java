@@ -8,8 +8,16 @@ import java.util.List;
 import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import com.mysql.cj.util.Util;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.chart.axis.CategoryLabelPositions;
 
 public class GUIAdmin extends JFrame {
     private JPanel mainPanel;
@@ -1101,7 +1109,7 @@ public class GUIAdmin extends JFrame {
         panelGbc.weightx = 1.0;
         bottomPanel.add(middlePanel, panelGbc);
 
-        // Add right panel - remove right inset for last panel
+        // Add right panel
         panelGbc.gridx = 2;
         panelGbc.weightx = 1.0;
         panelGbc.insets = new Insets(0, 0, 0, 0); // Remove right gap for last panel
@@ -1120,285 +1128,187 @@ public class GUIAdmin extends JFrame {
         panel.add(bottomPanel, gbc);
 
         return panel;
-
-        /*
-         * JPanel panel = new JPanel(new GridBagLayout());
-         * panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-         * 
-         * GridBagConstraints gbc = new GridBagConstraints();
-         * gbc.insets = new Insets(10, 10, 10, 10);
-         * gbc.fill = GridBagConstraints.HORIZONTAL;
-         * gbc.anchor = GridBagConstraints.WEST;
-         * 
-         * // Create labels
-         * JLabel lblTotalTransaksi = Utility.styleLabel("Total Transaksi");
-         * lblTotalTransaksi.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-         * JLabel lblTotalPendapatan = Utility.styleLabel("Total Pendapatan");
-         * lblTotalPendapatan.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-         * JLabel lblTotalDenda = Utility.styleLabel("Total Denda");
-         * lblTotalDenda.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
-         * 
-         * // Create text fields with values
-         * JTextField txtTotalTransaksi = Utility.styleTextField(false);
-         * txtTotalTransaksi.setText(String.valueOf(Transaksi.getAllTransaksi().size()))
-         * ;
-         * JTextField txtTotalPendapatan = Utility.styleTextField(false);
-         * txtTotalPendapatan.setText(
-         * NumberFormat.getCurrencyInstance(new Locale("id", "ID"))
-         * .format(Transaksi.getAllTransaksi().stream()
-         * .mapToDouble(Transaksi::getTotalHarga).sum()));
-         * JTextField txtTotalDenda = Utility.styleTextField(false);
-         * txtTotalDenda.setText(NumberFormat.getCurrencyInstance(new Locale("id",
-         * "ID"))
-         * .format(Transaksi.getAllTransaksi().stream()
-         * .mapToDouble(Transaksi::getDenda).sum()));
-         * 
-         * Dimension fieldSize = new Dimension(300, 40);
-         * 
-         * for (JTextField field : new JTextField[] { txtTotalTransaksi,
-         * txtTotalPendapatan, txtTotalDenda }) {
-         * field.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-         * field.setPreferredSize(fieldSize);
-         * field.setFont(new Font("Arial", Font.PLAIN, 14));
-         * }
-         * 
-         * // Add components to panel
-         * gbc.gridx = 0;
-         * gbc.gridy = 0;
-         * gbc.weightx = 0.3;
-         * panel.add(lblTotalTransaksi, gbc);
-         * 
-         * gbc.gridx = 1;
-         * gbc.weightx = 0.7;
-         * panel.add(txtTotalTransaksi, gbc);
-         * 
-         * gbc.gridx = 0;
-         * gbc.gridy = 1;
-         * gbc.weightx = 0.3;
-         * panel.add(lblTotalPendapatan, gbc);
-         * 
-         * gbc.gridx = 1;
-         * gbc.weightx = 0.7;
-         * panel.add(txtTotalPendapatan, gbc);
-         * 
-         * gbc.gridx = 0;
-         * gbc.gridy = 2;
-         * gbc.weightx = 0.3;
-         * panel.add(lblTotalDenda, gbc);
-         * 
-         * gbc.gridx = 1;
-         * gbc.weightx = 0.7;
-         * panel.add(txtTotalDenda, gbc);
-         * 
-         * // Create wrapper panel for centering
-         * JPanel wrapperPanel = new JPanel(new GridBagLayout());
-         * wrapperPanel.add(panel);
-         * 
-         * return wrapperPanel;
-         */
-    }
-
-    // Helper method to create consistent panel layouts
-    private JPanel createStatistikItemPanel(String nomor, String merkModel, String penyewaanValue) {
-        // Main panel with fixed size
-
-        GridBagConstraints dalemgbc = new GridBagConstraints();
-        dalemgbc.fill = GridBagConstraints.BOTH;
-        dalemgbc.weightx = 1;
-
-        JPanel panel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
-        panel.setPreferredSize(new Dimension(120, 120)); // Your original size
-        dalemgbc.gridy = 1;
-        dalemgbc.weighty = 0;
-        panel.setBackground(Color.BLUE);
-        
-        GridBagConstraints gbclagi = new GridBagConstraints();
-        gbclagi.fill = GridBagConstraints.BOTH;
-
-        JPanel namaMobilPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
-        namaMobilPanel.setPreferredSize(new Dimension(200, 120)); // Your original size
-        gbclagi.gridy = 0;
-        gbclagi.gridx = 0;
-        gbclagi.weightx = 1;
-        gbclagi.weighty = 1;
-        gbclagi.insets = new Insets(0, 0, 0, 0);
-        panel.add(namaMobilPanel, gbclagi);
-
-        JLabel nomorLabel = Utility.styleLabel(nomor + ".");
-        nomorLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
-        nomorLabel.setForeground(new Color(51, 40, 255));
-        gbclagi.gridy = 0;
-        gbclagi.gridx = 0;
-        gbclagi.weightx = 0.5;
-        gbclagi.weighty = 0;
-        gbclagi.insets = new Insets(0, 40, 0, 0);
-        gbclagi.anchor = GridBagConstraints.CENTER;
-        namaMobilPanel.add(nomorLabel, gbclagi);
-
-        JLabel merkMobilLabel = Utility.styleLabel(merkModel);
-        merkMobilLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
-        merkMobilLabel.setForeground(new Color(51, 40, 255));
-        gbclagi.gridy = 0;
-        gbclagi.gridx = 1;
-        gbclagi.weightx = 1;
-        gbclagi.weighty = 0;
-        gbclagi.insets = new Insets(0, 0, 0, 0);
-        gbclagi.anchor = GridBagConstraints.EAST;
-        namaMobilPanel.add(merkMobilLabel, gbclagi);
-
-
-        JPanel panelkanan = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
-        panelkanan.setPreferredSize(new Dimension(100, 120)); // slightly bigger width
-        panelkanan.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
-        gbclagi.gridy = 0;
-        gbclagi.gridx = 1;
-        gbclagi.weightx = 1;
-        gbclagi.weighty = 1;
-        gbclagi.insets = new Insets(0, 0, 0, 0);
-        gbclagi.anchor = GridBagConstraints.EAST;
-        panel.add(panelkanan, gbclagi);
-
-        GridBagConstraints gbctrus = new GridBagConstraints();
-
-        JLabel penyewaanLabel = Utility.styleLabel("Penyewaan");
-        penyewaanLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
-        penyewaanLabel.setForeground(new Color(35, 47, 89));
-        gbctrus.gridy = 0;
-        gbctrus.gridx = 0;
-        gbctrus.weightx = 1.0;
-        gbctrus.weighty = 0;
-        gbctrus.insets = new Insets(10, 0, 0, 0);
-        gbctrus.anchor = GridBagConstraints.CENTER;
-        panelkanan.add(penyewaanLabel, gbctrus);
-
-        JLabel totalsewaLabel = Utility.styleLabel(penyewaanValue);
-        totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
-        totalsewaLabel.setForeground(new Color(51, 100, 255));
-        gbctrus.gridy = 1;
-        gbctrus.gridx = 0;
-        gbctrus.weightx = 1.0;
-        gbctrus.weighty = 0.5;
-        gbctrus.insets = new Insets(0, 0, 0, 0);
-        gbctrus.anchor = GridBagConstraints.CENTER;
-        panelkanan.add(totalsewaLabel, gbctrus);
-       
-
-        return panel;
     }
 
     private JPanel statistik() {
-        // Main panel with BorderLayout
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+
+        // --- LEFT PANEL ---
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBackground(new Color(255, 204, 0));
         
-        // Left panel (Yellow)
-        JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(new Color(255, 204, 0)); // Yellow color
-        leftPanel.setPreferredSize(new Dimension(682, 800));
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(150, "", "Lamborghini stargazer");
+        dataset.addValue(120, "", "BMW X3");
+        dataset.addValue(100, "", "Honda Civic");
+        dataset.addValue(80, "", "Toyota Fortuner");
+        dataset.addValue(60, "", "Hyundai IONIQ");
+        dataset.addValue(40, "", "Toyota Alphard");
+
+        JFreeChart barChart = ChartFactory.createBarChart(
+            "Statistik",
+            "Model Mobil",
+            "Jumlah Penyewaan",
+            dataset,
+            PlotOrientation.HORIZONTAL,
+            false, true, false
+        );
         
-        // Top right panel (Orange)
-        JPanel topRightPanel = new JPanel(new GridBagLayout());
-        topRightPanel.setBackground(new Color(255, 140, 0)); // Orange color
-        topRightPanel.setPreferredSize(new Dimension(682, 400));
-        
-        GridBagConstraints gbcsatu = new GridBagConstraints();
-        gbcsatu.fill = GridBagConstraints.BOTH;
-        gbcsatu.weightx = 1.0;
-        gbcsatu.weighty = 1.0;
-        gbcsatu.insets = new Insets(10, 10, 10, 10);
+        // Set chart title color (navy)
+        barChart.getTitle().setPaint(new Color(35, 47, 89));
 
-        // Create mobilTerlaris panels using the helper method
-        JPanel mobilTerlaris0JPanel = createStatistikItemPanel("1","Lamborghini stargazer", "Rp.10000000000");
-        gbcsatu.gridx = 0;
-        gbcsatu.gridy = 0;
-        topRightPanel.add(mobilTerlaris0JPanel, gbcsatu);
+        // Set bar color (orange)
+        CategoryPlot plot = barChart.getCategoryPlot();
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, new Color(255, 140, 0));
 
-        JPanel mobilTerlaris1JPanel = createStatistikItemPanel("2","BMW X3", "Rp.8000000000");
-        gbcsatu.gridx = 0;
-        gbcsatu.gridy = 1;
-        topRightPanel.add(mobilTerlaris1JPanel, gbcsatu);
+        // Set axis label color (blue)
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setLabelPaint(new Color(51, 100, 255)); // "Model Mobil" label
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
+        domainAxis.setTickLabelFont(new Font("poppinsFont", Font.PLAIN, 12));
+        domainAxis.setTickLabelPaint(new Color(35, 47, 89)); // navy for tick labels
 
-        JPanel mobilTerlaris2JPanel = createStatistikItemPanel("3","Honda Civic", "Rp.7000000000");
-        gbcsatu.gridx = 0;
-        gbcsatu.gridy = 2;
-        topRightPanel.add(mobilTerlaris2JPanel, gbcsatu);
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setLabelPaint(new Color(51, 100, 255)); // "Jumlah Penyewaan" label
+        rangeAxis.setTickLabelFont(new Font("poppinsFont", Font.PLAIN, 12));
+        rangeAxis.setTickLabelPaint(new Color(35, 47, 89)); // navy for tick labels
 
-        JPanel mobilTerlaris3JPanel = createStatistikItemPanel("4","Toyota Fortuner", "Rp.6000000000");
-        gbcsatu.gridx = 1;
-        gbcsatu.gridy = 0;
-        topRightPanel.add(mobilTerlaris3JPanel, gbcsatu);
+        // DO NOT force chartPanel width
+        ChartPanel chartPanel = new ChartPanel(barChart);
+        leftPanel.add(chartPanel, BorderLayout.CENTER);
 
-        JPanel mobilTerlaris4JPanel = createStatistikItemPanel("5","Hyundai IONIQ", "Rp.5000000000");
-        gbcsatu.gridx = 1;
-        gbcsatu.gridy = 1;
-        topRightPanel.add(mobilTerlaris4JPanel, gbcsatu);
-
-        JPanel mobilTerlaris5JPanel = createStatistikItemPanel("6","Toyota Alphard", "Rp.4000000000");
-        gbcsatu.gridx = 1;
-        gbcsatu.gridy = 2;
-        topRightPanel.add(mobilTerlaris5JPanel, gbcsatu);
-
-        // Bottom right panel (Light Blue)
-        JPanel bottomRightPanel = new JPanel(new GridBagLayout());
-        bottomRightPanel.setBackground(new Color(51, 181, 229)); // Light blue color
-        bottomRightPanel.setPreferredSize(new Dimension(682, 400));
-
-        GridBagConstraints gbcdua = new GridBagConstraints();
-        gbcdua.fill = GridBagConstraints.BOTH;
-        gbcdua.weightx = 1.0;
-        gbcdua.weighty = 1.0;
-        gbcdua.insets = new Insets(10, 10, 10, 10);
-
-        // Create pelanggan panels using the same helper method
-        JPanel pelanggan0JPanel = createStatistikItemPanel("1","John Doe", "30 Hari");
-        gbcdua.gridx = 0;
-        gbcdua.gridy = 0;
-        bottomRightPanel.add(pelanggan0JPanel, gbcdua);
-
-        JPanel pelanggan1JPanel = createStatistikItemPanel("2","Jane Smith", "25 Hari");
-        gbcdua.gridx = 0;
-        gbcdua.gridy = 1;
-        bottomRightPanel.add(pelanggan1JPanel, gbcdua);
-
-        JPanel pelanggan2JPanel = createStatistikItemPanel("3","Bob Wilson", "20 Hari");
-        gbcdua.gridx = 0;
-        gbcdua.gridy = 2;
-        bottomRightPanel.add(pelanggan2JPanel, gbcdua);
-
-        JPanel pelanggan3JPanel = createStatistikItemPanel("4","Alice Brown", "18 Hari");
-        gbcdua.gridx = 1;
-        gbcdua.gridy = 0;
-        bottomRightPanel.add(pelanggan3JPanel, gbcdua);
-
-        JPanel pelanggan4JPanel = createStatistikItemPanel("5","Charlie Davis", "15 Hari");
-        gbcdua.gridx = 1;
-        gbcdua.gridy = 1;
-        bottomRightPanel.add(pelanggan4JPanel, gbcdua);
-
-        JPanel pelanggan5JPanel = createStatistikItemPanel("6","Eve Johnson", "12 Hari");
-        gbcdua.gridx = 1;
-        gbcdua.gridy = 2;
-        bottomRightPanel.add(pelanggan5JPanel, gbcdua);
-
-        // Add panels to main panel
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridheight = 2;
+        gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0.5;
         gbc.weighty = 1.0;
         mainPanel.add(leftPanel, gbc);
-        
+
+        // --- RIGHT PANEL ---
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setBackground(Color.WHITE); // optional, set your own color
+
+        GridBagConstraints rightGbc = new GridBagConstraints();
+        rightGbc.weightx = 1.0;
+        rightGbc.fill = GridBagConstraints.BOTH;
+
+        JPanel topRightPanel = new JPanel(new GridBagLayout());
+        topRightPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        rightGbc.weighty = 0.5;
+        rightGbc.gridy = 0;
+        rightPanel.add(topRightPanel, rightGbc);
+
+        JPanel bottomRightPanel = new JPanel(new GridBagLayout());
+        rightGbc.gridy = 1;
+        rightPanel.add(bottomRightPanel, rightGbc);
+
+        // Add right panel with 50% weight
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridheight = 1;
-        gbc.weighty = 0.5;
-        mainPanel.add(topRightPanel, gbc);
-        
-        gbc.gridy = 1;
-        mainPanel.add(bottomRightPanel, gbc);
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        mainPanel.add(rightPanel, gbc);
 
+        JLabel topTitle = new JLabel("Mobil Dengan Penyewaan Terbanyak");
+        topTitle.setFont(new Font("poppinsFont", Font.BOLD, 22));
+        topTitle.setForeground(new Color(35, 47, 89));
+        GridBagConstraints topTitleGbc = new GridBagConstraints();
+        topTitleGbc.gridx = 0;
+        topTitleGbc.gridy = 0;
+        topTitleGbc.gridwidth = 1;
+        topTitleGbc.insets = new Insets(0, 10, 0, 10);
+        topTitleGbc.anchor = GridBagConstraints.WEST;
+        topRightPanel.add(topTitle, topTitleGbc);
+
+        // Statistik rows for topRightPanel, start from rowGbc.gridy = 1
+        GridBagConstraints rowGbc = new GridBagConstraints();
+        rowGbc.gridx = 0;
+        rowGbc.fill = GridBagConstraints.HORIZONTAL;
+        rowGbc.weightx = 1.0;
+        rowGbc.insets = new Insets(10, 10, 10, 10);
+
+        rowGbc.gridy = 1;
+        topRightPanel.add(createStatistikRow(1, "Lamborghini", "stargazer", 150), rowGbc);
+        rowGbc.gridy = 2;
+        topRightPanel.add(createStatistikRow(2, "BMW", "X3", 120), rowGbc);
+        rowGbc.gridy = 3;
+        topRightPanel.add(createStatistikRow(3, "Honda", "Civic", 100), rowGbc);
+        rowGbc.gridy = 4;
+        topRightPanel.add(createStatistikRow(4, "Toyota", "Fortuner", 80), rowGbc);
+        
+        // --- Add this before adding statistik rows to bottomRightPanel ---
+        JLabel bottomTitle = new JLabel("Pelanggan Dengan Penyewaan Terbanyak");
+        bottomTitle.setFont(new Font("poppinsFont", Font.BOLD, 22));
+        bottomTitle.setForeground(new Color(35, 47, 89));
+        GridBagConstraints bottomTitleGbc = new GridBagConstraints();
+        bottomTitleGbc.gridx = 0;
+        bottomTitleGbc.gridy = 0;
+        bottomTitleGbc.gridwidth = 1;
+        bottomTitleGbc.insets = new Insets(0, 10, 0, 10);
+        bottomTitleGbc.anchor = GridBagConstraints.WEST;
+        bottomRightPanel.add(bottomTitle, bottomTitleGbc);
+
+        // Statistik rows for bottomRightPanel, start from bottomRowGbc.gridy = 1
+        GridBagConstraints bottomRowGbc = new GridBagConstraints();
+        bottomRowGbc.gridx = 0;
+        bottomRowGbc.fill = GridBagConstraints.HORIZONTAL;
+        bottomRowGbc.weightx = 1.0;
+        bottomRowGbc.insets = new Insets(10, 10, 10, 10);
+
+        bottomRowGbc.gridy = 1;
+        bottomRightPanel.add(createStatistikRow(1, "John", "Doe", 30), bottomRowGbc);
+        bottomRowGbc.gridy = 2;
+        bottomRightPanel.add(createStatistikRow(2, "Jane", "Smith", 25), bottomRowGbc);
+        bottomRowGbc.gridy = 3;
+        bottomRightPanel.add(createStatistikRow(3, "Bob", "Wilson", 20), bottomRowGbc);
+        bottomRowGbc.gridy = 4;
+        bottomRightPanel.add(createStatistikRow(4, "Alice", "Brown", 18), bottomRowGbc);
+        
         return mainPanel;
+    }
+
+    private JPanel createStatistikRow(int number, String merk, String model, int jumlahSewa) {
+        JPanel rowPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
+        rowPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        rowPanel.setPreferredSize(new Dimension(0, 60)); // Height only, width will stretch
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        // Number label
+        JLabel numberLabel = new JLabel(number + ".");
+        numberLabel.setFont(new Font("poppinsFont", Font.BOLD, 22));
+        numberLabel.setForeground(new Color(51, 100, 255));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
+        gbc.insets = new Insets(0, 0, 0, 15);
+        rowPanel.add(numberLabel, gbc);
+
+        // Merk & model label
+        JLabel carLabel = new JLabel( merk +" "+model );
+        carLabel.setFont(new Font("poppinsFont", Font.BOLD, 20));
+        carLabel.setForeground(new Color(51, 40, 255));
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.insets = new Insets(0, 0, 0, 15);
+        gbc.anchor = GridBagConstraints.WEST;
+        rowPanel.add(carLabel, gbc);
+
+        // Penyewaan label
+        JLabel sewaLabel = new JLabel("Penyewaan: " + jumlahSewa + " kali");
+        sewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 18));
+        sewaLabel.setForeground(new Color(35, 47, 89));
+        gbc.gridx = 2;
+        gbc.weightx = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.EAST;
+        rowPanel.add(sewaLabel, gbc);
+
+        return rowPanel;
     }
 
     private void switchPanel(String panelName, JButton selectedButton) {
