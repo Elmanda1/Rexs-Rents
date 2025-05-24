@@ -435,7 +435,7 @@ public class GUIAdmin extends JFrame {
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
         tablePanel.setPreferredSize(new Dimension(500, 600)); // Standardized size
 
-        String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status" };
+        String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status", "Jumlah Hari Peminjaman" };
         DefaultTableModel mobilTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -453,7 +453,8 @@ public class GUIAdmin extends JFrame {
             mobilTableModel.addRow(new Object[] {
                     m.getIdMobil(), m.getModel(), m.getMerk(),
                     formatRupiah.format(m.getHargaSewa()),
-                    m.isTersedia() ? "Available" : "Unavailable"
+                    m.isTersedia() ? "Available" : "Unavailable",
+                    m.getJumlahHariPeminjaman()
             });
         }
 
@@ -496,7 +497,7 @@ public class GUIAdmin extends JFrame {
             double harga = Double.parseDouble(hargaSewa);
             boolean isAvailable = status.equals("Available");
 
-            String result = Mobil.addToDatabase(id, model, merk, harga, isAvailable);
+            String result = Mobil.addToDatabase(id, model, merk, harga, isAvailable, "");
             System.out.println(result);
 
             refreshMobilTable(mobilTableModel);
@@ -647,7 +648,8 @@ public class GUIAdmin extends JFrame {
                         mobilTableModel.addRow(new Object[] {
                                 m.getIdMobil(), m.getModel(), m.getMerk(),
                                 formatRupiah.format(m.getHargaSewa()),
-                                m.isTersedia() ? "Available" : "Unavailable"
+                                m.isTersedia() ? "Available" : "Unavailable",
+                                m.getJumlahHariPeminjaman()
                         });
                     }
                 } else {
@@ -655,7 +657,8 @@ public class GUIAdmin extends JFrame {
                         mobilTableModel.addRow(new Object[] {
                                 m.getIdMobil(), m.getModel(), m.getMerk(),
                                 formatRupiah.format(m.getHargaSewa()),
-                                m.isTersedia() ? "Available" : "Unavailable"
+                                m.isTersedia() ? "Available" : "Unavailable",
+                                m.getJumlahHariPeminjaman()
                         });
                     }
                 }
@@ -693,7 +696,8 @@ public class GUIAdmin extends JFrame {
             mobilTableModel.addRow(new Object[] {
                     m.getIdMobil(), m.getModel(), m.getMerk(),
                     formatRupiah.format(m.getHargaSewa()),
-                    m.isTersedia() ? "Available" : "Unavailable"
+                    m.isTersedia() ? "Available" : "Unavailable",
+                    m.getJumlahHariPeminjaman()
             });
         }
     }
@@ -833,16 +837,16 @@ public class GUIAdmin extends JFrame {
         innerTopPanel.setPreferredSize(new Dimension(1300, 300)); // Your original size
 
         JPanel jumlahPelanggan = new JPanel(new GridBagLayout());
-        jumlahPelanggan.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.LIGHT_GRAY));
+        jumlahPelanggan.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         jumlahPelanggan.setBackground(new Color(220, 230, 250));
         JPanel totalTransaksi = new JPanel(new GridBagLayout());
-        totalTransaksi.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.LIGHT_GRAY));
+        totalTransaksi.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         totalTransaksi.setBackground(new Color(220, 230, 250));
         JPanel labaKotor = new JPanel(new GridBagLayout());
-        labaKotor.setBorder(BorderFactory.createMatteBorder(1,0,0,1, Color.LIGHT_GRAY));
+        labaKotor.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 1, Color.LIGHT_GRAY));
         labaKotor.setBackground(new Color(220, 230, 250));
         JPanel labaBersih = new JPanel(new GridBagLayout());
-        labaBersih.setBorder(BorderFactory.createMatteBorder(1,1,0,0, Color.LIGHT_GRAY));
+        labaBersih.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, Color.LIGHT_GRAY));
         labaBersih.setBackground(new Color(220, 230, 250));
 
         GridBagConstraints gbcBanyakBangetAnjing = new GridBagConstraints();
@@ -1001,7 +1005,7 @@ public class GUIAdmin extends JFrame {
         gbclagi.insets = new Insets(0, 0, 0, 0);
         gbclagi.anchor = GridBagConstraints.WEST;
         namaMobilPanel.add(modelMobiLabel, gbclagi);
-//panell ini jing
+        // panell ini jing
         JPanel sewPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         sewPanel.setPreferredSize(new Dimension(130, 120)); // slightly bigger width
         sewPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
@@ -1046,7 +1050,6 @@ public class GUIAdmin extends JFrame {
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         middlePanel.add(totalDendaLabel, dalemgbc);
 
-
         JPanel dendaPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         dendaPanel.setPreferredSize(new Dimension(120, 120)); // Your original size
         dalemgbc.gridy = 1;
@@ -1068,12 +1071,12 @@ public class GUIAdmin extends JFrame {
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
 
-        JLabel totalMaintenance = Utility.styleLabel("Total Maintenance");
-        totalMaintenance.setFont(new Font("poppinsFont", Font.BOLD, 24));
-        totalMaintenance.setForeground(new Color(35, 47, 89));
+        JLabel totalMaintenanceLabel = Utility.styleLabel("Total Maintenance");
+        totalMaintenanceLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
+        totalMaintenanceLabel.setForeground(new Color(35, 47, 89));
         dalemgbc.gridy = 0;
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
-        rightPanel.add(totalMaintenance, dalemgbc);
+        rightPanel.add(totalMaintenanceLabel, dalemgbc);
 
         JPanel maintenancePanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
         maintenancePanel.setPreferredSize(new Dimension(120, 120)); // Your original size
@@ -1082,8 +1085,10 @@ public class GUIAdmin extends JFrame {
         maintenancePanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         rightPanel.add(maintenancePanel, dalemgbc);
-        
-        JLabel maintenanceangkaLabel = Utility.styleLabel("MILYARMILYAR");
+
+        double totalMaintenance = Mobil.getTotalMaintenance();
+        String formattedMaintenance = NumberFormat.getCurrencyInstance(new Locale("id", "ID")).format(totalMaintenance);
+        JLabel maintenanceangkaLabel = Utility.styleLabel(formattedMaintenance);
         maintenanceangkaLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         maintenanceangkaLabel.setForeground(new Color(51, 100, 255));
         dendaGbc.gridy = 0;
@@ -1137,7 +1142,7 @@ public class GUIAdmin extends JFrame {
         // --- LEFT PANEL ---
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(new Color(255, 204, 0));
-        
+
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         dataset.addValue(150, "", "Lamborghini stargazer");
         dataset.addValue(120, "", "BMW X3");
@@ -1147,14 +1152,13 @@ public class GUIAdmin extends JFrame {
         dataset.addValue(40, "", "Toyota Alphard");
 
         JFreeChart barChart = ChartFactory.createBarChart(
-            "Statistik",
-            "Model Mobil",
-            "Jumlah Penyewaan",
-            dataset,
-            PlotOrientation.HORIZONTAL,
-            false, true, false
-        );
-        
+                "Statistik",
+                "Model Mobil",
+                "Jumlah Penyewaan",
+                dataset,
+                PlotOrientation.HORIZONTAL,
+                false, true, false);
+
         // Set chart title color (navy)
         barChart.getTitle().setPaint(new Color(35, 47, 89));
 
@@ -1239,7 +1243,7 @@ public class GUIAdmin extends JFrame {
         topRightPanel.add(createStatistikRow(3, "Honda", "Civic", 100), rowGbc);
         rowGbc.gridy = 4;
         topRightPanel.add(createStatistikRow(4, "Toyota", "Fortuner", 80), rowGbc);
-        
+
         // --- Add this before adding statistik rows to bottomRightPanel ---
         JLabel bottomTitle = new JLabel("Pelanggan Dengan Penyewaan Terbanyak");
         bottomTitle.setFont(new Font("poppinsFont", Font.BOLD, 22));
@@ -1267,7 +1271,7 @@ public class GUIAdmin extends JFrame {
         bottomRightPanel.add(createStatistikRow(3, "Bob", "Wilson", 20), bottomRowGbc);
         bottomRowGbc.gridy = 4;
         bottomRightPanel.add(createStatistikRow(4, "Alice", "Brown", 18), bottomRowGbc);
-        
+
         return mainPanel;
     }
 
@@ -1289,7 +1293,7 @@ public class GUIAdmin extends JFrame {
         rowPanel.add(numberLabel, gbc);
 
         // Merk & model label
-        JLabel carLabel = new JLabel( merk +" "+model );
+        JLabel carLabel = new JLabel(merk + " " + model);
         carLabel.setFont(new Font("poppinsFont", Font.BOLD, 20));
         carLabel.setForeground(new Color(51, 40, 255));
         gbc.gridx = 1;
@@ -1346,7 +1350,7 @@ public class GUIAdmin extends JFrame {
         } else if (selectedButton == editLoginButton) {
             selectedButton.setIcon(Utility.createUniformIcon("assets/editw.png", 24, 20));
         } else if (selectedButton == dataKeuanganButton) {
-            selectedButton.setIcon(Utility.createUniformIcon("assets/keuanganw.png", 20, 20)); 
+            selectedButton.setIcon(Utility.createUniformIcon("assets/keuanganw.png", 20, 20));
         } else if (selectedButton == statistikButton) {
             selectedButton.setIcon(Utility.createUniformIcon("assets/statistikw.png", 20, 20));
         }

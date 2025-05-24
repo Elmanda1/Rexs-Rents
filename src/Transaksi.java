@@ -74,6 +74,7 @@ public class Transaksi {
 
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
+                Mobil.updateMaintenanceIfNeeded(transaksi.getMobil().getIdMobil(), transaksi.getDurasiSewa());
                 result = "Transaksi berhasil disimpan.";
             } else {
                 result = "Transaksi gagal disimpan.";
@@ -262,7 +263,7 @@ public class Transaksi {
         return formatRupiah.format(denda);
     }
 
-    public static String mobilTerlaris () {
+    public static String mobilTerlaris() {
         String mobilTerlaris = "";
         try (Connection con = Utility.connectDB()) {
             String query = "SELECT m.model, m.merk, SUM(t.total_harga) AS total_harga_acc " +
