@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-
+import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -16,18 +16,24 @@ public class StatistikPanel {
     public static JPanel create() {
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        List<String> top4Mobil = Mobil.getTopMobilByPenyewaan(4);
+        List<String> top6Mobil = Mobil.getTopMobilByPenyewaan(6);
+        List<String> top4Pelanggan = Pelanggan.getTopPelanggan(4);
 
         // --- LEFT PANEL ---
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(new Color(255, 204, 0));
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(150, "", "Lamborghini stargazer");
-        dataset.addValue(120, "", "BMW X3");
-        dataset.addValue(100, "", "Honda Civic");
-        dataset.addValue(80, "", "Toyota Fortuner");
-        dataset.addValue(60, "", "Hyundai IONIQ");
-        dataset.addValue(40, "", "Toyota Alphard");
+        int rowNumber = 1;
+        for (String entry : top6Mobil) {
+            String[] parts = entry.split(",");
+            if (parts.length == 2) {
+                String namaMobil = parts[0].trim();
+                int jumlah = Integer.parseInt(parts[1].trim());
+                dataset.addValue(jumlah, "", namaMobil);
+            }
+        }
 
         JFreeChart barChart = ChartFactory.createBarChart(
                 "Statistik",
@@ -114,13 +120,20 @@ public class StatistikPanel {
         rowGbc.insets = new Insets(10, 10, 10, 10);
 
         rowGbc.gridy = 1;
-        topRightPanel.add(createStatistikRow(1, "Lamborghini", "stargazer", 150), rowGbc);
-        rowGbc.gridy = 2;
-        topRightPanel.add(createStatistikRow(2, "BMW", "X3", 120), rowGbc);
-        rowGbc.gridy = 3;
-        topRightPanel.add(createStatistikRow(3, "Honda", "Civic", 100), rowGbc);
-        rowGbc.gridy = 4;
-        topRightPanel.add(createStatistikRow(4, "Toyota", "Fortuner", 80), rowGbc);
+        rowNumber = 1;
+        for (String entry : top4Mobil) {
+            String[] parts = entry.split(",");
+            if (parts.length == 2) {
+                String namaMobil = parts[0].trim();
+                int jumlah = Integer.parseInt(parts[1].trim());
+                String[] merkModel = namaMobil.split(" ", 2);
+                String merk = merkModel.length > 0 ? merkModel[0] : "";
+                String model = merkModel.length > 1 ? merkModel[1] : "";
+                topRightPanel.add(createStatistikRow(rowNumber, merk, model, jumlah), rowGbc);
+                rowGbc.gridy++;
+                rowNumber++;
+            }
+        }
 
         // --- Add this before adding statistik rows to bottomRightPanel ---
         JLabel bottomTitle = new JLabel("Pelanggan Dengan Penyewaan Terbanyak");
@@ -142,13 +155,17 @@ public class StatistikPanel {
         bottomRowGbc.insets = new Insets(10, 10, 10, 10);
 
         bottomRowGbc.gridy = 1;
-        bottomRightPanel.add(createStatistikRow(1, "John", "Doe", 30), bottomRowGbc);
-        bottomRowGbc.gridy = 2;
-        bottomRightPanel.add(createStatistikRow(2, "Jane", "Smith", 25), bottomRowGbc);
-        bottomRowGbc.gridy = 3;
-        bottomRightPanel.add(createStatistikRow(3, "Bob", "Wilson", 20), bottomRowGbc);
-        bottomRowGbc.gridy = 4;
-        bottomRightPanel.add(createStatistikRow(4, "Alice", "Brown", 18), bottomRowGbc);
+        int pelangganRowNumber = 1;
+        for (String entry : top4Pelanggan) {
+            String[] parts = entry.split("\\|\\|");
+            if (parts.length == 2) {
+                String nama = parts[0].trim();
+                int jumlah = Integer.parseInt(parts[1].trim());
+                bottomRightPanel.add(createStatistikRow(pelangganRowNumber, nama, "", jumlah), bottomRowGbc);
+                bottomRowGbc.gridy++;
+                pelangganRowNumber++;
+            }
+        }
 
         return mainPanel;
     }
@@ -192,5 +209,4 @@ public class StatistikPanel {
 
         return rowPanel;
     }
-
 }

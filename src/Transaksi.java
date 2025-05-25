@@ -74,7 +74,6 @@ public class Transaksi {
 
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
-                Mobil.updateMaintenanceIfNeeded(transaksi.getMobil().getIdMobil(), transaksi.getDurasiSewa());
                 result = "Transaksi berhasil disimpan.";
             } else {
                 result = "Transaksi gagal disimpan.";

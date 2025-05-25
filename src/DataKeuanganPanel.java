@@ -1,7 +1,5 @@
 import java.awt.*;
 import java.io.File;
-import java.text.NumberFormat;
-import java.util.Locale;
 import javax.swing.*;
 
 public class DataKeuanganPanel {
@@ -281,9 +279,7 @@ public class DataKeuanganPanel {
         dalemgbc.insets = new Insets(0, 20, 0, 20);
         rightPanel.add(maintenancePanel, dalemgbc);
 
-        double totalMaintenance = Mobil.getTotalMaintenance();
-        String formattedMaintenance = NumberFormat.getCurrencyInstance(new Locale("id", "ID")).format(totalMaintenance);
-        JLabel maintenanceangkaLabel = Utility.styleLabel(formattedMaintenance);
+        JLabel maintenanceangkaLabel = Utility.styleLabel(Mobil.getTotalMaintenance());
         maintenanceangkaLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         maintenanceangkaLabel.setForeground(new Color(51, 100, 255));
         dendaGbc.gridy = 0;

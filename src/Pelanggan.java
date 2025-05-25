@@ -239,4 +239,29 @@ public class Pelanggan {
         }
         return count;
     }
+
+    public static List<String> getTopPelanggan(int jumlah) {
+        List<String> topPelanggan = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT p.nama, COUNT(*) AS jumlah_sewa " +
+                        "FROM tb_transaksi t " +
+                        "JOIN tb_pelanggan p ON t.id_pelanggan = p.id_pelanggan " +
+                        "GROUP BY p.id_pelanggan, p.nama " +
+                        "ORDER BY jumlah_sewa DESC " +
+                        "LIMIT " + jumlah;
+
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String nama = rs.getString("nama").trim();
+                int jumlahSewa = rs.getInt("jumlah_sewa");
+                topPelanggan.add(nama + "||" + jumlahSewa); 
+            }            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return topPelanggan;
+    }
 }
