@@ -11,26 +11,18 @@ public class Mobil {
     private double hargaSewa;
     private boolean status;
     private String foto;
-    private int jumlahHariPeminjaman;
 
     private static final Locale indo = new Locale("id", "ID");
     private static final NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(indo);
 
-    // Constructor untuk data dari database (7 parameter)
-    public Mobil(String idMobil, String model, String merk, double hargaSewa, boolean status, String foto,
-            int jumlahHariPeminjaman) {
+    // Constructor untuk data dari database (6 parameter)
+    public Mobil(String idMobil, String model, String merk, double hargaSewa, boolean status, String foto) {
         this.idMobil = idMobil;
         this.model = model;
         this.merk = merk;
         this.hargaSewa = hargaSewa;
         this.status = status;
         this.foto = foto;
-        this.jumlahHariPeminjaman = jumlahHariPeminjaman;
-    }
-
-    // Constructor untuk tambah/update mobil baru (6 parameter)
-    public Mobil(String idMobil, String model, String merk, double hargaSewa, boolean status, String foto) {
-        this(idMobil, model, merk, hargaSewa, status, foto, 0); // default jumlahHariPeminjaman = 0
     }
 
     public String getIdMobil() {
@@ -55,10 +47,6 @@ public class Mobil {
 
     public String getFoto() {
         return foto;
-    }
-
-    public int getJumlahHariPeminjaman() {
-        return jumlahHariPeminjaman;
     }
 
     public void setModel(String model) {
@@ -86,7 +74,7 @@ public class Mobil {
     public static List<Mobil> getAllMobil() {
         List<Mobil> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
-            String query = "SELECT id_mobil, model, merk, hargasewa, status, foto, jumlah_hari_peminjaman FROM tb_mobil ORDER BY id_mobil ASC";
+            String query = "SELECT id_mobil, model, merk, hargasewa, status, foto FROM tb_mobil ORDER BY id_mobil ASC";
             try (PreparedStatement ps = con.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String idMobil = rs.getString("id_mobil").trim();
@@ -95,9 +83,8 @@ public class Mobil {
                     double hargaSewa = rs.getDouble("hargasewa");
                     boolean status = rs.getBoolean("status");
                     String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
-                    int jumlahHariPeminjaman = rs.getInt("jumlah_hari_peminjaman");
 
-                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto, jumlahHariPeminjaman));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
                 }
             }
         } catch (SQLException e) {
@@ -120,7 +107,7 @@ public class Mobil {
                     boolean status = rs.getBoolean("status");
                     String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto, 0));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
                 }
             }
         } catch (SQLException e) {
@@ -142,7 +129,7 @@ public class Mobil {
                     boolean status = rs.getBoolean("status");
                     String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto, 0));
+                    daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
                 }
             }
         } catch (SQLException e) {
@@ -156,7 +143,7 @@ public class Mobil {
             String foto) {
         double biayaMaintenance = hargaSewa * 0.10; // 10% dari harga sewa
         try (Connection con = Utility.connectDB()) {
-            String query = "INSERT INTO tb_mobil (id_mobil, model, merk, hargasewa, status, foto, jumlah_hari_peminjaman, total_biaya_maintenance, biaya_maintenance) VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?)";
+            String query = "INSERT INTO tb_mobil (id_mobil, model, merk, hargasewa, status, foto, biaya_maintenance) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, id);
             ps.setString(2, model);
@@ -249,7 +236,7 @@ public class Mobil {
                 boolean status = rs.getBoolean("status");
                 String foto = rs.getString("foto") != null ? rs.getString("foto").trim() : "";
 
-                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto, 0));
+                daftarMobil.add(new Mobil(idMobil, model, merk, hargaSewa, status, foto));
             }
         } catch (SQLException e) {
             // ignored

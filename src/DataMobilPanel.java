@@ -143,7 +143,7 @@ public class DataMobilPanel extends JPanel {
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
         tablePanel.setPreferredSize(new Dimension(500, 600)); // Standardized size
 
-        String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status", "Jumlah Hari Peminjaman" };
+        String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status"};
         DefaultTableModel mobilTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -161,8 +161,7 @@ public class DataMobilPanel extends JPanel {
             mobilTableModel.addRow(new Object[] {
                     m.getIdMobil(), m.getModel(), m.getMerk(),
                     formatRupiah.format(m.getHargaSewa()),
-                    m.isTersedia() ? "Available" : "Unavailable",
-                    m.getJumlahHariPeminjaman()
+                    m.isTersedia() ? "Available" : "Unavailable"
             });
         }
 
@@ -357,7 +356,6 @@ public class DataMobilPanel extends JPanel {
                                 m.getIdMobil(), m.getModel(), m.getMerk(),
                                 formatRupiah.format(m.getHargaSewa()),
                                 m.isTersedia() ? "Available" : "Unavailable",
-                                m.getJumlahHariPeminjaman()
                         });
                     }
                 } else {
@@ -366,7 +364,6 @@ public class DataMobilPanel extends JPanel {
                                 m.getIdMobil(), m.getModel(), m.getMerk(),
                                 formatRupiah.format(m.getHargaSewa()),
                                 m.isTersedia() ? "Available" : "Unavailable",
-                                m.getJumlahHariPeminjaman()
                         });
                     }
                 }

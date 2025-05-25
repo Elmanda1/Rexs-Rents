@@ -15,8 +15,7 @@ public class AdminUtility {
             mobilTableModel.addRow(new Object[] {
                     m.getIdMobil(), m.getModel(), m.getMerk(),
                     formatRupiah.format(m.getHargaSewa()),
-                    m.isTersedia() ? "Available" : "Unavailable",
-                    m.getJumlahHariPeminjaman()
+                    m.isTersedia() ? "Available" : "Unavailable"
             });
         }
     }
