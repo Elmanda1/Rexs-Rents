@@ -44,82 +44,80 @@ public class DataKeuanganPanel {
         labaBersih.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, Color.LIGHT_GRAY));
         labaBersih.setBackground(new Color(220, 230, 250));
 
-        GridBagConstraints gbcBanyakBangetAnjing = new GridBagConstraints();
+        GridBagConstraints gbcBanyakBanget = new GridBagConstraints();
 
         JLabel jumlahPelangganLabel = Utility.styleLabel("Total Pelanggan");
         jumlahPelangganLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         jumlahPelangganLabel.setForeground(new Color(35, 47, 89));
         jumlahPelangganLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridx = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(55, 0, 65, 70); // Add gap between panels
-        jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridx = 0;
+        gbcBanyakBanget.insets = new Insets(55, 0, 65, 70); // Add gap between panels
+        jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBanget);
 
         JLabel angkaPelangganLabel = Utility.styleLabel(Pelanggan.countPelanggan() + "");
         angkaPelangganLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaPelangganLabel.setForeground(new Color(51, 100, 255));
         angkaPelangganLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridx = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(55, 60, 65, 0); // Add gap between panels
-        jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridx = 1;
+        gbcBanyakBanget.insets = new Insets(55, 60, 65, 0); // Add gap between panels
+        jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBanget);
 
         JLabel jumlahTransaksiLabel = Utility.styleLabel("Total Transaksi");
         jumlahTransaksiLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         jumlahTransaksiLabel.setForeground(new Color(35, 47, 89));
         jumlahTransaksiLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridx = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(55, 0, 65, 70); // Add gap between panels
-        totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridx = 0;
+        gbcBanyakBanget.insets = new Insets(55, 0, 65, 70); // Add gap between panels
+        totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBanget);
 
         JLabel angkaTransaksiLabel = Utility.styleLabel(Transaksi.countTransaksi() + "");
         angkaTransaksiLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaTransaksiLabel.setForeground(new Color(51, 100, 255));
         angkaTransaksiLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridx = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(55, 60, 65, 0); // Add gap between panels
-        totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridx = 1;
+        gbcBanyakBanget.insets = new Insets(55, 60, 65, 0); // Add gap between panels
+        totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBanget);
 
         JLabel labaKotorLabel = Utility.styleLabel("Laba Kotor");
         labaKotorLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         labaKotorLabel.setForeground(new Color(35, 47, 89));
         labaKotorLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridy = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
-        labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridy = 0;
+        gbcBanyakBanget.insets = new Insets(40, 0, 0, 0); // Add gap between panels
+        labaKotor.add(labaKotorLabel, gbcBanyakBanget);
 
         JLabel angkaKotorLabel = Utility.styleLabel(Transaksi.calculateBruto());
         angkaKotorLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaKotorLabel.setForeground(new Color(51, 100, 255));
         angkaKotorLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridy = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 40, 0); // Add gap between panels
-        labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridy = 1;
+        gbcBanyakBanget.insets = new Insets(20, 0, 40, 0); // Add gap between panels
+        labaKotor.add(angkaKotorLabel, gbcBanyakBanget);
 
         JLabel labaBersihLabel = Utility.styleLabel("Laba Bersih");
         labaBersihLabel.setForeground(new Color(35, 47, 89));
         labaBersihLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         labaBersihLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridy = 0;
-        gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
-        labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridy = 0;
+        gbcBanyakBanget.insets = new Insets(40, 0, 0, 0); // Add gap between panels
+        labaBersih.add(labaBersihLabel, gbcBanyakBanget);
 
         JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateNetto());
         angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaBersihLabel.setForeground(new Color(51, 100, 255));
         angkaBersihLabel.setBackground(Color.WHITE);
-        gbcBanyakBangetAnjing.gridy = 1;
-        gbcBanyakBangetAnjing.insets = new Insets(20, 0, 40, 0); // Add gap between panels
-        labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
+        gbcBanyakBanget.gridy = 1;
+        gbcBanyakBanget.insets = new Insets(20, 0, 40, 0); // Add gap between panels
+        labaBersih.add(angkaBersihLabel, gbcBanyakBanget);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         gbc.insets = new Insets(0, 0, 0, 0);
 
-        // Add left panel
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         innerTopPanel.add(jumlahPelanggan, gbc);
 
-        // Add middle panel
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
@@ -135,7 +133,7 @@ public class DataKeuanganPanel {
         gbc.weightx = 1.0;
         innerTopPanel.add(labaBersih, gbc);
 
-        // Center the innerTopPanel within topPanel
+        // tengahin innerTopPanel ke topPanel
         GridBagConstraints innerGbc = new GridBagConstraints();
         innerGbc.gridx = 0;
         innerGbc.gridy = 0;
@@ -148,8 +146,6 @@ public class DataKeuanganPanel {
         innerGbc.anchor = GridBagConstraints.CENTER;
         topPanel.add(innerTopPanel, innerGbc);
 
-        // Create bottom panel
-        // Create bottom panel with GridBagLayout
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 92, 30, 92));
         bottomPanel.setBackground(Color.WHITE);
@@ -337,7 +333,6 @@ public class DataKeuanganPanel {
         panelGbc.insets = new Insets(0, 0, 0, 0); // Remove right gap for last panel
         bottomPanel.add(rightPanel, panelGbc);
 
-        // Add panels to main panel with 50-50 split
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0.5;

@@ -89,7 +89,6 @@ public class StatistikPanel {
         gbc.weighty = 1.0;
         mainPanel.add(leftPanel, gbc);
 
-        // --- RIGHT PANEL ---
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setBackground(Color.WHITE); // optional, set your own color
 
@@ -109,7 +108,6 @@ public class StatistikPanel {
         rightGbc.gridy = 1;
         rightPanel.add(bottomRightPanel, rightGbc);
 
-        // Add right panel with 50% weight
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridheight = 1;
@@ -128,7 +126,6 @@ public class StatistikPanel {
         topTitleGbc.anchor = GridBagConstraints.WEST;
         topRightPanel.add(topTitle, topTitleGbc);
 
-        // Statistik rows for topRightPanel, start from rowGbc.gridy = 1
         GridBagConstraints rowGbc = new GridBagConstraints();
         rowGbc.gridx = 0;
         rowGbc.fill = GridBagConstraints.HORIZONTAL;
