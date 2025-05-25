@@ -9,10 +9,12 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
     public static JPanel create(JPanel contentPanel) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        panel.setBackground(Color.WHITE);
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
+        formPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -92,6 +94,7 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
         tambahButton.setIconTextGap(5); // Add some space between icon and text
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(tambahButton);
 
         formPanel.add(buttonPanel, gbc);
@@ -99,6 +102,7 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
+        tablePanel.setBackground(Color.WHITE);
 
         String[] columnNamesAtas = { "ID", "Model", "Merk", "Harga Sewa" };
         DefaultTableModel tableModelAtas = new DefaultTableModel(columnNamesAtas, 0) {
@@ -203,10 +207,8 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
 
                     if (selectedMobil != null) {
                         String fotoFile = selectedMobil.getFoto();
-                        System.out.println("Foto file: " + fotoFile); // Debug
                         if (fotoFile != null && !fotoFile.isEmpty()) {
                             String path = "assets/mobil/" + fotoFile;
-                            System.out.println("Path gambar: " + path); // Debug
                             File imgFile = new File(path);
                             if (!imgFile.exists()) {
                                 System.out.println("File gambar tidak ditemukan: " + path);
@@ -217,8 +219,8 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
                                 System.out.println("Gambar gagal di-load: " + path);
                                 fotoLabel.setIcon(null);
                             } else {
-                                int width = 500;
-                                int height = 200;
+                                int width = fotoLabel.getWidth();
+                                int height = fotoLabel.getHeight();
                                 // Scaling langsung tanpa BufferedImage
                                 Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                                 fotoLabel.setIcon(new ImageIcon(scaledImg));
@@ -326,6 +328,7 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
         // Add search functionality for Mobil table (live search)
         JPanel searchPanelMobil = new JPanel(new BorderLayout());
         searchPanelMobil.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        searchPanelMobil.setBackground(Color.WHITE);
         JTextField searchFieldMobil = new Utility.PlaceholderTextField("Search Mobil...");
         searchPanelMobil.add(searchFieldMobil, BorderLayout.CENTER);
         tablePanel.add(searchPanelMobil, BorderLayout.NORTH);
@@ -370,6 +373,7 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
         // Add search functionality for Pelanggan table (live search)
         JPanel searchPanelPelanggan = new JPanel(new BorderLayout());
         searchPanelPelanggan.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        searchPanelPelanggan.setBackground(Color.WHITE);
         JTextField searchFieldPelanggan = new Utility.PlaceholderTextField("Search Pelanggan...");
         searchPanelPelanggan.add(searchFieldPelanggan, BorderLayout.CENTER);
         searchFieldPelanggan.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -419,6 +423,7 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
         splitPane.setDividerSize(5); // Divider size
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        wrapperPanel.setBackground(Color.white);
         wrapperPanel.add(formPanel);
         panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);

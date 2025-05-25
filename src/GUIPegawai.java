@@ -7,7 +7,7 @@ public class GUIPegawai extends BaseDashboardUI {
     private PegawaiMenuBar menuBarPanel;
 
     public GUIPegawai() {
-        setTitle("Rex's Rents - Employee Dashboard");
+        setTitle("Rex's Rents - Dashboard Pegawai");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);

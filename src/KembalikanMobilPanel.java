@@ -12,6 +12,7 @@ public class KembalikanMobilPanel extends JPanel {
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 10));
+        formPanel.setBackground(Color.white);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -71,12 +72,14 @@ public class KembalikanMobilPanel extends JPanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.add(kembalikanButton);
+        buttonPanel.setBackground(Color.white);
 
         formPanel.add(buttonPanel, gbc);
 
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
+        tablePanel.setBackground(Color.white);
 
         String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa" };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -271,6 +274,7 @@ public class KembalikanMobilPanel extends JPanel {
         // Add search functionality for KembalikanMobil table (live search)
         JPanel searchPanelKembalikan = new JPanel(new BorderLayout());
         searchPanelKembalikan.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        searchPanelKembalikan.setBackground(Color.white);
         JTextField searchFieldKembalikan = new Utility.PlaceholderTextField("Search Mobil...");
         searchPanelKembalikan.add(searchFieldKembalikan, BorderLayout.CENTER);
         tablePanel.add(searchPanelKembalikan, BorderLayout.NORTH);
@@ -310,6 +314,7 @@ public class KembalikanMobilPanel extends JPanel {
         });
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        wrapperPanel.setBackground(Color.white);
         wrapperPanel.add(formPanel);
         panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);

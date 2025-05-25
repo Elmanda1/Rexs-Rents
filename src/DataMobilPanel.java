@@ -5,13 +5,14 @@ import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-
 public class DataMobilPanel extends JPanel {
     public static JPanel create() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 10));
+        formPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -122,6 +123,7 @@ public class DataMobilPanel extends JPanel {
         buttonPanel.add(tambahButton);
         buttonPanel.add(simpanButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.setBackground(Color.WHITE);
 
         formPanel.add(buttonPanel, gbc);
 
@@ -142,8 +144,9 @@ public class DataMobilPanel extends JPanel {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
         tablePanel.setPreferredSize(new Dimension(500, 600)); // Standardized size
+        tablePanel.setBackground(Color.WHITE);
 
-        String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status"};
+        String[] columnNames = { "ID", "Model", "Merk", "Harga Sewa", "Status" };
         DefaultTableModel mobilTableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -343,6 +346,7 @@ public class DataMobilPanel extends JPanel {
         // Add search functionality for Data Mobil (live search)
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        searchPanel.setBackground(Color.WHITE);
         JTextField searchField = new Utility.PlaceholderTextField("Search Mobil...");
         searchPanel.add(searchField, BorderLayout.CENTER);
         tablePanel.add(searchPanel, BorderLayout.NORTH);
@@ -386,6 +390,7 @@ public class DataMobilPanel extends JPanel {
         });
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 7));
+        wrapperPanel.setBackground(Color.white);
         wrapperPanel.add(formPanel);
         panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);

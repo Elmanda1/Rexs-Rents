@@ -11,6 +11,7 @@ public class AdminMenuBar extends JPanel {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.contentPanel = contentPanel;
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        setBackground(Color.WHITE);
 
         JButton historyButton = new JButton("Histori Transaksi");
         JButton dataMobilButton = new JButton("Data Mobil");

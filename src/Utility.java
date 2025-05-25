@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Locale;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -229,18 +230,25 @@ public class Utility {
         dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
         dateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Set Locale ke Indonesia
+        Locale locale = new Locale("id", "ID");
+
         // Timer untuk update jam dan tanggal setiap detik
         Timer timer = new Timer(1000, e -> {
-            String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
-            String currentDate = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy").format(new java.util.Date());
+            java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy", locale);
+            String currentTime = timeFormat.format(new java.util.Date());
+            String currentDate = dateFormat.format(new java.util.Date());
             clockLabel.setText(currentTime);
             dateLabel.setText(currentDate);
         });
         timer.start();
 
         // Set awal
-        String currentTime = new java.text.SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
-        String currentDate = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy").format(new java.util.Date());
+        java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy", locale);
+        String currentTime = timeFormat.format(new java.util.Date());
+        String currentDate = dateFormat.format(new java.util.Date());
         clockLabel.setText(currentTime);
         dateLabel.setText(currentDate);
 
@@ -263,7 +271,7 @@ public class Utility {
         passwordPanel.add(passwordField, BorderLayout.CENTER);
 
         // Create toggle button for show/hide password
-        JToggleButton showPassword = new RoundedToggleButton("Show", new Color(173, 216, 230));
+        JToggleButton showPassword = new RoundedToggleButton("Tampilkan", new Color(173, 216, 230));
         showPassword.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust font
         showPassword.setFocusPainted(false);
         showPassword.setBackground(new Color(173, 216, 230)); // Light blue button
@@ -378,29 +386,29 @@ public class Utility {
     }
 
     // Add this class after the other inner classes
-public static class RoundedPanel extends JPanel {
-    private int arc = 50;
-    
-    public RoundedPanel(LayoutManager layout) {
-        super(layout);
-        setOpaque(false);
-    }
+    public static class RoundedPanel extends JPanel {
+        private int arc = 50;
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
-        super.paintComponent(g);
-        g2.dispose();
+        public RoundedPanel(LayoutManager layout) {
+            super(layout);
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(getBackground());
+            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
+            super.paintComponent(g);
+            g2.dispose();
+        }
     }
-}
 
     // Add this utility method
     public static JPanel createRoundedPanel(LayoutManager layout, Color backgroundColor) {
-    RoundedPanel panel = new RoundedPanel(layout);
-    panel.setBackground(backgroundColor);
-    return panel;
-}
+        RoundedPanel panel = new RoundedPanel(layout);
+        panel.setBackground(backgroundColor);
+        return panel;
+    }
 }

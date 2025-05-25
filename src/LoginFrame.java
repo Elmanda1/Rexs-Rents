@@ -135,7 +135,7 @@ public class LoginFrame extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 3;
 
-        JLabel roleLabel = new JLabel("Role");
+        JLabel roleLabel = new JLabel("Jabatan");
         roleLabel.setFont(poppinsFont.deriveFont(Font.BOLD, 20f));
         mainPanel.add(roleLabel, gbc);
 
@@ -163,7 +163,7 @@ public class LoginFrame extends JFrame {
 
         ImageIcon exitIcon = Utility.createUniformIcon("assets/logouthitam.png", 20, 20);
 
-        JButton exitButton = Utility.styleButton("Exit", new Color(173, 216, 230));
+        JButton exitButton = Utility.styleButton("Keluar", new Color(173, 216, 230));
         exitButton.setIcon(exitIcon); // Set the icon
         exitButton.setIconTextGap(8);
         exitButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
@@ -179,7 +179,7 @@ public class LoginFrame extends JFrame {
 
         ImageIcon loginIcon = Utility.createUniformIcon("assets/login.png", 20, 20);
 
-        JButton loginButton = Utility.styleButton("Login", new Color(255, 87, 51));
+        JButton loginButton = Utility.styleButton("Masuk", new Color(255, 87, 51));
         loginButton.setIcon(loginIcon);
         loginButton.setIconTextGap(8);
         loginButton.setFont(poppinsFont.deriveFont(Font.BOLD, 16f)); // Use Poppins font
@@ -197,34 +197,34 @@ public class LoginFrame extends JFrame {
             String role = adminRadio.isSelected() ? "Admin" : employeeRadio.isSelected() ? "Employee" : "";
 
             if (role.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please select a role before logging in!", "Error",
+                JOptionPane.showMessageDialog(null, "Tolong pilih role sebelum masuk!", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Semua field harus terisi!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (role.equals("Admin")) {
                 if (adminCredentials.containsKey(username) && adminCredentials.get(username).equals(password)) {
-                    JOptionPane.showMessageDialog(null, "Successfully logged in as Admin!", "Success",
+                    JOptionPane.showMessageDialog(null, "Berhasil login sebagai admin!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                     SwingUtilities.invokeLater(() -> new GUIAdmin().setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Invalid Admin username or password!", "Error",
+                    JOptionPane.showMessageDialog(null, "Terdapat kesalahan username atau password!", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             } else if (role.equals("Employee")) {
                 if (employeeCredentials.containsKey(username) && employeeCredentials.get(username).equals(password)) {
-                    JOptionPane.showMessageDialog(null, "Successfully logged in as Employee!", "Success",
+                    JOptionPane.showMessageDialog(null, "Berhasil login sebagai pegawai!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                     SwingUtilities.invokeLater(() -> new GUIPegawai().setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Invalid Employee username or password!", "Error",
+                    JOptionPane.showMessageDialog(null, "Terdapat kesalahan username atau password!", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }

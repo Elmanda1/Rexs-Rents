@@ -14,6 +14,7 @@ public class PegawaiMenuBar extends JPanel {
         this.contentPanel = contentPanel;
         this.onPanelSwitched = onPanelSwitched;
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        setBackground(Color.WHITE);
 
         JButton tambahTransaksiButton = new JButton("Tambah Transaksi");
         JButton dataPelangganButton = new JButton("Data Pelanggan");
@@ -88,6 +89,7 @@ public class PegawaiMenuBar extends JPanel {
         setSelectedButton(panelName);
         CardLayout cl = (CardLayout) contentPanel.getLayout();
         cl.show(contentPanel, panelName);
-        if (onPanelSwitched != null) onPanelSwitched.accept(panelName);
+        if (onPanelSwitched != null)
+            onPanelSwitched.accept(panelName);
     }
 }

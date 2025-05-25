@@ -11,10 +11,12 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.chart.ui.RectangleInsets;  // Tambahkan import ini
 
 public class StatistikPanel {
     public static JPanel create() {
         JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         List<String> top4Mobil = Mobil.getTopMobilByPenyewaan(4);
         List<String> top6Mobil = Mobil.getTopMobilByPenyewaan(6);
@@ -22,7 +24,7 @@ public class StatistikPanel {
 
         // --- LEFT PANEL ---
         JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setBackground(new Color(255, 204, 0));
+        leftPanel.setBackground(Color.WHITE);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         int rowNumber = 1;
@@ -43,8 +45,7 @@ public class StatistikPanel {
                 PlotOrientation.HORIZONTAL,
                 false, true, false);
 
-        // Set chart title color (navy)
-        barChart.getTitle().setPaint(new Color(35, 47, 89));
+        barChart.getTitle().setPaint(new Color(51, 40, 255));
 
         // Set bar color (orange)
         CategoryPlot plot = barChart.getCategoryPlot();
@@ -56,15 +57,28 @@ public class StatistikPanel {
         domainAxis.setLabelPaint(new Color(51, 100, 255)); // "Model Mobil" label
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
         domainAxis.setTickLabelFont(new Font("poppinsFont", Font.PLAIN, 12));
-        domainAxis.setTickLabelPaint(new Color(35, 47, 89)); // navy for tick labels
+        domainAxis.setTickLabelPaint(new Color(51, 40, 255)); // navy for tick labels
 
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setLabelPaint(new Color(51, 100, 255)); // "Jumlah Penyewaan" label
         rangeAxis.setTickLabelFont(new Font("poppinsFont", Font.PLAIN, 12));
-        rangeAxis.setTickLabelPaint(new Color(35, 47, 89)); // navy for tick labels
+        rangeAxis.setTickLabelPaint(new Color(51, 40, 255)); // navy for tick labels
 
-        // DO NOT force chartPanel width
+        // Konfigurasi plot dan chart background
+        plot.setBackgroundPaint(new Color(220, 230, 250)); // Background chart biru muda
+        plot.setRangeGridlinePaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.WHITE);
+
         ChartPanel chartPanel = new ChartPanel(barChart);
+        chartPanel.setBackground(Color.WHITE); // Background panel putih
+        barChart.setBackgroundPaint(Color.WHITE); // Background chart putih
+
+        // Set warna domain dan range plot ke putih untuk area di luar grafik
+        plot.setDomainGridlinesVisible(true);
+        plot.setRangeGridlinesVisible(true);
+        plot.setOutlinePaint(Color.WHITE);
+        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+
         leftPanel.add(chartPanel, BorderLayout.CENTER);
 
         gbc.gridx = 0;
@@ -85,11 +99,13 @@ public class StatistikPanel {
 
         JPanel topRightPanel = new JPanel(new GridBagLayout());
         topRightPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        topRightPanel.setBackground(Color.WHITE);
         rightGbc.weighty = 0.5;
         rightGbc.gridy = 0;
         rightPanel.add(topRightPanel, rightGbc);
 
         JPanel bottomRightPanel = new JPanel(new GridBagLayout());
+        bottomRightPanel.setBackground(Color.WHITE);
         rightGbc.gridy = 1;
         rightPanel.add(bottomRightPanel, rightGbc);
 

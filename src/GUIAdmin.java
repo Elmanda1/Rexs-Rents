@@ -6,7 +6,7 @@ public class GUIAdmin extends BaseDashboardUI {
     private AdminMenuBar menuBarPanel;
 
     public GUIAdmin() {
-        setTitle("Rex's Rents - Admin Dashboard");
+        setTitle("Rex's Rents - Dashboard Admin");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH);

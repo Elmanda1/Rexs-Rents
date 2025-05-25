@@ -15,6 +15,7 @@ public class DataKeuanganPanel {
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        panel.setBackground(Color.WHITE);
 
         JLabel profitLabel = Utility.styleLabel("Pelanggan & Profit All Time");
         profitLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
@@ -22,6 +23,7 @@ public class DataKeuanganPanel {
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        topPanel.setBackground(Color.WHITE);
 
         // Create and configure innerTopPanel with your size
         JPanel innerTopPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
@@ -47,6 +49,7 @@ public class DataKeuanganPanel {
         JLabel jumlahPelangganLabel = Utility.styleLabel("Total Pelanggan");
         jumlahPelangganLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         jumlahPelangganLabel.setForeground(new Color(35, 47, 89));
+        jumlahPelangganLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridx = 0;
         gbcBanyakBangetAnjing.insets = new Insets(55, 0, 65, 70); // Add gap between panels
         jumlahPelanggan.add(jumlahPelangganLabel, gbcBanyakBangetAnjing);
@@ -54,6 +57,7 @@ public class DataKeuanganPanel {
         JLabel angkaPelangganLabel = Utility.styleLabel(Pelanggan.countPelanggan() + "");
         angkaPelangganLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaPelangganLabel.setForeground(new Color(51, 100, 255));
+        angkaPelangganLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(55, 60, 65, 0); // Add gap between panels
         jumlahPelanggan.add(angkaPelangganLabel, gbcBanyakBangetAnjing);
@@ -61,6 +65,7 @@ public class DataKeuanganPanel {
         JLabel jumlahTransaksiLabel = Utility.styleLabel("Total Transaksi");
         jumlahTransaksiLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         jumlahTransaksiLabel.setForeground(new Color(35, 47, 89));
+        jumlahTransaksiLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridx = 0;
         gbcBanyakBangetAnjing.insets = new Insets(55, 0, 65, 70); // Add gap between panels
         totalTransaksi.add(jumlahTransaksiLabel, gbcBanyakBangetAnjing);
@@ -68,6 +73,7 @@ public class DataKeuanganPanel {
         JLabel angkaTransaksiLabel = Utility.styleLabel(Transaksi.countTransaksi() + "");
         angkaTransaksiLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaTransaksiLabel.setForeground(new Color(51, 100, 255));
+        angkaTransaksiLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridx = 1;
         gbcBanyakBangetAnjing.insets = new Insets(55, 60, 65, 0); // Add gap between panels
         totalTransaksi.add(angkaTransaksiLabel, gbcBanyakBangetAnjing);
@@ -75,6 +81,7 @@ public class DataKeuanganPanel {
         JLabel labaKotorLabel = Utility.styleLabel("Laba Kotor");
         labaKotorLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         labaKotorLabel.setForeground(new Color(35, 47, 89));
+        labaKotorLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridy = 0;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
         labaKotor.add(labaKotorLabel, gbcBanyakBangetAnjing);
@@ -82,6 +89,7 @@ public class DataKeuanganPanel {
         JLabel angkaKotorLabel = Utility.styleLabel(Transaksi.calculateBruto());
         angkaKotorLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaKotorLabel.setForeground(new Color(51, 100, 255));
+        angkaKotorLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 40, 0); // Add gap between panels
         labaKotor.add(angkaKotorLabel, gbcBanyakBangetAnjing);
@@ -89,6 +97,7 @@ public class DataKeuanganPanel {
         JLabel labaBersihLabel = Utility.styleLabel("Laba Bersih");
         labaBersihLabel.setForeground(new Color(35, 47, 89));
         labaBersihLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
+        labaBersihLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridy = 0;
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
         labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
@@ -96,6 +105,7 @@ public class DataKeuanganPanel {
         JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateNetto());
         angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaBersihLabel.setForeground(new Color(51, 100, 255));
+        angkaBersihLabel.setBackground(Color.WHITE);
         gbcBanyakBangetAnjing.gridy = 1;
         gbcBanyakBangetAnjing.insets = new Insets(20, 0, 40, 0); // Add gap between panels
         labaBersih.add(angkaBersihLabel, gbcBanyakBangetAnjing);
@@ -142,9 +152,11 @@ public class DataKeuanganPanel {
         // Create bottom panel with GridBagLayout
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 92, 30, 92));
+        bottomPanel.setBackground(Color.WHITE);
 
         // Create three panels
         JPanel leftPanel = new JPanel(new GridBagLayout());
+        leftPanel.setBackground(Color.WHITE);
 
         GridBagConstraints dalemgbc = new GridBagConstraints();
         dalemgbc.fill = GridBagConstraints.BOTH;
@@ -247,6 +259,7 @@ public class DataKeuanganPanel {
         sewPanel.add(totalsewaLabel, gbctrus);
 
         JPanel middlePanel = new JPanel(new GridBagLayout());
+        middlePanel.setBackground(Color.WHITE);
 
         JLabel totalDendaLabel = Utility.styleLabel("Total Denda");
         totalDendaLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
@@ -275,6 +288,7 @@ public class DataKeuanganPanel {
         dendaPanel.add(totalDendaAngka, dendaGbc);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setBackground(Color.WHITE);
 
         JLabel totalMaintenanceLabel = Utility.styleLabel("Total Maintenance");
         totalMaintenanceLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));

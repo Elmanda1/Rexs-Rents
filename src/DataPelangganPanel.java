@@ -9,6 +9,7 @@ public class DataPelangganPanel extends JPanel {
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(16, 20, 10, 10));
+        formPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -97,12 +98,14 @@ public class DataPelangganPanel extends JPanel {
         buttonPanel.add(tambahButton);
         buttonPanel.add(simpanButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.setBackground(Color.WHITE);
 
         formPanel.add(buttonPanel, gbc);
 
         // Right table panel
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 20));
+        tablePanel.setBackground(Color.WHITE);
 
         String[] columnNames = { "ID", "Nama", "No HP", "No KTP", "Alamat", "Gender" };
         DefaultTableModel pelangganTableModel = new DefaultTableModel(columnNames, 0) {
@@ -131,6 +134,7 @@ public class DataPelangganPanel extends JPanel {
         // Add search functionality for Data Pelanggan (live search)
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        searchPanel.setBackground(Color.WHITE);
         JTextField searchField = new Utility.PlaceholderTextField("Search Pelanggan...");
         searchPanel.add(searchField, BorderLayout.CENTER);
         tablePanel.add(searchPanel, BorderLayout.NORTH);
@@ -322,6 +326,7 @@ public class DataPelangganPanel extends JPanel {
         });
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 4));
+        wrapperPanel.setBackground(Color.white);
         wrapperPanel.add(formPanel);
         panel.add(wrapperPanel, BorderLayout.WEST);
         panel.add(tablePanel, BorderLayout.CENTER);

@@ -2,11 +2,11 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 
-
 public class EditLoginPegawaiPanel {
     public static JPanel create() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 10, 6, 10);

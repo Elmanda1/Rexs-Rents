@@ -8,12 +8,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
-public class HistoryTransaksiPanel extends JPanel{
+public class HistoryTransaksiPanel extends JPanel {
     public static JPanel create() {
         List<Transaksi> transaksiList = Transaksi.getAllTransaksi();
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBackground(Color.WHITE);
 
         String[] columnNames = {
                 "ID Transaksi", "Tanggal", "Nama Pelanggan", "Model Mobil",
@@ -48,6 +50,7 @@ public class HistoryTransaksiPanel extends JPanel{
         // Add search functionality for History Transaksi (live search)
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        searchPanel.setBackground(Color.WHITE);
         JTextField searchField = new Utility.PlaceholderTextField("Search Transaksi...");
         searchPanel.add(searchField, BorderLayout.CENTER);
         panel.add(searchPanel, BorderLayout.NORTH);
