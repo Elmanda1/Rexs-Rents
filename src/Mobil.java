@@ -274,57 +274,6 @@ public class Mobil {
         return "M" + String.format("%02d", maxId + 1);
     }
 
-    // public static double getTotalMaintenance() {
-    //     double total = 0;
-    //     try (Connection con = Utility.connectDB();
-    //             PreparedStatement ps = con.prepareStatement("SELECT SUM(total_biaya_maintenance) FROM tb_mobil");
-    //             ResultSet rs = ps.executeQuery()) {
-    //         if (rs.next()) {
-    //             total = rs.getDouble(1);
-    //         }
-    //     } catch (SQLException e) {
-    //         // ignored
-    //     }
-    //     return total;
-    // }
-
-    // public static void updateMaintenanceIfNeeded(String idMobil, int hariSewa) {
-    //     try (Connection con = Utility.connectDB()) {
-    //         // 1. Tambah jumlah hari peminjaman
-    //         String updateHari = "UPDATE tb_mobil SET jumlah_hari_peminjaman = jumlah_hari_peminjaman + ? WHERE id_mobil = ?";
-    //         try (PreparedStatement ps = con.prepareStatement(updateHari)) {
-    //             ps.setInt(1, hariSewa);
-    //             ps.setString(2, idMobil);
-    //             ps.executeUpdate();
-    //         }
-
-    //         // 2. Ambil jumlah hari dan biaya maintenance per mobil SETELAH update
-    //         String select = "SELECT jumlah_hari_peminjaman, biaya_maintenance FROM tb_mobil WHERE id_mobil = ?";
-    //         try (PreparedStatement ps = con.prepareStatement(select)) {
-    //             ps.setString(1, idMobil);
-    //             ResultSet rs = ps.executeQuery();
-    //             if (rs.next()) {
-    //                 int jumlahHari = rs.getInt("jumlah_hari_peminjaman");
-    //                 double biayaPerMaintenance = rs.getDouble("biaya_maintenance");
-    //                 int kelipatan = jumlahHari / 30;
-    //                 if (kelipatan > 0) {
-    //                     double tambahan = kelipatan * biayaPerMaintenance;
-    //                     // 3. Update total_biaya_maintenance dan kurangi jumlah_hari_peminjaman
-    //                     String updateMaintenance = "UPDATE tb_mobil SET total_biaya_maintenance = total_biaya_maintenance + ?, jumlah_hari_peminjaman = jumlah_hari_peminjaman - ? WHERE id_mobil = ?";
-    //                     try (PreparedStatement ps2 = con.prepareStatement(updateMaintenance)) {
-    //                         ps2.setDouble(1, tambahan);
-    //                         ps2.setInt(2, kelipatan * 30);
-    //                         ps2.setString(3, idMobil);
-    //                         ps2.executeUpdate();
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     } catch (SQLException e) {
-    //         // ignored
-    //     }
-    // }
-
     public static List<String> getTopMobilByPenyewaan(int jumlah) {
         List<String> daftarMobil = new ArrayList<>();
         try (Connection con = Utility.connectDB()) {
@@ -368,5 +317,28 @@ public class Mobil {
             // ignored
         }
         return formatRupiah.format(total);
+    }
+
+    public static List<String> getTopMobilByEarnings() {
+        List<String> daftarMobil = new ArrayList<>();
+        try (Connection con = Utility.connectDB()) {
+            String query = "SELECT m.merk, m.model, SUM(t.total_harga) AS total_earning " +
+                           "FROM tb_mobil m " +
+                           "JOIN tb_transaksi t ON m.id_mobil = t.id_mobil " +
+                           "GROUP BY m.id_mobil, m.merk, m.model " +
+                           "ORDER BY total_earning DESC LIMIT 1";
+            try (PreparedStatement ps = con.prepareStatement(query);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String merk = rs.getString("merk").trim();
+                    String model = rs.getString("model").trim();
+                    double totalEarning = rs.getDouble("total_earning");
+                    daftarMobil.add(merk + "," + model + "," + formatRupiah.format(totalEarning));
+                }
+            }
+        } catch (SQLException e) {
+            // ignored
+        }
+        return daftarMobil;
     }
 }

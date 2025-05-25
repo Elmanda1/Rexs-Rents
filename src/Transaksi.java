@@ -12,6 +12,7 @@ public class Transaksi {
     private int durasiSewa;
     private double totalHarga;
     private double denda;
+    private static NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
 
     public Transaksi(String idTransaksi, String tanggal, Pelanggan pelanggan, Mobil mobil, int durasiSewa,
             double denda) {
@@ -241,8 +242,33 @@ public class Transaksi {
             e.printStackTrace();
         }
 
-        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         return formatRupiah.format(bruto);
+    }
+
+    public static String calculateNetto() {
+        // Remove .toDouble() and parse the formatted string values correctly
+        String brutoStr = calculateBruto();
+        String maintenanceStr = Mobil.getTotalMaintenance();
+        double bruto = parseRupiahToDouble(brutoStr);
+        double maintenance = parseRupiahToDouble(maintenanceStr);
+        double netto = bruto - maintenance;
+        
+        return formatRupiah.format(netto);
+    }
+
+    // Helper to parse formatted rupiah string to double
+    private static double parseRupiahToDouble(String rupiah) {
+        try {
+            // Remove all non-digit, non-comma, non-dot characters
+            String cleaned = rupiah.replaceAll("[^\\d,.]", "");
+            // Remove all periods (thousand separators)
+            cleaned = cleaned.replaceAll("\\.", "");
+            // Replace comma (decimal separator) with dot
+            cleaned = cleaned.replace(",", ".");
+            return Double.parseDouble(cleaned);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public static String calculateDenda() {

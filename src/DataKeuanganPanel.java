@@ -93,7 +93,7 @@ public class DataKeuanganPanel {
         gbcBanyakBangetAnjing.insets = new Insets(40, 0, 0, 0); // Add gap between panels
         labaBersih.add(labaBersihLabel, gbcBanyakBangetAnjing);
 
-        JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateBruto());
+        JLabel angkaBersihLabel = Utility.styleLabel(Transaksi.calculateNetto());
         angkaBersihLabel.setFont(new Font("poppinsFont", Font.BOLD, 40));
         angkaBersihLabel.setForeground(new Color(51, 100, 255));
         gbcBanyakBangetAnjing.gridy = 1;
@@ -177,7 +177,19 @@ public class DataKeuanganPanel {
         gbclagi.insets = new Insets(0, 0, 0, 0);
         mobilPanel.add(namaMobilPanel, gbclagi);
 
-        JLabel merkMobilLabel = Utility.styleLabel("Lamborghini");
+        // --- Top Car Earnings Integration ---
+        java.util.List<String> topCar = Mobil.getTopMobilByEarnings();
+        String merk = "-", model = "-", totalEarning = "-";
+        if (!topCar.isEmpty()) {
+            String[] parts = topCar.get(0).split(",", 3);
+            if (parts.length == 3) {
+                merk = parts[0].trim();
+                model = parts[1].trim();
+                totalEarning = parts[2].trim();
+            }
+        }
+
+        JLabel merkMobilLabel = Utility.styleLabel(merk);
         merkMobilLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
         merkMobilLabel.setForeground(new Color(51, 40, 255));
         gbclagi.gridy = 0;
@@ -188,7 +200,7 @@ public class DataKeuanganPanel {
         gbclagi.anchor = GridBagConstraints.WEST;
         namaMobilPanel.add(merkMobilLabel, gbclagi);
 
-        JLabel modelMobiLabel = Utility.styleLabel("stargazer");
+        JLabel modelMobiLabel = Utility.styleLabel(model);
         modelMobiLabel.setFont(new Font("poppinsFont", Font.BOLD, 24));
         modelMobiLabel.setForeground(new Color(51, 40, 255));
         gbclagi.gridy = 1;
@@ -223,7 +235,7 @@ public class DataKeuanganPanel {
         gbctrus.anchor = GridBagConstraints.CENTER;
         sewPanel.add(penyewaanLabel, gbctrus);
 
-        JLabel totalsewaLabel = Utility.styleLabel("Rp.10000000000");
+        JLabel totalsewaLabel = Utility.styleLabel(totalEarning);
         totalsewaLabel.setFont(new Font("poppinsFont", Font.PLAIN, 24));
         totalsewaLabel.setForeground(new Color(51, 100, 255));
         gbctrus.gridy = 1;
