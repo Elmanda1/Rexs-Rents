@@ -35,7 +35,7 @@ public class KembalikanMobilPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 259; // Smaller padding
+        gbc.ipadx = 280; // Smaller padding
         gbc.ipady = 10;
 
         JTextField idMobilField = Utility.styleTextField(false);

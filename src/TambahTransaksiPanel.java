@@ -50,7 +50,7 @@ public class TambahTransaksiPanel extends javax.swing.JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 227;
+        gbc.ipadx = 246;
         gbc.ipady = 10;
 
         JTextField pelangganField = Utility.styleTextField(false);
