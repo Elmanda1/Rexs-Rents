@@ -45,7 +45,7 @@ public class StatistikPanel {
                 PlotOrientation.HORIZONTAL,
                 false, true, false);
 
-        barChart.getTitle().setPaint(new Color(51, 40, 255));
+        barChart.getTitle().setPaint(new Color(255, 255, 255));
 
         // Set bar color (orange)
         CategoryPlot plot = barChart.getCategoryPlot();
@@ -55,13 +55,15 @@ public class StatistikPanel {
         // Set axis label color (blue)
         CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setLabelPaint(new Color(51, 100, 255)); // "Model Mobil" label
+        domainAxis.setLabelFont(new Font("poppinsFont",Font.BOLD, 18));
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
-        domainAxis.setTickLabelFont(new Font("poppinsFont", Font.PLAIN, 12));
+        domainAxis.setTickLabelFont(new Font("poppinsFont", Font.BOLD, 12));
         domainAxis.setTickLabelPaint(new Color(51, 40, 255)); // navy for tick labels
 
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setLabelPaint(new Color(51, 100, 255)); // "Jumlah Penyewaan" label
-        rangeAxis.setTickLabelFont(new Font("poppinsFont", Font.PLAIN, 12));
+        rangeAxis.setLabelFont(new Font("poppinsFont",Font.BOLD, 18));
+        rangeAxis.setTickLabelFont(new Font("poppinsFont", Font.BOLD, 12));
         rangeAxis.setTickLabelPaint(new Color(51, 40, 255)); // navy for tick labels
 
         // Konfigurasi plot dan chart background

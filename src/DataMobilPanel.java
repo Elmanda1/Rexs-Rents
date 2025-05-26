@@ -11,7 +11,7 @@ public class DataMobilPanel extends JPanel {
         panel.setBackground(Color.WHITE);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(17, 20, 10, 10));
         formPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -71,21 +71,21 @@ public class DataMobilPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.insets = new Insets(70, 0, 0, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 0.8;
 
         JPanel fotoPanel = new JPanel(new BorderLayout());
-        fotoPanel.setPreferredSize(new Dimension(0, 173));
-        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
-        fotoPanel.setMinimumSize(new Dimension(0, 173));
+        fotoPanel.setPreferredSize(new Dimension(0, 300));
+        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 400));
+        fotoPanel.setMinimumSize(new Dimension(0, 400));
         fotoPanel.setBackground(new Color(240, 240, 240));
         fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
 
         JLabel fotoLabel = new JLabel();
         fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
-        fotoLabel.setPreferredSize(new Dimension(0, 150));
+        fotoLabel.setPreferredSize(new Dimension(0, 300));
         fotoLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
@@ -120,6 +120,7 @@ public class DataMobilPanel extends JPanel {
         deleteButton.setIconTextGap(5);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 50, 0));    
         buttonPanel.add(tambahButton);
         buttonPanel.add(simpanButton);
         buttonPanel.add(deleteButton);
@@ -321,53 +322,77 @@ public class DataMobilPanel extends JPanel {
                             ImageIcon icon = new ImageIcon(path);
                             Image img = icon.getImage();
                             if (img.getWidth(null) != -1) {
-                                int width = 510;
-                                int height = 200;
+                                int width = fotoLabel.getWidth();
+                                int height = fotoLabel.getHeight();
                                 Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                                 fotoLabel.setIcon(new ImageIcon(scaledImg));
+                                fotoLabel.setText(""); // clear text if image exists
+                                captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
                             } else {
                                 fotoLabel.setIcon(null);
+                                fotoLabel.setText("Foto mobil belum diimport");
+                                captionLabel.setText("");
                             }
                         } else {
                             fotoLabel.setIcon(null);
+                            fotoLabel.setText("Foto mobil belum diimport");
+                            captionLabel.setText("");
                         }
-                        captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
                     } else {
                         fotoLabel.setIcon(null);
+                        fotoLabel.setText("");
                         captionLabel.setText("Pilih Mobil");
                     }
                 } else {
                     fotoLabel.setIcon(null);
-                    captionLabel.setText("Pilih Mobil");
+                    fotoLabel.setText("Pilih Mobil");
                 }
             }
         });
-
+        
         // Add search functionality for Data Mobil (live search)
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         searchPanel.setBackground(Color.WHITE);
+
         JTextField searchField = new Utility.PlaceholderTextField("Search Mobil...");
+
+        // Tambahkan FocusListener agar placeholder hilang saat fokus
+        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchField.getText().equals("Search Mobil...")) {
+                    searchField.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search Mobil...");
+                }
+            }
+        });
+
         searchPanel.add(searchField, BorderLayout.CENTER);
         tablePanel.add(searchPanel, BorderLayout.NORTH);
+
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void updateTable() {
-                String keyword = searchField.getText().trim();
+                String keyword = searchField.getText().trim().toLowerCase();
                 mobilTableModel.setRowCount(0);
-                if (keyword.isEmpty() || keyword.equals("Search Mobil...")) {
-                    for (Mobil m : Mobil.getAllMobil()) {
-                        mobilTableModel.addRow(new Object[] {
-                                m.getIdMobil(), m.getModel(), m.getMerk(),
-                                formatRupiah.format(m.getHargaSewa()),
-                                m.isTersedia() ? "Available" : "Unavailable",
-                        });
-                    }
-                } else {
-                    for (Mobil m : Mobil.search(keyword)) {
-                        mobilTableModel.addRow(new Object[] {
-                                m.getIdMobil(), m.getModel(), m.getMerk(),
-                                formatRupiah.format(m.getHargaSewa()),
-                                m.isTersedia() ? "Available" : "Unavailable",
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+                for (Mobil m : Mobil.getMobilTersedia()) {
+                    String hargaSewaStr = formatRupiah.format(m.getHargaSewa());
+                    String all = (m.getIdMobil() + " " + m.getModel() + " " + m.getMerk() + " " + hargaSewaStr).toLowerCase();
+                    if (keyword.isEmpty() || keyword.equals("search mobil...") || all.contains(keyword)) {
+                        mobilTableModel.addRow(new Object[]{
+                                m.getIdMobil(),
+                                m.getModel(),
+                                m.getMerk(),
+                                hargaSewaStr,
+                                m.isTersedia() ? "Available" : "Unavailable"
                         });
                     }
                 }
@@ -388,6 +413,7 @@ public class DataMobilPanel extends JPanel {
                 updateTable();
             }
         });
+
 
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 7));
         wrapperPanel.setBackground(Color.white);

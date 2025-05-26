@@ -23,7 +23,7 @@ public class DataKeuanganPanel {
         // Create top panel (blue)
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        topPanel.setBackground(Color.WHITE);
+        topPanel.setBackground(Color.white);
 
         // Create and configure innerTopPanel with your size
         JPanel innerTopPanel = Utility.createRoundedPanel(new GridBagLayout(), new Color(220, 230, 250));
@@ -148,7 +148,7 @@ public class DataKeuanganPanel {
 
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 92, 30, 92));
-        bottomPanel.setBackground(Color.WHITE);
+        bottomPanel.setBackground(Color.white);
 
         // Create three panels
         JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -161,6 +161,7 @@ public class DataKeuanganPanel {
         JLabel mobilPopuler = Utility.styleLabel("Mobil Terlaris");
         mobilPopuler.setFont(new Font("poppinsFont", Font.BOLD, 24));
         mobilPopuler.setForeground(new Color(35, 47, 89));
+        dalemgbc.anchor = GridBagConstraints.CENTER;
 
         dalemgbc.insets = new Insets(0, 20, 20, 0); // Add gap between panels
         leftPanel.add(mobilPopuler, dalemgbc);
@@ -171,6 +172,15 @@ public class DataKeuanganPanel {
         dalemgbc.weighty = 0;
         mobilPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
+        dalemgbc.anchor = GridBagConstraints.CENTER;
+
+
+        GridBagConstraints fillerGbc = new GridBagConstraints();
+        fillerGbc.gridx = 0;
+        fillerGbc.gridy = 2;
+        fillerGbc.weighty = 1.0; // This row takes up extra vertical space
+        fillerGbc.fill = GridBagConstraints.VERTICAL;
+        leftPanel.add(Box.createVerticalGlue(), fillerGbc);
         leftPanel.add(mobilPanel, dalemgbc);
 
         GridBagConstraints gbclagi = new GridBagConstraints();
@@ -270,6 +280,7 @@ public class DataKeuanganPanel {
         dalemgbc.weighty = 0;
         dendaPanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
+        middlePanel.add(Box.createVerticalGlue(), fillerGbc);
         middlePanel.add(dendaPanel, dalemgbc);
 
         JLabel totalDendaAngka = Utility.styleLabel(Transaksi.calculateDenda());
@@ -299,6 +310,7 @@ public class DataKeuanganPanel {
         dalemgbc.weighty = 0;
         maintenancePanel.setBackground(new Color(220, 230, 250));
         dalemgbc.insets = new Insets(0, 20, 0, 20);
+        rightPanel.add(Box.createVerticalGlue(), fillerGbc);
         rightPanel.add(maintenancePanel, dalemgbc);
 
         JLabel maintenanceangkaLabel = Utility.styleLabel(Mobil.getTotalMaintenance());
@@ -336,12 +348,12 @@ public class DataKeuanganPanel {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 0.5;
-        gbc.weighty = 0;
+        gbc.weighty = 0.5;
         gbc.fill = GridBagConstraints.BOTH;
         panel.add(topPanel, gbc);
 
         gbc.gridy = 2;
-        gbc.weighty = 1;
+        gbc.weighty = 0.5;
         panel.add(bottomPanel, gbc);
 
         return panel;

@@ -11,14 +11,14 @@ public class KembalikanMobilPanel extends JPanel {
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(24, 20, 10, 10));
         formPanel.setBackground(Color.white);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(6, 10, 6, 7);
+        gbc.insets = new Insets(6, 10, 6, 10);
 
         // Form fields
         formPanel.add(Utility.styleLabel("ID Mobil"), gbc);
@@ -36,7 +36,7 @@ public class KembalikanMobilPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.ipadx = 280; // Smaller padding
+        gbc.ipadx = 259; // Smaller padding
         gbc.ipady = 10;
 
         JTextField idMobilField = Utility.styleTextField(false);
@@ -71,6 +71,7 @@ public class KembalikanMobilPanel extends JPanel {
         kembalikanButton.setIconTextGap(5); // Add some space between icon and text
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 17, 0));  
         buttonPanel.add(kembalikanButton);
         buttonPanel.setBackground(Color.white);
 
@@ -89,27 +90,26 @@ public class KembalikanMobilPanel extends JPanel {
             }
         };
 
-        // --- FOTO MOBIL PANEL ---
+        // ====== TAMBAHKAN PANEL FOTO DI SINI ======
         gbc.gridy++;
-        gbc.gridx = 1; // <-- hanya di kolom kanan, segaris dengan textfield
+        gbc.gridx = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.insets = new Insets(70, 0, 0, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 0.8;
 
         JPanel fotoPanel = new JPanel(new BorderLayout());
-        // Atur hanya tinggi, lebar biarkan mengikuti parent
-        fotoPanel.setPreferredSize(new Dimension(0, 173));
-        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 173));
-        fotoPanel.setMinimumSize(new Dimension(0, 173));
+        fotoPanel.setPreferredSize(new Dimension(0, 300));
+        fotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 400));
+        fotoPanel.setMinimumSize(new Dimension(0, 400));
         fotoPanel.setBackground(new Color(240, 240, 240));
         fotoPanel.setBorder(BorderFactory.createLineBorder(new Color(217, 231, 244), 2, true));
 
         JLabel fotoLabel = new JLabel();
         fotoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         fotoLabel.setVerticalAlignment(SwingConstants.CENTER);
-        fotoLabel.setPreferredSize(new Dimension(0, 150));
+        fotoLabel.setPreferredSize(new Dimension(0, 300));
         fotoLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
@@ -117,6 +117,20 @@ public class KembalikanMobilPanel extends JPanel {
         JLabel captionLabel = new JLabel("Pilih Mobil", SwingConstants.CENTER);
         captionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         captionLabel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 180, 180)));
+
+        fotoPanel.add(fotoLabel, BorderLayout.CENTER);
+        fotoPanel.add(captionLabel, BorderLayout.SOUTH);
+
+        formPanel.add(fotoPanel, gbc);
+
+        // --- FOTO MOBIL PANEL (SAMA DENGAN GUIPegawai) ---
+        gbc.gridy++;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.8;
 
         fotoPanel.add(fotoLabel, BorderLayout.CENTER);
         fotoPanel.add(captionLabel, BorderLayout.SOUTH);
@@ -162,39 +176,41 @@ public class KembalikanMobilPanel extends JPanel {
                             .orElse(null);
 
                     if (selectedMobil != null) {
-                        String fotoFile = selectedMobil.getFoto();
-                        System.out.println("Foto file: " + fotoFile); // Debug
+                        String fotoFile = selectedMobil.getFoto(); // kolom foto di database
                         if (fotoFile != null && !fotoFile.isEmpty()) {
                             String path = "assets/mobil/" + fotoFile;
-                            System.out.println("Path gambar: " + path); // Debug
                             File imgFile = new File(path);
-                            if (!imgFile.exists()) {
-                                System.out.println("File gambar tidak ditemukan: " + path);
-                            }
                             ImageIcon icon = new ImageIcon(path);
                             Image img = icon.getImage();
-                            if (img.getWidth(null) == -1) {
-                                System.out.println("Gambar gagal di-load: " + path);
-                                fotoLabel.setIcon(null);
-                            } else {
-                                int width = 550;
-                                int height = 200;
-                                // Scaling langsung tanpa BufferedImage
+                            if (img.getWidth(null) != -1) {
+                                int width = fotoLabel.getWidth();
+                                int height = fotoLabel.getHeight();
                                 Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                                 fotoLabel.setIcon(new ImageIcon(scaledImg));
+                                fotoLabel.setText(""); // clear text if image exists
+                                captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
+                            } else {
+                                fotoLabel.setIcon(null);
+                                fotoLabel.setText("Foto mobil belum diimport");
+                                captionLabel.setText("");
                             }
                         } else {
                             fotoLabel.setIcon(null);
+                            fotoLabel.setText("Foto mobil belum diimport");
+                            captionLabel.setText("");
                         }
-                        captionLabel.setText(selectedMobil.getMerk() + " " + selectedMobil.getModel());
                     } else {
                         fotoLabel.setIcon(null);
+                        fotoLabel.setText("");
                         captionLabel.setText("Pilih Mobil");
                     }
+                } else {
+                    fotoLabel.setIcon(null);
+                    fotoLabel.setText("Pilih Mobil");
                 }
             }
         });
-
+        
         // Add action listener to the "Kembalikan" button
         kembalikanButton.addActionListener(e -> {
             String idMobil = idMobilField.getText();

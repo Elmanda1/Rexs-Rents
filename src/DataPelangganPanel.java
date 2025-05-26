@@ -8,7 +8,7 @@ public class DataPelangganPanel extends JPanel {
 
         // Create form panel (left side)
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createEmptyBorder(16, 20, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 10));
         formPanel.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
