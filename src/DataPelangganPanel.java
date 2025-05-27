@@ -3,7 +3,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class DataPelangganPanel extends JPanel {
-    public static JPanel create() {
+    public static JPanel create(JPanel contentPanel) {
         JPanel panel = new JPanel(new BorderLayout());
 
         // Create form panel (left side)
@@ -183,12 +183,7 @@ public class DataPelangganPanel extends JPanel {
             String alamat = alamatField.getText();
             String gender = genderComboBox.getSelectedItem().toString();
 
-            // Validate input
-            if (nama.trim().isEmpty() || noHP.trim().isEmpty() || noKTP.trim().isEmpty() || alamat.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            PegawaiUtility.validasiDataPelanggan(nama, noHP, noKTP, alamat);            
 
             // Check if ID already exists
             for (Pelanggan pelanggan : Pelanggan.getAllPelanggan()) {
@@ -221,6 +216,8 @@ public class DataPelangganPanel extends JPanel {
                 });
             }
 
+            PegawaiUtility.refreshTambahTransaksiPanel(contentPanel);
+
             JOptionPane.showMessageDialog(null, "Pelanggan berhasil ditambahkan!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
@@ -249,6 +246,8 @@ public class DataPelangganPanel extends JPanel {
             String alamat = alamatField.getText();
             String gender = genderComboBox.getSelectedItem().toString();
 
+            PegawaiUtility.validasiDataPelanggan(nama, noHP, noKTP, alamat);         
+
             // Update pelanggan in the database
             Pelanggan pelanggan = new Pelanggan(id, nama, noHP, noKTP, alamat, gender);
             String result = Pelanggan.updateInDatabase(pelanggan);
@@ -262,6 +261,8 @@ public class DataPelangganPanel extends JPanel {
                         p.getNoKtp(), p.getAlamat(), p.getGender()
                 });
             }
+
+            PegawaiUtility.refreshTambahTransaksiPanel(contentPanel);
 
             JOptionPane.showMessageDialog(null, "Pelanggan berhasil diperbarui!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -298,6 +299,8 @@ public class DataPelangganPanel extends JPanel {
                         p.getNoKtp(), p.getAlamat(), p.getGender()
                 });
             }
+
+            PegawaiUtility.refreshTambahTransaksiPanel(contentPanel);
 
             JOptionPane.showMessageDialog(null, "Pelanggan berhasil dihapus!",
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);

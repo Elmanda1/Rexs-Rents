@@ -1,6 +1,8 @@
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -81,6 +83,32 @@ public class PegawaiUtility {
                     p.getIdPelanggan(), p.getNama(), p.getNoHp(),
                     p.getNoKtp(), p.getAlamat(), p.getGender()
             });
+        }
+    }
+
+    public static void validasiDataPelanggan(String nama, String noHP, String noKTP, String alamat) {
+        if (nama.trim().isEmpty() || noHP.trim().isEmpty() || noKTP.trim().isEmpty() || alamat.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Semua field harus diisi!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!nama.matches("^[a-zA-Z]+$")) {
+            JOptionPane.showMessageDialog(null, "Nama hanya boleh mengandung huruf.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!noHP.matches("^\\d{10,13}$")) {
+            JOptionPane.showMessageDialog(null, "No HP harus berupa angka dengan panjang 10-13 digit.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!noKTP.matches("^\\d{16}$")) {
+            JOptionPane.showMessageDialog(null, "No KTP harus berupa angka dengan panjang 16 digit.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
     }
 }

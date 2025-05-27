@@ -32,7 +32,7 @@ public class GUIPegawai extends BaseDashboardUI {
     private void setupUI() {
         contentPanel = new JPanel(new CardLayout());
         JPanel tambahTransaksi = TambahTransaksiPanel.create(contentPanel);
-        JPanel dataPelanggan = DataPelangganPanel.create();
+        JPanel dataPelanggan = DataPelangganPanel.create(contentPanel);
         JPanel kembalikanMobil = KembalikanMobilPanel.create();
         contentPanel.add(tambahTransaksi, "NewTransaction");
         contentPanel.add(dataPelanggan, "dataPelanggan");
